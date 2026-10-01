@@ -18,41 +18,20 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Role: Developer
 * Responsibilities: Scheduling and tracking; Integration
 
-### Jane Doe
+### Siu Lok Yin
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/bedrockfake.png" width="200px">
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
-
-* Role: Team Lead
-* Responsibilities: UI
-
-### Johnny Doe
-
-<img src="images/johndoe.png" width="200px">
-
-[[github](http://github.com/johndoe)] [[portfolio](team/johndoe.md)]
+[[github](https://github.com/bedrockfake)]
 
 * Role: Developer
-* Responsibilities: Data
+* Responsibilities: Deliverables and deadlines
 
-### Jean Doe
+### Aykhan Damirli
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/dmraykhan.png" width="200px">
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
-
-* Role: Developer
-* Responsibilities: Dev Ops + Threading
-
-### James Doe
-
-<img src="images/johndoe.png" width="200px">
-
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+[[github](https://github.com/dmraykhan)]
 
 * Role: Developer
-* Responsibilities: UI
+* Responsibilities: Implementing assigned features and reviewing pull requests
