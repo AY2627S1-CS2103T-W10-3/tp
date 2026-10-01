@@ -9,6 +9,15 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
+### Aykhan Damirli
+
+<img src="images/dmraykhan.png" width="200px">
+
+[[github](https://github.com/dmraykhan)]
+
+* Role: Developer
+* Responsibilities: Implementing assigned features and reviewing pull requests
+
 ### Wang Yanrong
 
 <img src="images/yanrong-wang.png" width="200px">
