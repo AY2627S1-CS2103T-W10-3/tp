@@ -287,32 +287,116 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
+For all use cases below, the **System** is `TutorContacts` and the **Actor** is the private tutor, unless otherwise specified.
 
-**Use case: Delete a person**
+**Use case: UC01 — Add a student**
 
 **MSS**
 
-1.  User requests to list persons
-2.  AddressBook shows a list of persons
-3.  User requests to delete a specific person in the list
-4.  AddressBook deletes the person
+1. User requests to add a student and provides the student's details.
+2. TutorContacts validates the supplied details.
+3. TutorContacts adds the student.
+4. TutorContacts saves the updated student data.
+5. TutorContacts displays the added student and reports that the operation was successful.
 
     Use case ends.
 
 **Extensions**
 
-* 2a. The list is empty.
+* 1a. The user omits the student's name.
+
+  * 1a1. TutorContacts reports that the name is required.
 
   Use case ends.
 
-* 3a. The given index is invalid.
+* 1b. The user provides an invalid field value.
 
-    * 3a1. AddressBook shows an error message.
+  * 1b1. TutorContacts reports the invalid field and its required format.
 
-      Use case resumes at step 2.
+  Use case ends.
 
-*{More to be added}*
+* 1c. The user provides guardian contact details without a guardian name.
+
+  * 1c1. TutorContacts reports that a guardian name is required when guardian contact details are provided.
+
+  Use case ends.
+
+* 2a. A student with the same normalized name already exists.
+
+  * 2a1. TutorContacts reports the duplicate student.
+  * 2a2. TutorContacts leaves the existing records unchanged.
+
+  Use case ends.
+
+* 4a. TutorContacts cannot save the updated data.
+
+  * 4a1. TutorContacts reports the save failure.
+  * 4a2. TutorContacts leaves the displayed and saved records unchanged.
+
+  Use case ends.
+
+**Use case: UC02 — Review student records**
+
+**MSS**
+
+1. User requests to list students.
+2. TutorContacts retrieves the student records.
+3. TutorContacts displays all students and their recorded contact, guardian, subject, and education-level details.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. There are no student records.
+
+  * 2a1. TutorContacts informs the user that no students have been recorded.
+
+  Use case ends.
+
+* 2b. Student data could not be loaded when TutorContacts started.
+
+  * 2b1. TutorContacts informs the user that student data is unavailable.
+
+  Use case ends.
+
+**Use case: UC03 — Delete a student**
+
+**MSS**
+
+1. User requests to list students.
+2. TutorContacts displays the students with their current indices.
+3. User requests to delete the student at a specified index.
+4. TutorContacts validates the specified index.
+5. TutorContacts deletes the selected student.
+6. TutorContacts saves the updated student data.
+7. TutorContacts displays the remaining students and reports that the operation was successful.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. There are no student records.
+
+  Use case ends.
+
+* 3a. The supplied index is not a positive integer in the required format.
+
+  * 3a1. TutorContacts reports the required command format.
+
+  Use case ends.
+
+* 4a. The supplied index does not identify a displayed student.
+
+  * 4a1. TutorContacts reports that no student exists at that index.
+
+  Use case resumes at step 2.
+
+* 6a. TutorContacts cannot save the updated data.
+
+  * 6a1. TutorContacts reports the save failure.
+  * 6a2. TutorContacts leaves the displayed and saved records unchanged.
+
+  Use case ends.
 
 ### Non-Functional Requirements
 
