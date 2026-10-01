@@ -16,6 +16,18 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 [[github](https://github.com/JiayiZhai)]
 
 * Role: Developer
+* Responsibilities: Implementing assigned features and reviewing pull requests
+
+### Wang Yanrong
+
+<img src="images/yanrong-wang.png" width="200px">
+
+[[github](https://github.com/Yanrong-Wang)]
+
+* Role: Developer
+* Responsibilities: Documentation and testing
+
+### Jane Doe
 * Responsibilities: Scheduling and tracking; Integration
 
 ### Siu Lok Yin
