@@ -18,6 +18,15 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Role: Developer
 * Responsibilities: Deliverables and deadlines
 
+### Aykhan Damirli
+
+<img src="images/dmraykhan.png" width="200px">
+
+[[github](https://github.com/dmraykhan)]
+
+* Role: Developer
+* Responsibilities: Implementing assigned features and reviewing pull requests
+
 ### Jane Doe
 
 <img src="images/johndoe.png" width="200px">
