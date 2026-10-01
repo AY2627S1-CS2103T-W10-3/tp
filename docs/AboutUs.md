@@ -9,11 +9,11 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
-### Aykhan Damirli
+### Zhai Jiayi
 
-<img src="images/dmraykhan.png" width="200px">
+<img src="images/jiayizhai.png" width="200px">
 
-[[github](https://github.com/dmraykhan)]
+[[github](https://github.com/JiayiZhai)]
 
 * Role: Developer
 * Responsibilities: Implementing assigned features and reviewing pull requests
@@ -28,40 +28,22 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Responsibilities: Documentation and testing
 
 ### Jane Doe
+* Responsibilities: Scheduling and tracking; Integration
 
-<img src="images/johndoe.png" width="200px">
+### Siu Lok Yin
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+<img src="images/bedrockfake.png" width="200px">
 
-* Role: Team Lead
-* Responsibilities: UI
-
-### Johnny Doe
-
-<img src="images/johndoe.png" width="200px">
-
-[[github](http://github.com/johndoe)] [[portfolio](team/johndoe.md)]
+[[github](https://github.com/bedrockfake)]
 
 * Role: Developer
-* Responsibilities: Data
+* Responsibilities: Deliverables and deadlines
 
-### Jean Doe
+### Aykhan Damirli
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/dmraykhan.png" width="200px">
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
-
-* Role: Developer
-* Responsibilities: Dev Ops + Threading
-
-### James Doe
-
-<img src="images/johndoe.png" width="200px">
-
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+[[github](https://github.com/dmraykhan)]
 
 * Role: Developer
-* Responsibilities: UI
+* Responsibilities: Implementing assigned features and reviewing pull requests
