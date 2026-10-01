@@ -261,13 +261,15 @@ _{Explain here how the data archiving feature will be implemented}_
 
 **Target user profile**:
 
-* has a need to manage a significant number of contacts
-* prefers desktop apps over other types of applications
-* can type fast
-* prefers typing to mouse interactions
-* is reasonably comfortable using CLI apps
+* is an independent private tutor managing multiple students
+* needs to keep student and guardian contact details together
+* needs to record tutoring information such as subjects and education levels
+* primarily manages one-to-one tutoring arrangements
+* uses a desktop or laptop as the main working device
+* prefers typing commands to navigating a mouse-driven interface
+* is comfortable using a CLI-style application
 
-**Value proposition**: Manage contacts faster than with a typical mouse-driven GUI application.
+**Value proposition**: TutorContacts enables independent private tutors to manage student, guardian, and tutoring information quickly in one place using a typing-oriented interface.
 
 
 ### User stories
@@ -416,8 +418,12 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
 ### Glossary
 
-* **Mainstream OS**: Windows, Linux, Unix, or macOS
-* **Private contact detail**: A contact detail that is not meant to be shared with others
+* **CLI**: Command-line interface, an interface in which users perform actions by typing commands.
+* **Education level**: The student's current school level, such as `P6`, `S3`, or `JC1`.
+* **Guardian**: A parent or other responsible adult whose contact details are associated with a student.
+* **Independent private tutor**: A tutor who manages their own students and tutoring arrangements rather than relying on an organization to manage them.
+* **Student record**: The information stored for one student, including the student's name and any recorded contact, guardian, subject, and education-level details.
+* **Subject**: The academic subject for which the student is receiving tuition.
 
 --------------------------------------------------------------------------------------------------------------------
 
