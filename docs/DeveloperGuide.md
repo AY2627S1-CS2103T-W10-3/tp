@@ -400,11 +400,19 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
 ### Non-Functional Requirements
 
-1.  Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
-2.  Should be able to hold up to 1000 persons without noticeable sluggishness in performance for typical usage.
-3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-
-*{More to be added}*
+1. TutorContacts should work on Windows, Linux, and macOS systems that have Java `25` installed.
+2. TutorContacts should be packaged as a single portable JAR file, require no installer, and not exceed 100 MB.
+3. TutorContacts should be designed for use by a single independent private tutor and should not support concurrent or shared-user access.
+4. TutorContacts should not require an Internet connection for its core contact-management features.
+5. TutorContacts should store user data locally in a human-editable text file.
+6. TutorContacts should not require a database management system or a remote server operated by the development team.
+7. TutorContacts should be able to manage at least 100 active and archived student records without noticeable sluggishness during typical usage.
+8. A user with above-average typing speed should be able to perform common contact-management tasks faster using commands than by relying primarily on mouse interactions.
+9. TutorContacts should work well at screen resolutions of `1920 × 1080` or higher with display scaling of 100% or 125%.
+10. TutorContacts should remain functionally usable at screen resolutions of `1280 × 720` or higher with display scaling of 150%.
+11. Information displayed in student records should wrap when necessary rather than being permanently truncated.
+12. TutorContacts should preserve data integrity when handling invalid commands or data by displaying a clear error message and leaving existing student records unchanged.
+13. A failure to load or save data should not cause existing valid data to be silently overwritten.
 
 ### Glossary
 
