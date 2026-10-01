@@ -9,6 +9,15 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
+### Siu Lok Yin
+
+<img src="images/bedrockfake.png" width="200px">
+
+[[github](https://github.com/bedrockfake)]
+
+* Role: Developer
+* Responsibilities: Deliverables and deadlines
+
 ### Aykhan Damirli
 
 <img src="images/dmraykhan.png" width="200px">
