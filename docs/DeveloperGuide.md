@@ -274,16 +274,25 @@ _{Explain here how the data archiving feature will be implemented}_
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …​                                    | I want to …​                     | So that I can…​                                                        |
-| -------- | ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------- |
-| `* * *`  | new user                                   | see usage instructions         | refer to instructions when I forget how to use the App                 |
-| `* * *`  | user                                       | add a new person               |                                                                        |
-| `* * *`  | user                                       | delete a person                | remove entries that I no longer need                                   |
-| `* * *`  | user                                       | find a person by name          | locate details of persons without having to go through the entire list |
-| `* *`    | user                                       | hide private contact details   | minimize chance of someone else seeing them by accident                |
-| `*`      | user with many persons in the address book | sort persons by name           | locate a person easily                                                 |
-
-*{More to be added}*
+| Priority | As a …​ | I want to …​ | So that I can…​ |
+| -------- | -------- | ------------ | ---------------- |
+| `* * *` | private tutor | add a student | keep a record of a student I tutor |
+| `* * *` | private tutor | record a student's contact details | contact the student when necessary |
+| `* * *` | private tutor | record a student's guardian details | contact the guardian when necessary |
+| `* * *` | private tutor | add a student even when some details are unavailable | create useful records without waiting for complete information |
+| `* * *` | private tutor | record a student's subject and education level | remember the context in which I tutor the student |
+| `* * *` | private tutor | list all students with their recorded details | review my student information before a lesson |
+| `* * *` | private tutor | delete an obsolete or incorrect student record | keep my records relevant and accurate |
+| `* * *` | private tutor | have my data saved locally | retain my records after closing the application |
+| `* *` | new user | view command instructions | learn or recall how to use the application |
+| `* *` | private tutor | edit an existing student record | correct information without deleting and recreating the record |
+| `* *` | private tutor | find a student by name | retrieve a record without scanning the full list |
+| `* *` | private tutor | tag and filter students by subject or education level | retrieve a relevant group of students quickly |
+| `* *` | private tutor | record upcoming lessons | keep track of tutoring arrangements |
+| `* *` | private tutor | record learning focuses and follow-up actions | remember what should be covered in future lessons |
+| `*` | private tutor | archive former students | retain old records without showing them in my active list |
+| `*` | private tutor | record group tuition arrangements | manage students who attend lessons together |
+| `*` | private tutor | associate multiple guardians with a student | retain additional family contact details |
 
 ### Use cases
 
