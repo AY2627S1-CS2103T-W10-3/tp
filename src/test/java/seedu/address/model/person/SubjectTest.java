@@ -37,7 +37,7 @@ public class SubjectTest {
     }
 
     @Test
-    public void gettersAndToString_returnsStoredValue() {
+    public void getValueAndToString_validSubject_returnsStoredValue() {
         Subject subject = new Subject("H2 Mathematics");
 
         assertEquals("H2 Mathematics", subject.getValue());
