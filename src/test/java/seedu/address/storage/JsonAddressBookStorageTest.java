@@ -2,6 +2,7 @@ package seedu.address.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.HOON;
@@ -9,15 +10,20 @@ import static seedu.address.testutil.TypicalPersons.IDA;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import seedu.address.commons.exceptions.DataLoadingException;
+import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
+import seedu.address.testutil.PersonBuilder;
 
 public class JsonAddressBookStorageTest {
     private static final Path TEST_DATA_FOLDER = Paths.get("src", "test", "data", "JsonAddressBookStorageTest");
@@ -84,6 +90,31 @@ public class JsonAddressBookStorageTest {
         readBack = jsonAddressBookStorage.readAddressBook().get(); // file path not specified
         assertEquals(original, new AddressBook(readBack));
 
+    }
+
+    @Test
+    public void readAndSaveAddressBook_incompleteAndCompletePersons_preservesOptionalDetails() throws Exception {
+        Path filePath = testFolder.resolve("OptionalDetails.json");
+        AddressBook original = new AddressBook();
+        original.addPerson(new PersonBuilder().withName("Name Only").withoutPhone().withoutEmail()
+                .withoutAddress().withTags().build());
+        original.addPerson(new PersonBuilder().withName("Complete Student").build());
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
+
+        storage.saveAddressBook(original);
+
+        String json = Files.readString(filePath);
+        JsonNode persons = JsonUtil.fromJsonString(json, JsonNode.class).path("persons");
+        JsonNode incomplete = persons.get(0);
+        assertTrue(incomplete.has("phone") && incomplete.get("phone").isNull());
+        assertTrue(incomplete.has("email") && incomplete.get("email").isNull());
+        assertTrue(incomplete.has("address") && incomplete.get("address").isNull());
+        assertFalse(json.contains("Not provided"));
+        JsonNode complete = persons.get(1);
+        assertEquals(PersonBuilder.DEFAULT_PHONE, complete.path("phone").asText());
+        assertEquals(PersonBuilder.DEFAULT_EMAIL, complete.path("email").asText());
+        assertEquals(PersonBuilder.DEFAULT_ADDRESS, complete.path("address").asText());
+        assertEquals(original, new AddressBook(storage.readAddressBook().get()));
     }
 
     @Test

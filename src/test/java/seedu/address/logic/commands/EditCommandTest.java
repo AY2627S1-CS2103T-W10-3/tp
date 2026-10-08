@@ -83,6 +83,23 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_addPhoneToNameOnlyPerson_preservesAbsentDetails() {
+        Person nameOnly = new PersonBuilder().withName("Name Only").withoutPhone().withoutEmail()
+                .withoutAddress().withTags().build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(nameOnly);
+        Model modelWithNameOnly = new ModelManager(addressBook, new UserPrefs());
+        Person editedPerson = new PersonBuilder(nameOnly).withPhone(VALID_PHONE_BOB).build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withPhone(VALID_PHONE_BOB).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
+        expectedModel.setPerson(nameOnly, editedPerson);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        assertCommandSuccess(editCommand, modelWithNameOnly, expectedMessage, expectedModel);
+    }
+
+    @Test
     public void execute_filteredList_success() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
 

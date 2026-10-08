@@ -2,6 +2,7 @@ package seedu.address.model.person;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
@@ -12,11 +13,47 @@ import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.BOB;
 
+import java.util.Optional;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.testutil.PersonBuilder;
 
 public class PersonTest {
+
+    @Test
+    public void constructor_nameOnly_hasEmptyOptionalDetails() {
+        Person person = new Person(new Name("Only Name"), Optional.empty(), Optional.empty(), Optional.empty(),
+                Set.of());
+        assertEquals(Optional.empty(), person.getPhone());
+        assertEquals(Optional.empty(), person.getEmail());
+        assertEquals(Optional.empty(), person.getAddress());
+        assertTrue(person.getTags().isEmpty());
+    }
+
+    @Test
+    public void constructor_nullName_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () ->
+                new Person(null, Optional.empty(), Optional.empty(), Optional.empty(), Set.of()));
+    }
+
+    @Test
+    public void optionalDetails_partiallyComplete_preservedByCopyBuilder() {
+        Person person = new PersonBuilder().withName("Partial Student").withoutEmail().withoutAddress().build();
+        assertEquals(Optional.of(new Phone(PersonBuilder.DEFAULT_PHONE)), person.getPhone());
+        assertEquals(Optional.empty(), person.getEmail());
+        assertEquals(Optional.empty(), person.getAddress());
+        assertEquals(person, new PersonBuilder(person).build());
+    }
+
+    @Test
+    public void equals_optionalDetailsDiffer_returnsFalse() {
+        Person nameOnly = new PersonBuilder().withoutPhone().withoutEmail().withoutAddress().build();
+        Person withPhone = new PersonBuilder(nameOnly).withPhone(PersonBuilder.DEFAULT_PHONE).build();
+        assertNotEquals(nameOnly, withPhone);
+        assertTrue(nameOnly.isSamePerson(withPhone));
+    }
 
     @Test
     public void asObservableList_modifyList_throwsUnsupportedOperationException() {
