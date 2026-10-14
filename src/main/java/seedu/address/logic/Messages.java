@@ -44,6 +44,14 @@ public class Messages {
                 .append(person.getEmail().map(email -> email.value).orElse(NOT_PROVIDED))
                 .append("; Address: ")
                 .append(person.getAddress().map(address -> address.value).orElse(NOT_PROVIDED))
+                .append("; Guardian: ")
+                .append(person.getGuardian().map(guardian -> guardian.getName().fullName).orElse(NOT_PROVIDED))
+                .append("; Guardian phone: ")
+                .append(person.getGuardian().flatMap(guardian -> guardian.getPhone())
+                        .map(phone -> phone.value).orElse(NOT_PROVIDED))
+                .append("; Guardian email: ")
+                .append(person.getGuardian().flatMap(guardian -> guardian.getEmail())
+                        .map(email -> email.value).orElse(NOT_PROVIDED))
                 .append("; Tags: ");
         person.getTags().forEach(builder::append);
         return builder.toString();

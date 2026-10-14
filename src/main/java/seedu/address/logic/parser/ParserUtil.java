@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
@@ -11,6 +12,7 @@ import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.Guardian;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
 import seedu.address.model.tag.Tag;
@@ -93,6 +95,22 @@ public class ParserUtil {
             throw new ParseException(Email.MESSAGE_CONSTRAINTS);
         }
         return new Email(trimmedEmail);
+    }
+
+    /**
+     * Parses a guardian name and optional contact values into a {@code Guardian}.
+     */
+    public static Guardian parseGuardian(String name, Optional<String> phone, Optional<String> email)
+            throws ParseException {
+        requireNonNull(name);
+        requireNonNull(phone);
+        requireNonNull(email);
+        Name parsedName = parseName(name);
+        Optional<Phone> parsedPhone = phone.isPresent()
+                ? Optional.of(parsePhone(phone.get())) : Optional.empty();
+        Optional<Email> parsedEmail = email.isPresent()
+                ? Optional.of(parseEmail(email.get())) : Optional.empty();
+        return new Guardian(parsedName, parsedPhone, parsedEmail);
     }
 
     /**

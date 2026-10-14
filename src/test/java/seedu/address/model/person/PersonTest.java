@@ -25,17 +25,18 @@ public class PersonTest {
     @Test
     public void constructor_nameOnly_hasEmptyOptionalDetails() {
         Person person = new Person(new Name("Only Name"), Optional.empty(), Optional.empty(), Optional.empty(),
-                Set.of());
+                Optional.empty(), Set.of());
         assertEquals(Optional.empty(), person.getPhone());
         assertEquals(Optional.empty(), person.getEmail());
         assertEquals(Optional.empty(), person.getAddress());
+        assertEquals(Optional.empty(), person.getGuardian());
         assertTrue(person.getTags().isEmpty());
     }
 
     @Test
     public void constructor_nullName_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
-                new Person(null, Optional.empty(), Optional.empty(), Optional.empty(), Set.of()));
+                new Person(null, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Set.of()));
     }
 
     @Test
@@ -53,6 +54,19 @@ public class PersonTest {
         Person withPhone = new PersonBuilder(nameOnly).withPhone(PersonBuilder.DEFAULT_PHONE).build();
         assertNotEquals(nameOnly, withPhone);
         assertTrue(nameOnly.isSamePerson(withPhone));
+    }
+
+    @Test
+    public void guardian_preservedByCopyBuilderAndIncludedInEquality() {
+        Person withGuardian = new PersonBuilder().withGuardian(
+                "Jane Bee", "81234567", "jane@example.com").build();
+        Person copied = new PersonBuilder(withGuardian).build();
+        Person withoutGuardian = new PersonBuilder(withGuardian).withoutGuardian().build();
+
+        assertEquals(withGuardian, copied);
+        assertTrue(withGuardian.getGuardian().isPresent());
+        assertNotEquals(withGuardian, withoutGuardian);
+        assertTrue(withGuardian.isSamePerson(withoutGuardian));
     }
 
     @Test
@@ -130,7 +144,8 @@ public class PersonTest {
     @Test
     public void toStringMethod() {
         String expected = Person.class.getCanonicalName() + "{name=" + ALICE.getName() + ", phone=" + ALICE.getPhone()
-                + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", tags=" + ALICE.getTags() + "}";
+                + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", guardian="
+                + ALICE.getGuardian() + ", tags=" + ALICE.getTags() + "}";
         assertEquals(expected, ALICE.toString());
     }
 }
