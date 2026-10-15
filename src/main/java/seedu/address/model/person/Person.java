@@ -22,6 +22,8 @@ public class Person {
     private final Optional<Phone> phone;
     private final Optional<Email> email;
     private final Optional<Guardian> guardian;
+    private final Optional<Subject> subject;
+    private final Optional<EducationLevel> educationLevel;
 
     // Data fields
     private final Optional<Address> address;
@@ -32,14 +34,25 @@ public class Person {
      * Optional wrappers and tags must not be null; use empty values for omitted details.
      */
     public Person(Name name, Optional<Phone> phone, Optional<Email> email, Optional<Address> address,
-            Optional<Guardian> guardian, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, guardian, tags);
+            Optional<Guardian> guardian, Optional<Subject> subject, Optional<EducationLevel> educationLevel,
+            Set<Tag> tags) {
+        requireAllNonNull(name, phone, email, address, guardian, subject, educationLevel, tags);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
         this.guardian = guardian;
+        this.subject = subject;
+        this.educationLevel = educationLevel;
         this.tags.addAll(tags);
+    }
+
+    /**
+     * Constructs a person without tutoring details.
+     */
+    public Person(Name name, Optional<Phone> phone, Optional<Email> email, Optional<Address> address,
+            Optional<Guardian> guardian, Set<Tag> tags) {
+        this(name, phone, email, address, guardian, Optional.empty(), Optional.empty(), tags);
     }
 
     public Name getName() {
@@ -60,6 +73,14 @@ public class Person {
 
     public Optional<Guardian> getGuardian() {
         return guardian;
+    }
+
+    public Optional<Subject> getSubject() {
+        return subject;
+    }
+
+    public Optional<EducationLevel> getEducationLevel() {
+        return educationLevel;
     }
 
     /**
@@ -103,13 +124,15 @@ public class Person {
                 && email.equals(otherPerson.email)
                 && address.equals(otherPerson.address)
                 && guardian.equals(otherPerson.guardian)
+                && subject.equals(otherPerson.subject)
+                && educationLevel.equals(otherPerson.educationLevel)
                 && tags.equals(otherPerson.tags);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, guardian, tags);
+        return Objects.hash(name, phone, email, address, guardian, subject, educationLevel, tags);
     }
 
     @Override
@@ -120,6 +143,8 @@ public class Person {
                 .add("email", email)
                 .add("address", address)
                 .add("guardian", guardian)
+                .add("subject", subject)
+                .add("educationLevel", educationLevel)
                 .add("tags", tags)
                 .toString();
     }

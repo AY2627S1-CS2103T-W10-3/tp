@@ -15,9 +15,11 @@ import org.junit.jupiter.api.Test;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Subject;
 import seedu.address.testutil.PersonBuilder;
 
 public class JsonAdaptedPersonTest {
@@ -29,6 +31,8 @@ public class JsonAdaptedPersonTest {
     private static final String INVALID_GUARDIAN_NAME = "Jane&";
     private static final String INVALID_GUARDIAN_PHONE = "812a";
     private static final String INVALID_GUARDIAN_EMAIL = "guardian.example.com";
+    private static final String INVALID_SUBJECT = " ";
+    private static final String INVALID_EDUCATION_LEVEL = "University";
 
     private static final String VALID_NAME = BENSON.getName().toString();
     private static final String VALID_PHONE = BENSON.getPhone().orElseThrow().toString();
@@ -37,6 +41,8 @@ public class JsonAdaptedPersonTest {
     private static final String VALID_GUARDIAN_NAME = "Jane Meier";
     private static final String VALID_GUARDIAN_PHONE = "81234567";
     private static final String VALID_GUARDIAN_EMAIL = "jane.meier@example.com";
+    private static final String VALID_SUBJECT = "H2 Mathematics";
+    private static final String VALID_EDUCATION_LEVEL = "JC2";
     private static final List<JsonAdaptedTag> VALID_TAGS = BENSON.getTags().stream()
             .map(JsonAdaptedTag::new)
             .collect(Collectors.toList());
@@ -121,7 +127,7 @@ public class JsonAdaptedPersonTest {
     @Test
     public void toModelType_validGuardianDetails_returnsPersonWithGuardian() throws Exception {
         JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                VALID_TAGS, VALID_GUARDIAN_NAME, VALID_GUARDIAN_PHONE, VALID_GUARDIAN_EMAIL);
+                VALID_TAGS, VALID_GUARDIAN_NAME, VALID_GUARDIAN_PHONE, VALID_GUARDIAN_EMAIL, null, null);
         assertEquals(new PersonBuilder(BENSON)
                 .withGuardian(VALID_GUARDIAN_NAME, VALID_GUARDIAN_PHONE, VALID_GUARDIAN_EMAIL).build(),
                 person.toModelType());
@@ -130,14 +136,34 @@ public class JsonAdaptedPersonTest {
     @Test
     public void toModelType_guardianNameOnly_returnsPersonWithGuardianWithoutContacts() throws Exception {
         JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                VALID_TAGS, VALID_GUARDIAN_NAME, null, null);
+                VALID_TAGS, VALID_GUARDIAN_NAME, null, null, null, null);
         assertEquals(new PersonBuilder(BENSON).withGuardianName(VALID_GUARDIAN_NAME).build(), person.toModelType());
+    }
+
+    @Test
+    public void toModelType_validTutoringDetails_returnsPersonWithTutoringDetails() throws Exception {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                VALID_TAGS, null, null, null, VALID_SUBJECT, VALID_EDUCATION_LEVEL);
+        assertEquals(new PersonBuilder(BENSON).withSubject(VALID_SUBJECT)
+                .withEducationLevel(VALID_EDUCATION_LEVEL).build(), person.toModelType());
+    }
+
+    @Test
+    public void toModelType_invalidTutoringDetails_throwIllegalValueException() {
+        JsonAdaptedPerson invalidSubject = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                VALID_TAGS, null, null, null, INVALID_SUBJECT, VALID_EDUCATION_LEVEL);
+        assertThrows(IllegalValueException.class, Subject.MESSAGE_CONSTRAINTS, invalidSubject::toModelType);
+
+        JsonAdaptedPerson invalidEducationLevel = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+                VALID_ADDRESS, VALID_TAGS, null, null, null, VALID_SUBJECT, INVALID_EDUCATION_LEVEL);
+        assertThrows(IllegalValueException.class, EducationLevel.MESSAGE_CONSTRAINTS,
+                invalidEducationLevel::toModelType);
     }
 
     @Test
     public void toModelType_guardianContactWithoutName_throwsIllegalValueException() {
         JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                VALID_TAGS, null, VALID_GUARDIAN_PHONE, VALID_GUARDIAN_EMAIL);
+                VALID_TAGS, null, VALID_GUARDIAN_PHONE, VALID_GUARDIAN_EMAIL, null, null);
         assertThrows(IllegalValueException.class,
                 "Guardian name is required when guardian contact details are provided.", person::toModelType);
     }
@@ -145,15 +171,15 @@ public class JsonAdaptedPersonTest {
     @Test
     public void toModelType_invalidGuardianFields_throwIllegalValueException() {
         JsonAdaptedPerson invalidName = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                VALID_TAGS, INVALID_GUARDIAN_NAME, VALID_GUARDIAN_PHONE, VALID_GUARDIAN_EMAIL);
+                VALID_TAGS, INVALID_GUARDIAN_NAME, VALID_GUARDIAN_PHONE, VALID_GUARDIAN_EMAIL, null, null);
         assertThrows(IllegalValueException.class, Name.MESSAGE_CONSTRAINTS, invalidName::toModelType);
 
         JsonAdaptedPerson invalidPhone = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                VALID_TAGS, VALID_GUARDIAN_NAME, INVALID_GUARDIAN_PHONE, VALID_GUARDIAN_EMAIL);
+                VALID_TAGS, VALID_GUARDIAN_NAME, INVALID_GUARDIAN_PHONE, VALID_GUARDIAN_EMAIL, null, null);
         assertThrows(IllegalValueException.class, Phone.MESSAGE_CONSTRAINTS, invalidPhone::toModelType);
 
         JsonAdaptedPerson invalidEmail = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                VALID_TAGS, VALID_GUARDIAN_NAME, VALID_GUARDIAN_PHONE, INVALID_GUARDIAN_EMAIL);
+                VALID_TAGS, VALID_GUARDIAN_NAME, VALID_GUARDIAN_PHONE, INVALID_GUARDIAN_EMAIL, null, null);
         assertThrows(IllegalValueException.class, Email.MESSAGE_CONSTRAINTS, invalidEmail::toModelType);
     }
 

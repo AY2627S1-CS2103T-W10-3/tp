@@ -25,18 +25,21 @@ public class PersonTest {
     @Test
     public void constructor_nameOnly_hasEmptyOptionalDetails() {
         Person person = new Person(new Name("Only Name"), Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Set.of());
+                Optional.empty(), Optional.empty(), Optional.empty(), Set.of());
         assertEquals(Optional.empty(), person.getPhone());
         assertEquals(Optional.empty(), person.getEmail());
         assertEquals(Optional.empty(), person.getAddress());
         assertEquals(Optional.empty(), person.getGuardian());
+        assertEquals(Optional.empty(), person.getSubject());
+        assertEquals(Optional.empty(), person.getEducationLevel());
         assertTrue(person.getTags().isEmpty());
     }
 
     @Test
     public void constructor_nullName_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
-                new Person(null, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Set.of()));
+                new Person(null, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
+                        Optional.empty(), Optional.empty(), Set.of()));
     }
 
     @Test
@@ -67,6 +70,20 @@ public class PersonTest {
         assertTrue(withGuardian.getGuardian().isPresent());
         assertNotEquals(withGuardian, withoutGuardian);
         assertTrue(withGuardian.isSamePerson(withoutGuardian));
+    }
+
+    @Test
+    public void tutoringDetails_preservedByCopyBuilderAndIncludedInEquality() {
+        Person withTutoringDetails = new PersonBuilder().withSubject("H2 Mathematics")
+                .withEducationLevel("jc1").build();
+        Person copied = new PersonBuilder(withTutoringDetails).build();
+
+        assertEquals(withTutoringDetails, copied);
+        assertEquals("H2 Mathematics", withTutoringDetails.getSubject().orElseThrow().toString());
+        assertEquals("JC1", withTutoringDetails.getEducationLevel().orElseThrow().toString());
+        assertNotEquals(withTutoringDetails, new PersonBuilder(withTutoringDetails).withoutSubject().build());
+        assertNotEquals(withTutoringDetails,
+                new PersonBuilder(withTutoringDetails).withoutEducationLevel().build());
     }
 
     @Test
@@ -145,7 +162,8 @@ public class PersonTest {
     public void toStringMethod() {
         String expected = Person.class.getCanonicalName() + "{name=" + ALICE.getName() + ", phone=" + ALICE.getPhone()
                 + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", guardian="
-                + ALICE.getGuardian() + ", tags=" + ALICE.getTags() + "}";
+                + ALICE.getGuardian() + ", subject=" + ALICE.getSubject() + ", educationLevel="
+                + ALICE.getEducationLevel() + ", tags=" + ALICE.getTags() + "}";
         assertEquals(expected, ALICE.toString());
     }
 }

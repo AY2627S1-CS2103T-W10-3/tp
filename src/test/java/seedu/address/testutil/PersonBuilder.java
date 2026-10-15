@@ -5,11 +5,13 @@ import java.util.Optional;
 import java.util.Set;
 
 import seedu.address.model.person.Address;
+import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Guardian;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Subject;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
 
@@ -22,12 +24,16 @@ public class PersonBuilder {
     public static final String DEFAULT_PHONE = "85355255";
     public static final String DEFAULT_EMAIL = "amy@gmail.com";
     public static final String DEFAULT_ADDRESS = "123, Jurong West Ave 6, #08-111";
+    public static final String DEFAULT_SUBJECT = "Mathematics";
+    public static final String DEFAULT_EDUCATION_LEVEL = "S3";
 
     private Name name;
     private Optional<Phone> phone;
     private Optional<Email> email;
     private Optional<Address> address;
     private Optional<Guardian> guardian;
+    private Optional<Subject> subject;
+    private Optional<EducationLevel> educationLevel;
     private Set<Tag> tags;
 
     /**
@@ -39,6 +45,8 @@ public class PersonBuilder {
         email = Optional.of(new Email(DEFAULT_EMAIL));
         address = Optional.of(new Address(DEFAULT_ADDRESS));
         guardian = Optional.empty();
+        subject = Optional.empty();
+        educationLevel = Optional.empty();
         tags = new HashSet<>();
     }
 
@@ -51,6 +59,8 @@ public class PersonBuilder {
         email = personToCopy.getEmail();
         address = personToCopy.getAddress();
         guardian = personToCopy.getGuardian();
+        subject = personToCopy.getSubject();
+        educationLevel = personToCopy.getEducationLevel();
         tags = new HashSet<>(personToCopy.getTags());
     }
 
@@ -131,8 +141,32 @@ public class PersonBuilder {
         return this;
     }
 
+    /** Sets the person's tutoring subject. */
+    public PersonBuilder withSubject(String subject) {
+        this.subject = Optional.of(new Subject(subject));
+        return this;
+    }
+
+    /** Omits the person's tutoring subject. */
+    public PersonBuilder withoutSubject() {
+        subject = Optional.empty();
+        return this;
+    }
+
+    /** Sets the person's education level. */
+    public PersonBuilder withEducationLevel(String educationLevel) {
+        this.educationLevel = Optional.of(new EducationLevel(educationLevel));
+        return this;
+    }
+
+    /** Omits the person's education level. */
+    public PersonBuilder withoutEducationLevel() {
+        educationLevel = Optional.empty();
+        return this;
+    }
+
     public Person build() {
-        return new Person(name, phone, email, address, guardian, tags);
+        return new Person(name, phone, email, address, guardian, subject, educationLevel, tags);
     }
 
 }
