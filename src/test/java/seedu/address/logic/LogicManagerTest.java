@@ -4,16 +4,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.EDUCATION_LEVEL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.GUARDIAN_EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.GUARDIAN_NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.GUARDIAN_PHONE_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.SUBJECT_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_EDUCATION_LEVEL_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_EMAIL_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_NAME_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_PHONE_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_SUBJECT_AMY;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.AMY;
 
@@ -85,6 +89,20 @@ public class LogicManagerTest {
                 .withoutAddress().withTags()
                 .withGuardian(VALID_GUARDIAN_NAME_AMY, VALID_GUARDIAN_PHONE_AMY, VALID_GUARDIAN_EMAIL_AMY)
                 .build();
+        ModelManager expectedModel = new ModelManager();
+        expectedModel.addPerson(expectedPerson);
+
+        assertCommandSuccess(addCommand,
+                String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(expectedPerson)), expectedModel);
+    }
+
+    @Test
+    public void execute_addWithTutoringDetails_success() throws Exception {
+        String addCommand = AddCommand.COMMAND_WORD + NAME_DESC_AMY + SUBJECT_DESC_AMY
+                + EDUCATION_LEVEL_DESC_AMY;
+        Person expectedPerson = new PersonBuilder().withName(VALID_NAME_AMY).withoutPhone().withoutEmail()
+                .withoutAddress().withTags().withSubject(VALID_SUBJECT_AMY)
+                .withEducationLevel(VALID_EDUCATION_LEVEL_AMY).build();
         ModelManager expectedModel = new ModelManager();
         expectedModel.addPerson(expectedPerson);
 

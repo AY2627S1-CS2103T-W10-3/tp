@@ -2,12 +2,14 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_EDUCATION_LEVEL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_SUBJECT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Optional;
@@ -17,11 +19,13 @@ import java.util.stream.Stream;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Guardian;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Subject;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -40,7 +44,8 @@ public class AddCommandParser implements Parser<AddCommand> {
     public AddCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG,
-                        PREFIX_GUARDIAN_NAME, PREFIX_GUARDIAN_PHONE, PREFIX_GUARDIAN_EMAIL);
+                        PREFIX_GUARDIAN_NAME, PREFIX_GUARDIAN_PHONE, PREFIX_GUARDIAN_EMAIL, PREFIX_SUBJECT,
+                        PREFIX_EDUCATION_LEVEL);
 
         if (!arePrefixesPresent(argMultimap, PREFIX_NAME)
                 || !argMultimap.getPreamble().isEmpty()) {
@@ -48,7 +53,8 @@ public class AddCommandParser implements Parser<AddCommand> {
         }
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS,
-                PREFIX_GUARDIAN_NAME, PREFIX_GUARDIAN_PHONE, PREFIX_GUARDIAN_EMAIL);
+                PREFIX_GUARDIAN_NAME, PREFIX_GUARDIAN_PHONE, PREFIX_GUARDIAN_EMAIL, PREFIX_SUBJECT,
+                PREFIX_EDUCATION_LEVEL);
         Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
         Optional<String> phoneValue = argMultimap.getValue(PREFIX_PHONE);
         Optional<String> emailValue = argMultimap.getValue(PREFIX_EMAIL);
@@ -69,9 +75,15 @@ public class AddCommandParser implements Parser<AddCommand> {
                 ? Optional.of(ParserUtil.parseGuardian(
                         guardianNameValue.get(), guardianPhoneValue, guardianEmailValue))
                 : Optional.empty();
+        Optional<String> subjectValue = argMultimap.getValue(PREFIX_SUBJECT);
+        Optional<String> educationLevelValue = argMultimap.getValue(PREFIX_EDUCATION_LEVEL);
+        Optional<Subject> subject = subjectValue.isPresent()
+                ? Optional.of(ParserUtil.parseSubject(subjectValue.get())) : Optional.empty();
+        Optional<EducationLevel> educationLevel = educationLevelValue.isPresent()
+                ? Optional.of(ParserUtil.parseEducationLevel(educationLevelValue.get())) : Optional.empty();
         Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
 
-        Person person = new Person(name, phone, email, address, guardian, tagList);
+        Person person = new Person(name, phone, email, address, guardian, subject, educationLevel, tagList);
 
         return new AddCommand(person);
     }
