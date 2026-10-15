@@ -4,6 +4,7 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -83,17 +84,18 @@ public class Person {
         return Collections.unmodifiableSet(tags);
     }
 
-    /**
-     * Returns true if both persons have the same name.
-     * This defines a weaker notion of equality between two persons.
-     */
+    /** Returns true if both students have the same name after case and whitespace normalization. */
     public boolean isSamePerson(Person otherPerson) {
         if (otherPerson == this) {
             return true;
         }
 
         return otherPerson != null
-                && otherPerson.getName().equals(getName());
+                && normalizedName(otherPerson.getName()).equals(normalizedName(getName()));
+    }
+
+    private static String normalizedName(Name name) {
+        return name.fullName.strip().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
     }
 
     /**
