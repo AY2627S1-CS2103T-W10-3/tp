@@ -40,6 +40,12 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private Label email;
     @FXML
+    private Label guardianName;
+    @FXML
+    private Label guardianPhone;
+    @FXML
+    private Label guardianEmail;
+    @FXML
     private FlowPane tags;
 
     /**
@@ -53,6 +59,12 @@ public class PersonCard extends UiPart<Region> {
         phone.setText(person.getPhone().map(value -> value.value).orElse(Messages.NOT_PROVIDED));
         address.setText(person.getAddress().map(value -> value.value).orElse(Messages.NOT_PROVIDED));
         email.setText(person.getEmail().map(value -> value.value).orElse(Messages.NOT_PROVIDED));
+        guardianName.setText("Guardian: " + person.getGuardian()
+                .map(value -> value.getName().fullName).orElse(Messages.NOT_PROVIDED));
+        guardianPhone.setText("Guardian phone: " + person.getGuardian()
+                .flatMap(value -> value.getPhone()).map(value -> value.value).orElse(Messages.NOT_PROVIDED));
+        guardianEmail.setText("Guardian email: " + person.getGuardian()
+                .flatMap(value -> value.getEmail()).map(value -> value.value).orElse(Messages.NOT_PROVIDED));
         person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));

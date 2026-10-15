@@ -21,6 +21,7 @@ public class Person {
     private final Name name;
     private final Optional<Phone> phone;
     private final Optional<Email> email;
+    private final Optional<Guardian> guardian;
 
     // Data fields
     private final Optional<Address> address;
@@ -30,12 +31,14 @@ public class Person {
      * Constructs a person with a required name and optional contact details.
      * Optional wrappers and tags must not be null; use empty values for omitted details.
      */
-    public Person(Name name, Optional<Phone> phone, Optional<Email> email, Optional<Address> address, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, tags);
+    public Person(Name name, Optional<Phone> phone, Optional<Email> email, Optional<Address> address,
+            Optional<Guardian> guardian, Set<Tag> tags) {
+        requireAllNonNull(name, phone, email, address, guardian, tags);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
+        this.guardian = guardian;
         this.tags.addAll(tags);
     }
 
@@ -53,6 +56,10 @@ public class Person {
 
     public Optional<Address> getAddress() {
         return address;
+    }
+
+    public Optional<Guardian> getGuardian() {
+        return guardian;
     }
 
     /**
@@ -95,13 +102,14 @@ public class Person {
                 && phone.equals(otherPerson.phone)
                 && email.equals(otherPerson.email)
                 && address.equals(otherPerson.address)
+                && guardian.equals(otherPerson.guardian)
                 && tags.equals(otherPerson.tags);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, tags);
+        return Objects.hash(name, phone, email, address, guardian, tags);
     }
 
     @Override
@@ -111,6 +119,7 @@ public class Person {
                 .add("phone", phone)
                 .add("email", email)
                 .add("address", address)
+                .add("guardian", guardian)
                 .add("tags", tags)
                 .toString();
     }

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.Guardian;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
@@ -26,6 +27,7 @@ public class PersonBuilder {
     private Optional<Phone> phone;
     private Optional<Email> email;
     private Optional<Address> address;
+    private Optional<Guardian> guardian;
     private Set<Tag> tags;
 
     /**
@@ -36,6 +38,7 @@ public class PersonBuilder {
         phone = Optional.of(new Phone(DEFAULT_PHONE));
         email = Optional.of(new Email(DEFAULT_EMAIL));
         address = Optional.of(new Address(DEFAULT_ADDRESS));
+        guardian = Optional.empty();
         tags = new HashSet<>();
     }
 
@@ -47,6 +50,7 @@ public class PersonBuilder {
         phone = personToCopy.getPhone();
         email = personToCopy.getEmail();
         address = personToCopy.getAddress();
+        guardian = personToCopy.getGuardian();
         tags = new HashSet<>(personToCopy.getTags());
     }
 
@@ -108,8 +112,27 @@ public class PersonBuilder {
         return this;
     }
 
+    /** Sets a guardian with all contact fields. */
+    public PersonBuilder withGuardian(String name, String phone, String email) {
+        guardian = Optional.of(new Guardian(new Name(name), Optional.of(new Phone(phone)),
+                Optional.of(new Email(email))));
+        return this;
+    }
+
+    /** Sets a guardian without contact details. */
+    public PersonBuilder withGuardianName(String name) {
+        guardian = Optional.of(new Guardian(new Name(name), Optional.empty(), Optional.empty()));
+        return this;
+    }
+
+    /** Omits the person's guardian. */
+    public PersonBuilder withoutGuardian() {
+        guardian = Optional.empty();
+        return this;
+    }
+
     public Person build() {
-        return new Person(name, phone, email, address, tags);
+        return new Person(name, phone, email, address, guardian, tags);
     }
 
 }

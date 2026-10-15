@@ -5,8 +5,17 @@ import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.GUARDIAN_EMAIL_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.GUARDIAN_EMAIL_DESC_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.GUARDIAN_NAME_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.GUARDIAN_NAME_DESC_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.GUARDIAN_PHONE_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.GUARDIAN_PHONE_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_ADDRESS_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_EMAIL_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_GUARDIAN_EMAIL_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_GUARDIAN_NAME_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_GUARDIAN_PHONE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_NAME_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PHONE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
@@ -20,12 +29,18 @@ import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_HUSBAND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_EMAIL_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_NAME_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_PHONE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_NAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
@@ -86,6 +101,14 @@ public class AddCommandParserTest {
         assertParseFailure(parser, ADDRESS_DESC_AMY + validExpectedPersonString,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_ADDRESS));
 
+        // multiple guardian fields
+        assertParseFailure(parser, validExpectedPersonString + GUARDIAN_NAME_DESC_AMY + GUARDIAN_NAME_DESC_BOB,
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_GUARDIAN_NAME));
+        assertParseFailure(parser, validExpectedPersonString + GUARDIAN_PHONE_DESC_AMY + GUARDIAN_PHONE_DESC_BOB,
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_GUARDIAN_PHONE));
+        assertParseFailure(parser, validExpectedPersonString + GUARDIAN_EMAIL_DESC_AMY + GUARDIAN_EMAIL_DESC_BOB,
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_GUARDIAN_EMAIL));
+
         // multiple fields repeated
         assertParseFailure(parser,
                 validExpectedPersonString + PHONE_DESC_AMY + EMAIL_DESC_AMY + NAME_DESC_AMY + ADDRESS_DESC_AMY
@@ -142,6 +165,30 @@ public class AddCommandParserTest {
 
         Person withPhone = new PersonBuilder(nameOnly).withPhone(VALID_PHONE_BOB).build();
         assertParseSuccess(parser, NAME_DESC_BOB + PHONE_DESC_BOB, new AddCommand(withPhone));
+
+        Person withGuardianName = new PersonBuilder(nameOnly).withGuardianName(VALID_GUARDIAN_NAME_BOB).build();
+        assertParseSuccess(parser, NAME_DESC_BOB + GUARDIAN_NAME_DESC_BOB, new AddCommand(withGuardianName));
+    }
+
+    @Test
+    public void parse_guardianDetailsPresent_success() {
+        Person expectedPerson = new PersonBuilder().withName(VALID_NAME_BOB).withoutPhone().withoutEmail()
+                .withoutAddress().withTags()
+                .withGuardian(VALID_GUARDIAN_NAME_BOB, VALID_GUARDIAN_PHONE_BOB, VALID_GUARDIAN_EMAIL_BOB)
+                .build();
+
+        assertParseSuccess(parser, GUARDIAN_EMAIL_DESC_BOB + NAME_DESC_BOB
+                + GUARDIAN_NAME_DESC_BOB + GUARDIAN_PHONE_DESC_BOB, new AddCommand(expectedPerson));
+    }
+
+    @Test
+    public void parse_guardianContactWithoutName_failure() {
+        assertParseFailure(parser, NAME_DESC_BOB + GUARDIAN_PHONE_DESC_BOB,
+                AddCommandParser.MESSAGE_GUARDIAN_NAME_REQUIRED);
+        assertParseFailure(parser, NAME_DESC_BOB + GUARDIAN_EMAIL_DESC_BOB,
+                AddCommandParser.MESSAGE_GUARDIAN_NAME_REQUIRED);
+        assertParseFailure(parser, NAME_DESC_BOB + GUARDIAN_PHONE_DESC_BOB + GUARDIAN_EMAIL_DESC_BOB,
+                AddCommandParser.MESSAGE_GUARDIAN_NAME_REQUIRED);
     }
 
     @Test
@@ -178,6 +225,17 @@ public class AddCommandParserTest {
         // invalid tag
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
                 + INVALID_TAG_DESC + VALID_TAG_FRIEND, Tag.MESSAGE_CONSTRAINTS);
+
+        // invalid guardian name
+        assertParseFailure(parser, NAME_DESC_BOB + INVALID_GUARDIAN_NAME_DESC, Name.MESSAGE_CONSTRAINTS);
+
+        // invalid guardian phone
+        assertParseFailure(parser, NAME_DESC_BOB + GUARDIAN_NAME_DESC_BOB + INVALID_GUARDIAN_PHONE_DESC,
+                Phone.MESSAGE_CONSTRAINTS);
+
+        // invalid guardian email
+        assertParseFailure(parser, NAME_DESC_BOB + GUARDIAN_NAME_DESC_BOB + INVALID_GUARDIAN_EMAIL_DESC,
+                Email.MESSAGE_CONSTRAINTS);
 
         // two invalid values, only first invalid value reported
         assertParseFailure(parser, INVALID_NAME_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB + INVALID_ADDRESS_DESC,
