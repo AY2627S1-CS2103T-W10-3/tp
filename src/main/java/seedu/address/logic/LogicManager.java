@@ -12,6 +12,7 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.AddressBookParser;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
 import seedu.address.storage.Storage;
@@ -46,6 +47,7 @@ public class LogicManager implements Logic {
 
         CommandResult commandResult;
         Command command = addressBookParser.parseCommand(commandText);
+        AddressBook addressBookSnapshot = new AddressBook(model.getAddressBook());
         commandResult = command.execute(model);
 
         // Help is useful even when the saved data file is corrupt or cannot be written.
@@ -56,8 +58,10 @@ public class LogicManager implements Logic {
         try {
             storage.saveAddressBook(model.getAddressBook());
         } catch (AccessDeniedException e) {
+            model.setAddressBook(addressBookSnapshot);
             throw new CommandException(String.format(FILE_OPS_PERMISSION_ERROR_FORMAT, e.getMessage()), e);
         } catch (IOException ioe) {
+            model.setAddressBook(addressBookSnapshot);
             throw new CommandException(String.format(FILE_OPS_ERROR_FORMAT, ioe.getMessage()), ioe);
         }
 
