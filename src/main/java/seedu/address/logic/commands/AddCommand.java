@@ -25,7 +25,7 @@ public class AddCommand extends Command {
 
     public static final String COMMAND_WORD = "add";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a person to the address book. "
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a student to TutorContacts. "
             + "Parameters: "
             + PREFIX_NAME + "NAME "
             + "[" + PREFIX_PHONE + "PHONE] "
@@ -36,7 +36,9 @@ public class AddCommand extends Command {
             + "[" + PREFIX_GUARDIAN_NAME + "GUARDIAN_NAME] "
             + "[" + PREFIX_GUARDIAN_PHONE + "GUARDIAN_PHONE] "
             + "[" + PREFIX_GUARDIAN_EMAIL + "GUARDIAN_EMAIL] "
-            + "[" + PREFIX_TAG + "TAG]...\n"
+            + "[" + PREFIX_TAG + "TAG]\n"
+            + "Prefixes may appear in any order, but each can appear only once. "
+            + "Guardian phone or email requires gn/.\n"
             + "Example: " + COMMAND_WORD + " "
             + PREFIX_NAME + "John Doe "
             + PREFIX_PHONE + "98765432 "
