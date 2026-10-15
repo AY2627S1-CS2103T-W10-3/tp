@@ -89,7 +89,9 @@ Examples:
 
 ### Listing all persons: `list`
 
-Shows a list of all persons in the address book.
+Shows the current list of students. Student cards show the student's name and recorded phone, email, and address. Omitted contact details are shown as `Not provided`.
+
+After a command is submitted, the command box retains keyboard focus so you can type the next command immediately. Use the mouse or Tab to focus the list when you want to scroll it or use its normal list navigation keys.
 
 Format: `list`
 
@@ -128,12 +130,12 @@ Examples:
 
 ### Deleting a person: `delete`
 
-Deletes the specified person from the address book.
+Deletes the specified student from TutorContacts. The result panel confirms the deleted student's details.
 
 Format: `delete INDEX`
 
-* Deletes the person at the specified `INDEX`.
-* The index refers to the index number shown in the displayed person list.
+* Deletes the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, …​
 
 Examples:
