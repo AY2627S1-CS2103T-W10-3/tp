@@ -473,17 +473,32 @@ testers are expected to do more *exploratory* testing.
 
 1. _{ more test cases …​ }_
 
-### Deleting a person
+### Student-list UI, keyboard, and deletion feedback
 
-1. Deleting a person while all persons are being shown
+1. List refresh and keyboard operation
 
-   1. Prerequisites: List all persons using the `list` command, with multiple persons in the list.
+   1. Prerequisites: At least two students are listed.
+
+   1. Test case: Run `edit 1 n/Amy Tan`, then `delete 1`.<br>
+      Expected: The edited card refreshes, then the deleted card disappears immediately. The result panel begins with `Deleted student:` and identifies the deleted student.
+
+   1. Test case: Submit `list`, then immediately type another command.<br>
+      Expected: The command box remains focused after the successful command. Submit an invalid command such as `delete 0`; it remains focused and displays an error.
+
+   1. Test case: Focus the student list using the mouse or Tab, then use arrow keys and Page Up/Page Down.<br>
+      Expected: Normal list selection and scrolling work; command entry remains available after returning focus to the command box.
+
+### Deleting a student
+
+1. Deleting a student while all students are being shown
+
+   1. Prerequisites: List all students using the `list` command, with multiple students in the list.
 
    1. Test case: `delete 1`<br>
-      Expected: The first contact is deleted from the list. The status message shows the deleted contact's details.
+      Expected: The first student is deleted from the list. The result panel identifies the deleted student.
 
    1. Test case: `delete 0`<br>
-      Expected: No person is deleted. The status message shows error details.
+      Expected: No student is deleted. The result panel shows error details.
 
    1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
       Expected: Similar to previous.
