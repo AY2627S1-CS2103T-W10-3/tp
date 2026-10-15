@@ -43,7 +43,6 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_SUBJECT_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EDUCATION_LEVEL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
@@ -84,18 +83,56 @@ public class AddCommandParserTest {
                 + ADDRESS_DESC_BOB + TAG_DESC_FRIEND, new AddCommand(expectedPerson));
 
 
-        // multiple tags - all accepted
-        Person expectedPersonMultipleTags = new PersonBuilder(BOB).withTags(VALID_TAG_FRIEND, VALID_TAG_HUSBAND)
-                .build();
-        assertParseSuccess(parser,
-                NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB + TAG_DESC_HUSBAND + TAG_DESC_FRIEND,
-                new AddCommand(expectedPersonMultipleTags));
+        // Each prefix has one value, including the optional tag prefix.
+        assertParseFailure(parser, NAME_DESC_BOB + TAG_DESC_HUSBAND + TAG_DESC_FRIEND,
+                Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_TAG));
+    }
+
+    @Test
+    public void parse_allMvpPrefixesInAnyOrder_success() {
+        Person expectedPerson = new PersonBuilder().withName("Bob Choo").withPhone(VALID_PHONE_BOB)
+                .withEmail(VALID_EMAIL_BOB).withAddress(VALID_ADDRESS_BOB)
+                .withSubject(VALID_SUBJECT_BOB).withEducationLevel(VALID_EDUCATION_LEVEL_BOB)
+                .withGuardian(VALID_GUARDIAN_NAME_BOB, VALID_GUARDIAN_PHONE_BOB, VALID_GUARDIAN_EMAIL_BOB)
+                .withTags(VALID_TAG_FRIEND).build();
+        assertParseSuccess(parser, TAG_DESC_FRIEND + GUARDIAN_EMAIL_DESC_BOB + SUBJECT_DESC_BOB
+                + ADDRESS_DESC_BOB + EDUCATION_LEVEL_DESC_BOB + PHONE_DESC_BOB + GUARDIAN_PHONE_DESC_BOB
+                + EMAIL_DESC_BOB + GUARDIAN_NAME_DESC_BOB + NAME_DESC_BOB, new AddCommand(expectedPerson));
+    }
+
+    @Test
+    public void parse_whitespaceAroundFields_normalizesFreeText() {
+        Person expectedPerson = new PersonBuilder().withName("Bob Choo").withoutPhone().withoutEmail()
+                .withoutAddress().withGuardianName("Jane Doe").withSubject("H2 Mathematics")
+                .withEducationLevel("JC2").withTags().build();
+        assertParseSuccess(parser, "\t s/ H2   Mathematics \t gn/ Jane   Doe \t l/ jc2 \t n/ Bob   Choo  ",
+                new AddCommand(expectedPerson));
+    }
+
+    @Test
+    public void parse_unsupportedPrefixLikeToken_failure() {
+        String expectedMessage = "Unsupported prefix in add command: x/";
+        assertParseFailure(parser, " n/Bob Choo x/extra", expectedMessage);
+        assertParseFailure(parser, " x/extra n/Bob Choo", expectedMessage);
+    }
+
+    @Test
+    public void parse_multipleErrors_reportsStructuralErrorBeforeValueError() {
+        assertParseFailure(parser, "surprise n/Bob Choo p/abc p/123", String.format(
+                MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, "n/Bob Choo e/invalid e/bob@example.com",
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_EMAIL));
+        assertParseFailure(parser, "n/Bob Choo p/bad gp/bad", AddCommandParser.MESSAGE_GUARDIAN_NAME_REQUIRED);
+        assertParseFailure(parser, "e/invalid n/Bob Choo p/bad", Phone.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, "p/bad n/Bob Choo e/invalid", Phone.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, "n/Bob Choo e/invalid p/bad p/123",
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE));
     }
 
     @Test
     public void parse_repeatedNonTagValue_failure() {
         String validExpectedPersonString = NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                + ADDRESS_DESC_BOB + TAG_DESC_FRIEND;
+                + ADDRESS_DESC_BOB;
 
         // multiple names
         assertParseFailure(parser, NAME_DESC_AMY + validExpectedPersonString,
@@ -235,23 +272,23 @@ public class AddCommandParserTest {
     public void parse_invalidValue_failure() {
         // invalid name
         assertParseFailure(parser, INVALID_NAME_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
-                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, Name.MESSAGE_CONSTRAINTS);
+                + TAG_DESC_FRIEND, Name.MESSAGE_CONSTRAINTS);
 
         // invalid phone
         assertParseFailure(parser, NAME_DESC_BOB + INVALID_PHONE_DESC + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
-                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, Phone.MESSAGE_CONSTRAINTS);
+                + TAG_DESC_FRIEND, Phone.MESSAGE_CONSTRAINTS);
 
         // invalid email
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + INVALID_EMAIL_DESC + ADDRESS_DESC_BOB
-                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, Email.MESSAGE_CONSTRAINTS);
+                + TAG_DESC_FRIEND, Email.MESSAGE_CONSTRAINTS);
 
         // invalid address
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + INVALID_ADDRESS_DESC
-                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, Address.MESSAGE_CONSTRAINTS);
+                + TAG_DESC_FRIEND, Address.MESSAGE_CONSTRAINTS);
 
         // invalid tag
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
-                + INVALID_TAG_DESC + VALID_TAG_FRIEND, Tag.MESSAGE_CONSTRAINTS);
+                + INVALID_TAG_DESC, Tag.MESSAGE_CONSTRAINTS);
 
         // invalid guardian name
         assertParseFailure(parser, NAME_DESC_BOB + INVALID_GUARDIAN_NAME_DESC, Name.MESSAGE_CONSTRAINTS);

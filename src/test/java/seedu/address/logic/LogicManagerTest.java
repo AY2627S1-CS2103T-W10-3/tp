@@ -1,5 +1,6 @@
 package seedu.address.logic;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,7 @@ import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.parser.AddCommandParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -121,6 +124,39 @@ public class LogicManagerTest {
 
         assertTrue(feedback.contains("add n/NAME"));
         assertEquals("invalid json", Files.readString(dataFile));
+    }
+
+    @Test
+    public void execute_rejectedAdd_preservesDisplayedAndSavedRecords() throws Exception {
+        logic.execute("add n/Alice Tan p/81234567 e/alice@example.com gn/Mary Tan gp/91234567");
+        Path dataFile = temporaryFolder.resolve("addressBook.json");
+        byte[] savedBefore = Files.readAllBytes(dataFile);
+        List<Person> displayedBefore = List.copyOf(logic.getFilteredPersonList());
+
+        String unknownPrefix = "add n/Bob Lee x/unexpected";
+        String duplicateName = "add n/ alice   tan p/90000000";
+        String repeatedPrefix = "add n/Bob Lee p/81234567 p/90000000";
+        String missingGuardianName = "add n/Bob Lee gp/90000000";
+        String guardianError = AddCommandParser.MESSAGE_GUARDIAN_NAME_REQUIRED;
+        assertThrows(ParseException.class, "Unsupported prefix in add command: x/", () -> logic.execute(unknownPrefix));
+        assertThrows(CommandException.class, AddCommand.MESSAGE_DUPLICATE_PERSON, () -> logic.execute(duplicateName));
+        assertThrows(ParseException.class, Messages.getErrorMessageForDuplicatePrefixes(
+                seedu.address.logic.parser.CliSyntax.PREFIX_PHONE), () -> logic.execute(repeatedPrefix));
+        assertThrows(ParseException.class, guardianError, () -> logic.execute(missingGuardianName));
+
+        assertEquals(displayedBefore, List.copyOf(logic.getFilteredPersonList()));
+        assertArrayEquals(savedBefore, Files.readAllBytes(dataFile));
+    }
+
+    @Test
+    public void execute_differentStudentsMayShareContacts() throws Exception {
+        String contacts = " p/81234567 e/shared@example.com gn/Mary Tan gp/91234567 ge/mary@example.com";
+        logic.execute("add n/Alice Tan" + contacts);
+        logic.execute("add n/Bob Lee" + contacts);
+
+        assertEquals(2, logic.getFilteredPersonList().size());
+        assertEquals(2, new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"))
+                .readAddressBook().orElseThrow().getPersonList().size());
     }
 
     @Test

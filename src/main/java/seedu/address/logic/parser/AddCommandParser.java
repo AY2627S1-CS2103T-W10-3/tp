@@ -43,19 +43,25 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     public AddCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG,
+                AddCommandTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG,
                         PREFIX_GUARDIAN_NAME, PREFIX_GUARDIAN_PHONE, PREFIX_GUARDIAN_EMAIL, PREFIX_SUBJECT,
                         PREFIX_EDUCATION_LEVEL);
 
-        if (!arePrefixesPresent(argMultimap, PREFIX_NAME)
-                || !argMultimap.getPreamble().isEmpty()) {
+        if (!arePrefixesPresent(argMultimap, PREFIX_NAME)) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
         }
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS,
                 PREFIX_GUARDIAN_NAME, PREFIX_GUARDIAN_PHONE, PREFIX_GUARDIAN_EMAIL, PREFIX_SUBJECT,
-                PREFIX_EDUCATION_LEVEL);
-        Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
+                PREFIX_EDUCATION_LEVEL, PREFIX_TAG);
+        Optional<String> guardianNameValue = argMultimap.getValue(PREFIX_GUARDIAN_NAME);
+        Optional<String> guardianPhoneValue = argMultimap.getValue(PREFIX_GUARDIAN_PHONE);
+        Optional<String> guardianEmailValue = argMultimap.getValue(PREFIX_GUARDIAN_EMAIL);
+        if (guardianNameValue.isEmpty() && (guardianPhoneValue.isPresent() || guardianEmailValue.isPresent())) {
+            throw new ParseException(MESSAGE_GUARDIAN_NAME_REQUIRED);
+        }
+
+        Name name = ParserUtil.parseName(normalizeFreeText(argMultimap.getValue(PREFIX_NAME).get()));
         Optional<String> phoneValue = argMultimap.getValue(PREFIX_PHONE);
         Optional<String> emailValue = argMultimap.getValue(PREFIX_EMAIL);
         Optional<String> addressValue = argMultimap.getValue(PREFIX_ADDRESS);
@@ -64,21 +70,15 @@ public class AddCommandParser implements Parser<AddCommand> {
         Optional<Email> email = emailValue.isPresent()
                 ? Optional.of(ParserUtil.parseEmail(emailValue.get())) : Optional.empty();
         Optional<Address> address = addressValue.isPresent()
-                ? Optional.of(ParserUtil.parseAddress(addressValue.get())) : Optional.empty();
-        Optional<String> guardianNameValue = argMultimap.getValue(PREFIX_GUARDIAN_NAME);
-        Optional<String> guardianPhoneValue = argMultimap.getValue(PREFIX_GUARDIAN_PHONE);
-        Optional<String> guardianEmailValue = argMultimap.getValue(PREFIX_GUARDIAN_EMAIL);
-        if (guardianNameValue.isEmpty() && (guardianPhoneValue.isPresent() || guardianEmailValue.isPresent())) {
-            throw new ParseException(MESSAGE_GUARDIAN_NAME_REQUIRED);
-        }
+                ? Optional.of(ParserUtil.parseAddress(normalizeFreeText(addressValue.get()))) : Optional.empty();
         Optional<Guardian> guardian = guardianNameValue.isPresent()
                 ? Optional.of(ParserUtil.parseGuardian(
-                        guardianNameValue.get(), guardianPhoneValue, guardianEmailValue))
+                        normalizeFreeText(guardianNameValue.get()), guardianPhoneValue, guardianEmailValue))
                 : Optional.empty();
         Optional<String> subjectValue = argMultimap.getValue(PREFIX_SUBJECT);
         Optional<String> educationLevelValue = argMultimap.getValue(PREFIX_EDUCATION_LEVEL);
         Optional<Subject> subject = subjectValue.isPresent()
-                ? Optional.of(ParserUtil.parseSubject(subjectValue.get())) : Optional.empty();
+                ? Optional.of(ParserUtil.parseSubject(normalizeFreeText(subjectValue.get()))) : Optional.empty();
         Optional<EducationLevel> educationLevel = educationLevelValue.isPresent()
                 ? Optional.of(ParserUtil.parseEducationLevel(educationLevelValue.get())) : Optional.empty();
         Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
@@ -94,6 +94,11 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     private static boolean arePrefixesPresent(ArgumentMultimap argumentMultimap, Prefix... prefixes) {
         return Stream.of(prefixes).allMatch(prefix -> argumentMultimap.getValue(prefix).isPresent());
+    }
+
+    /** Trims and collapses whitespace in fields that permit words separated by spaces. */
+    private static String normalizeFreeText(String value) {
+        return value.strip().replaceAll("\\s+", " ");
     }
 
 }
