@@ -144,6 +144,8 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`
 * Existing values will be updated to the input values.
 * When editing tags, all of the student's existing tags are removed; adding tags is not cumulative.
 * To remove all of a student's tags, enter `t/` without a tag after it.
+* Subject, education-level, and guardian details cannot currently be changed using `edit`. To change one of these
+  details, delete the student record and add it again with the corrected information.
 
 Examples:
 * `edit 1 p/91234567 e/johndoe@example.com` edits the phone number and email address of the 1st student.
@@ -223,6 +225,8 @@ Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a v
 
 1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
 2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
+3. **Exceptionally long student details may be truncated in the student list.** This display limitation does not affect
+   the stored value.
 
 --------------------------------------------------------------------------------------------------------------------
 
