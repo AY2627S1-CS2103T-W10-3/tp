@@ -30,9 +30,9 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 
    * `add n/John Doe p/98765432 gn/Jane Doe gp/91234567` : Adds a student named `John Doe` with optional student and guardian contact details.
 
-   * `delete 3` : Deletes the 3rd contact shown in the current list.
+   * `delete 3` : Deletes the 3rd student shown in the current list.
 
-   * `clear` : Deletes all contacts.
+   * `clear` : Deletes all student records.
 
    * `exit` : Exits the app.
 
@@ -133,25 +133,25 @@ Format: `list`
 
 Example: `list`
 
-### Editing a person: `edit`
+### Editing a student: `edit`
 
-Edits an existing person in the address book.
+Edits an existing student in TutorContacts.
 
 Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`
 
-* Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …​
+* Edits the student at the specified `INDEX`. The index refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
-* When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
-* To remove all of a person's tags, enter `t/` without a tag after it.
+* When editing tags, all of the student's existing tags are removed; adding tags is not cumulative.
+* To remove all of a student's tags, enter `t/` without a tag after it.
 
 Examples:
-*  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
-*  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
+* `edit 1 p/91234567 e/johndoe@example.com` edits the phone number and email address of the 1st student.
+* `edit 2 n/Betsy Crower t/` changes the name of the 2nd student to `Betsy Crower` and clears all existing tags.
 
-### Locating persons by name: `find`
+### Locating students by name: `find`
 
-Finds persons whose names contain any of the given keywords.
+Finds students whose names contain any of the given keywords.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
@@ -159,14 +159,14 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
 * The search considers only names.
 * Only full words match; for example, `Han` does not match `Hans`.
-* Persons matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
+* Students matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
 
 Examples:
 * `find John` returns `john` and `John Doe`
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
 
-### Deleting a person: `delete`
+### Deleting a student: `delete`
 
 Deletes the specified student from TutorContacts. The result panel confirms the deleted student's details.
 
@@ -184,7 +184,7 @@ Examples:
 
 ### Clearing all entries: `clear`
 
-Clears all entries from the address book.
+Clears all student records from TutorContacts.
 
 Format: `clear`
 
@@ -206,20 +206,16 @@ when the data file cannot be read or written, and does not change that file.
 TutorContacts data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
 
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
-If your changes make the data file invalid, TutorContacts starts with an empty address book at the next run. The invalid file remains on disk when you use `help`; a data-changing command can replace it. We recommend backing up the file before editing it.<br>
-Furthermore, certain edits can cause the AddressBook to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
+If your changes make the data file invalid, TutorContacts starts with an empty student list at the next run. The invalid file remains on disk when you use `help`; a data-changing command can replace it. We recommend backing up the file before editing it.<br>
+Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a value does not satisfy its validation rules. Edit the data file only if you are confident that you can update it correctly.
 </div>
-
-### Archiving data files `[coming in v2.0]`
-
-_Details coming soon ..._
 
 --------------------------------------------------------------------------------------------------------------------
 
 ## FAQ
 
 **Q**: How do I transfer my data to another computer?<br>
-**A**: Install the app on the other computer and overwrite the data file it creates with the data file from your previous AddressBook home folder.
+**A**: Install TutorContacts on the other computer, close it, and replace its `data/addressbook.json` file with the file from your previous TutorContacts home folder.
 
 --------------------------------------------------------------------------------------------------------------------
 
