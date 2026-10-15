@@ -40,6 +40,10 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private Label email;
     @FXML
+    private Label subject;
+    @FXML
+    private Label educationLevel;
+    @FXML
     private Label guardianName;
     @FXML
     private Label guardianPhone;
@@ -59,6 +63,10 @@ public class PersonCard extends UiPart<Region> {
         phone.setText(person.getPhone().map(value -> value.value).orElse(Messages.NOT_PROVIDED));
         address.setText(person.getAddress().map(value -> value.value).orElse(Messages.NOT_PROVIDED));
         email.setText(person.getEmail().map(value -> value.value).orElse(Messages.NOT_PROVIDED));
+        subject.setText("Subject: "
+                + person.getSubject().map(value -> value.getValue()).orElse(Messages.NOT_PROVIDED));
+        educationLevel.setText("Education level: "
+                + person.getEducationLevel().map(value -> value.getValue()).orElse(Messages.NOT_PROVIDED));
         guardianName.setText("Guardian: " + person.getGuardian()
                 .map(value -> value.getName().fullName).orElse(Messages.NOT_PROVIDED));
         guardianPhone.setText("Guardian phone: " + person.getGuardian()

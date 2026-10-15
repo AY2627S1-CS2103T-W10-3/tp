@@ -3,12 +3,14 @@ package seedu.address.logic.commands;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_EDUCATION_LEVEL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_SUBJECT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.testutil.Assert.assertThrows;
 
@@ -44,6 +46,10 @@ public class CommandTestUtil {
     public static final String VALID_GUARDIAN_PHONE_BOB = "82222222";
     public static final String VALID_GUARDIAN_EMAIL_AMY = "alice.guardian@example.com";
     public static final String VALID_GUARDIAN_EMAIL_BOB = "bobby.guardian@example.com";
+    public static final String VALID_SUBJECT_AMY = "H2 Mathematics";
+    public static final String VALID_SUBJECT_BOB = "English Language";
+    public static final String VALID_EDUCATION_LEVEL_AMY = "JC1";
+    public static final String VALID_EDUCATION_LEVEL_BOB = "S3";
 
     public static final String NAME_DESC_AMY = " " + PREFIX_NAME + VALID_NAME_AMY;
     public static final String NAME_DESC_BOB = " " + PREFIX_NAME + VALID_NAME_BOB;
@@ -61,6 +67,12 @@ public class CommandTestUtil {
     public static final String GUARDIAN_PHONE_DESC_BOB = " " + PREFIX_GUARDIAN_PHONE + VALID_GUARDIAN_PHONE_BOB;
     public static final String GUARDIAN_EMAIL_DESC_AMY = " " + PREFIX_GUARDIAN_EMAIL + VALID_GUARDIAN_EMAIL_AMY;
     public static final String GUARDIAN_EMAIL_DESC_BOB = " " + PREFIX_GUARDIAN_EMAIL + VALID_GUARDIAN_EMAIL_BOB;
+    public static final String SUBJECT_DESC_AMY = " " + PREFIX_SUBJECT + VALID_SUBJECT_AMY;
+    public static final String SUBJECT_DESC_BOB = " " + PREFIX_SUBJECT + VALID_SUBJECT_BOB;
+    public static final String EDUCATION_LEVEL_DESC_AMY =
+            " " + PREFIX_EDUCATION_LEVEL + VALID_EDUCATION_LEVEL_AMY;
+    public static final String EDUCATION_LEVEL_DESC_BOB =
+            " " + PREFIX_EDUCATION_LEVEL + VALID_EDUCATION_LEVEL_BOB;
 
     public static final String INVALID_NAME_DESC = " " + PREFIX_NAME + "James&"; // '&' not allowed in names
     public static final String INVALID_PHONE_DESC = " " + PREFIX_PHONE + "911a"; // 'a' not allowed in phones
@@ -70,6 +82,8 @@ public class CommandTestUtil {
     public static final String INVALID_GUARDIAN_NAME_DESC = " " + PREFIX_GUARDIAN_NAME + "Jane&";
     public static final String INVALID_GUARDIAN_PHONE_DESC = " " + PREFIX_GUARDIAN_PHONE + "811a";
     public static final String INVALID_GUARDIAN_EMAIL_DESC = " " + PREFIX_GUARDIAN_EMAIL + "guardian.example.com";
+    public static final String INVALID_SUBJECT_DESC = " " + PREFIX_SUBJECT;
+    public static final String INVALID_EDUCATION_LEVEL_DESC = " " + PREFIX_EDUCATION_LEVEL + "University";
 
     public static final String PREAMBLE_WHITESPACE = "\t  \r  \n";
     public static final String PREAMBLE_NON_EMPTY = "NonEmptyPreamble";

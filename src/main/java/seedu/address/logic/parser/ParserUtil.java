@@ -11,10 +11,12 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Guardian;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Subject;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -111,6 +113,30 @@ public class ParserUtil {
         Optional<Email> parsedEmail = email.isPresent()
                 ? Optional.of(parseEmail(email.get())) : Optional.empty();
         return new Guardian(parsedName, parsedPhone, parsedEmail);
+    }
+
+    /**
+     * Parses a {@code String subject} into a {@code Subject}.
+     */
+    public static Subject parseSubject(String subject) throws ParseException {
+        requireNonNull(subject);
+        String trimmedSubject = subject.trim();
+        if (!Subject.isValidSubject(trimmedSubject)) {
+            throw new ParseException(Subject.MESSAGE_CONSTRAINTS);
+        }
+        return new Subject(trimmedSubject);
+    }
+
+    /**
+     * Parses a {@code String educationLevel} into an {@code EducationLevel}.
+     */
+    public static EducationLevel parseEducationLevel(String educationLevel) throws ParseException {
+        requireNonNull(educationLevel);
+        String trimmedEducationLevel = educationLevel.trim();
+        if (!EducationLevel.isValidEducationLevel(trimmedEducationLevel)) {
+            throw new ParseException(EducationLevel.MESSAGE_CONSTRAINTS);
+        }
+        return new EducationLevel(trimmedEducationLevel);
     }
 
     /**
