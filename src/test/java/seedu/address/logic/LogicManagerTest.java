@@ -112,6 +112,7 @@ public class LogicManagerTest {
                 String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(expectedPerson)), expectedModel);
     }
 
+    @Test
     public void execute_helpWhenDataFileIsUnreadable_worksOfflineWithoutChangingFile() throws Exception {
         Path dataFile = temporaryFolder.resolve("addressBook.json");
         Files.writeString(dataFile, "invalid json");
