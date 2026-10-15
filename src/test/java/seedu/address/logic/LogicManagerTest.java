@@ -2,6 +2,7 @@ package seedu.address.logic;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
@@ -112,6 +113,17 @@ public class LogicManagerTest {
 
         assertCommandSuccess(addCommand,
                 String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(expectedPerson)), expectedModel);
+    }
+
+    @Test
+    public void execute_helpWhenDataFileIsUnreadable_worksOfflineWithoutChangingFile() throws Exception {
+        Path dataFile = temporaryFolder.resolve("addressBook.json");
+        Files.writeString(dataFile, "invalid json");
+
+        String feedback = logic.execute("help").getFeedbackToUser();
+
+        assertTrue(feedback.contains("add n/NAME"));
+        assertEquals("invalid json", Files.readString(dataFile));
     }
 
     @Test

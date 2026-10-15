@@ -25,8 +25,8 @@ public class AddCommand extends Command {
 
     public static final String COMMAND_WORD = "add";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a student to TutorContacts. "
-            + "Parameters: "
+    /** Canonical add syntax shared by usage errors and offline help. */
+    public static final String FORMAT = COMMAND_WORD + " "
             + PREFIX_NAME + "NAME "
             + "[" + PREFIX_PHONE + "PHONE] "
             + "[" + PREFIX_EMAIL + "EMAIL] "
@@ -36,7 +36,10 @@ public class AddCommand extends Command {
             + "[" + PREFIX_GUARDIAN_NAME + "GUARDIAN_NAME] "
             + "[" + PREFIX_GUARDIAN_PHONE + "GUARDIAN_PHONE] "
             + "[" + PREFIX_GUARDIAN_EMAIL + "GUARDIAN_EMAIL] "
-            + "[" + PREFIX_TAG + "TAG]\n"
+            + "[" + PREFIX_TAG + "TAG]";
+
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a student to TutorContacts. "
+            + "Parameters: " + FORMAT + "\n"
             + "Prefixes may appear in any order, but each can appear only once. "
             + "Guardian phone or email requires gn/.\n"
             + "Example: " + COMMAND_WORD + " "
@@ -48,8 +51,7 @@ public class AddCommand extends Command {
             + PREFIX_GUARDIAN_NAME + "Jane Doe "
             + PREFIX_GUARDIAN_PHONE + "91234567 "
             + PREFIX_ADDRESS + "311, Clementi Ave 2, #02-25 "
-            + PREFIX_TAG + "friends "
-            + PREFIX_TAG + "owesMoney";
+            + PREFIX_TAG + "friends";
 
     public static final String MESSAGE_SUCCESS = "New person added: %1$s";
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";

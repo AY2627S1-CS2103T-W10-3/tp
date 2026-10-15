@@ -1,5 +1,11 @@
-#copyButton, #helpMessage {
+#copyButton {
     -fx-text-fill: white;
+}
+
+#helpMessage {
+    -fx-control-inner-background: #292929;
+    -fx-text-fill: white;
+    -fx-font-family: monospace;
 }
 
 #copyButton {
