@@ -52,11 +52,8 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 * Items in square brackets are optional.<br>
   For example, `n/NAME [t/TAG]` can be used as `n/John Doe t/friend` or as `n/John Doe`.
 
-* Items followed by `…`​ can appear zero or more times.<br>
-  For example, `[t/TAG]…​` may be omitted, or written as `t/friend` or `t/friend t/family`.
-
-* Parameters can be in any order.<br>
-  For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
+* The prefixes in `add` can be in any order, with whitespace between fields.<br>
+  For example, `add p/81234567 n/Alex Tan` is accepted. Each `add` prefix can appear only once.
 
 * Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
@@ -66,9 +63,9 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 
 ### Viewing help: `help`
 
-Shows a message explaining how to access the help page.
-
-![help message](images/helpMessage.png)
+Shows the command formats and important rules in the result panel and a help window. The help text is bundled with
+TutorContacts, so `help` remains available without internet access and when the data file cannot be loaded. It does not
+write to the data file. The help window also has a button to copy the online User Guide link.
 
 Format: `help`
 
@@ -77,32 +74,54 @@ Format: `help`
 
 Adds a student to TutorContacts. Only the student name is required; the remaining fields are optional.
 
-Format: `add n/NAME [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]…​`
+Format: `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]`
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
-A student can have any number of tags, including zero. All supported prefixes can be supplied in any order.
+Only `n/` is required. Every other prefix is optional; each supported prefix can be supplied once, in any order.
 </div>
 
-Guardian details are optional. If `gp/` or `ge/` is supplied, `gn/` must also be supplied. A guardian name may be recorded without a guardian phone number or email address. Different students may share the same guardian contact details.
+| Prefix | Meaning and validation |
+|--------|------------------------|
+| `n/` | Student name. Required; letters, digits, and spaces; cannot be blank. |
+| `p/` | Student phone. Optional; digits only, at least 3 digits. |
+| `e/` | Student email. Optional; a valid email address. |
+| `a/` | Address. Optional; nonblank text. |
+| `s/` | Tutoring subject. Optional; nonblank text of at most 100 characters, without control characters. |
+| `l/` | Education level. Optional; `P1`–`P6`, `S1`–`S5`, or `JC1`–`JC2`, regardless of input case. Displayed in uppercase. |
+| `gn/` | Guardian name. Optional; uses the student-name rules. |
+| `gp/` | Guardian phone. Optional; uses the student-phone rules and requires `gn/`. |
+| `ge/` | Guardian email. Optional; uses the student-email rules and requires `gn/`. |
+| `t/` | One optional tag; letters and digits only. |
 
-Validation rules:
-* `gn/` uses the same name rules as the student name.
-* `gp/` uses the same phone-number rules as the student phone number.
-* `ge/` uses the same email-address rules as the student email address.
-* Repeating any single-valued prefix, including a guardian prefix, is rejected.
+Leading and trailing whitespace around field values is ignored. Repeated whitespace inside names, guardian names,
+subjects, and addresses is stored as one space. Whitespace within phone numbers, email addresses, education levels, and
+tags is not accepted. Text before the first prefix and unknown prefix-like tokens such as `x/value` are rejected.
+When an input breaks several rules, TutorContacts reports one error predictably: unexpected preamble, unsupported
+prefix, missing `n/`, repeated prefix, missing guardian name, then invalid field value. Repeated prefixes are listed in
+alphabetical order in the error.
+
+Student names are unique regardless of letter case and repeated spaces. For example, after adding `Alex Tan`,
+`add n/ alex   tan` is rejected as a duplicate. Different students may share phone, email, and guardian details.
+A guardian name may be supplied without guardian contact information.
 
 Examples:
-* Complete guardian details: `add n/John Doe p/98765432 e/johnd@example.com gn/Jane Doe gp/91234567 ge/jane@example.com`
-* Guardian name only: `add n/Alex Tan gn/Mary Tan`
-* Two siblings may share guardian contacts: `add n/Ben Tan gn/Mary Tan gp/81234567` followed by `add n/Chloe Tan gn/Mary Tan gp/81234567`
-* Invalid because the guardian name is missing: `add n/Sam Lee gp/81234567`
-* Invalid guardian email: `add n/Sam Lee gn/Pat Lee ge/pat.example.com`
+* Name only: `add n/Alex Tan`
+* All tutoring and guardian details, in a different prefix order: `add l/jc1 gn/Mary Tan s/H2 Mathematics p/98765432 ge/mary@example.com gp/81234567 e/alex@example.com n/Alex Tan`
+* Two students may share contacts: `add n/Ben Tan p/81234567 gn/Mary Tan gp/91234567` followed by `add n/Chloe Tan p/81234567 gn/Mary Tan gp/91234567`
+* Invalid, because `gn/` is missing: `add n/Sam Lee gp/81234567`
+* Invalid, because a prefix repeats: `add n/Sam Lee p/81234567 p/92345678`
+* Invalid, because the education level is unsupported: `add n/Sam Lee l/University`
+* Invalid, because of unexpected text: `add surprise n/Sam Lee` or `add n/Sam Lee x/value`
 
-### Listing all persons: `list`
+Rejected `add` commands leave the displayed records and saved data unchanged.
 
-Shows a list of all persons in the address book.
+### Listing all students: `list`
+
+Shows all student records in their saved order. If there are no records, TutorContacts shows guidance for adding one.
 
 Format: `list`
+
+Example: `list`
 
 ### Editing a person: `edit`
 
@@ -146,10 +165,12 @@ Format: `delete INDEX`
 * Deletes the person at the specified `INDEX`.
 * The index refers to the index number shown in the displayed person list.
 * The index **must be a positive integer** 1, 2, 3, …​
+* Missing, malformed, zero, negative, extra, or out-of-range indices are rejected.
 
 Examples:
 * `list` followed by `delete 2` deletes the 2nd person in the address book.
 * `find Betsy` followed by `delete 1` deletes the 1st person in the results of the `find` command.
+* `delete 0` and `delete 1 2` are rejected.
 
 ### Clearing all entries: `clear`
 
@@ -163,16 +184,19 @@ Exits the program.
 
 Format: `exit`
 
+Example: `exit`
+
 ### Saving the data
 
-TutorContacts automatically saves data after every command. You do not need to save manually.
+TutorContacts automatically saves data changes. You do not need to save manually. The `help` command can be used even
+when the data file cannot be read or written, and does not change that file.
 
 ### Editing the data file
 
 TutorContacts data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
 
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
-If your changes make the data file invalid, AddressBook starts with an empty address book at the next run. The invalid file remains on disk until you run a command (AddressBook saves after every command). Still, we recommend backing up the file before editing it.<br>
+If your changes make the data file invalid, TutorContacts starts with an empty address book at the next run. The invalid file remains on disk when you use `help`; a data-changing command can replace it. We recommend backing up the file before editing it.<br>
 Furthermore, certain edits can cause the AddressBook to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
 </div>
 
@@ -200,10 +224,11 @@ _Details coming soon ..._
 
 Action | Format, Examples
 --------|------------------
-**Add** | `add n/NAME [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 gn/Mary Ho gp/81234567 ge/mary@example.com`
+**Add** | `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]` <br> e.g., `add n/James Ho p/22224444 s/Mathematics l/S3 gn/Mary Ho gp/81234567`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List** | `list`
 **Help** | `help`
+**Exit** | `exit`

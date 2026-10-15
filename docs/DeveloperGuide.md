@@ -155,6 +155,14 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 This section describes some noteworthy details on how certain features are implemented.
 
+### Add command validation and offline help
+
+`AddCommandTokenizer` scans for supported prefix tokens at the start of an argument or after whitespace. It rejects text before the first prefix and unknown prefix-like tokens, then stores field values in an `ArgumentMultimap`. This lets `AddCommandParser` accept the ten MVP prefixes in any order without treating an unknown token as part of the preceding value.
+
+Validation follows a fixed order: token structure, required `n/`, repeated prefixes, guardian-name dependency, then individual field values. Duplicate-prefix errors list the repeated tokens in a stable order. Names, subjects, and addresses have surrounding whitespace removed and internal whitespace collapsed before validation. `Person#isSamePerson` compares names after the same whitespace normalization and case folding; phone, email, and guardian details do not determine whether two students are duplicates. An invalid command fails before `AddCommand` can update the model or save data.
+
+`HelpCommand` keeps the command formats in bundled text so help is available without a network connection. `LogicManager` returns the help result without saving the address book, which also allows help when the existing data file cannot be loaded. `HelpWindow` displays the same text directly in a scrollable JavaFX control.
+
 ### Guardian details
 
 TutorContacts represents a student's guardian as an immutable `Guardian` value object containing a required `Name` and optional `Phone` and `Email` values. `Person` stores the whole value as `Optional<Guardian>`, so the model cannot represent guardian contact details without a guardian name.

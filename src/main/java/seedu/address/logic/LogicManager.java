@@ -48,6 +48,11 @@ public class LogicManager implements Logic {
         Command command = addressBookParser.parseCommand(commandText);
         commandResult = command.execute(model);
 
+        // Help is useful even when the saved data file is corrupt or cannot be written.
+        if (commandResult.isShowHelp()) {
+            return commandResult;
+        }
+
         try {
             storage.saveAddressBook(model.getAddressBook());
         } catch (AccessDeniedException e) {

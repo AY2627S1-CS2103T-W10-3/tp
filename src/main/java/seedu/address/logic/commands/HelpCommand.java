@@ -12,10 +12,27 @@ public class HelpCommand extends Command {
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Shows program usage instructions.\n"
             + "Example: " + COMMAND_WORD;
 
-    public static final String SHOWING_HELP_MESSAGE = "Opened help window.";
+    /** Command formats and essential validation rules are bundled with the application for offline use. */
+    public static final String HELP_TEXT = "TutorContacts commands:\n"
+            + AddCommand.FORMAT + "\n"
+            + ListCommand.COMMAND_WORD + "\n"
+            + DeleteCommand.COMMAND_WORD + " INDEX\n"
+            + COMMAND_WORD + "\n"
+            + ExitCommand.COMMAND_WORD + "\n\n"
+            + "Only n/NAME is required. All other add fields are optional and may appear in any order.\n"
+            + "Use each add prefix once. Surrounding whitespace is ignored; repeated spaces in names, "
+            + "subjects, and addresses are collapsed.\n"
+            + "Student names are unique after case and whitespace normalization. "
+            + "Different students may share contact and guardian details.\n"
+            + "Guardian phone or email requires gn/. Education levels: P1-P6, S1-S5, JC1-JC2.\n\n"
+            + "Examples:\n"
+            + "add n/Alex Tan s/H2 Mathematics l/JC1 gn/Mary Tan gp/81234567\n"
+            + "list\n"
+            + "delete 1\n"
+            + "Invalid: add n/Alex Tan gp/81234567 (guardian name missing)\n";
 
     @Override
     public CommandResult execute(Model model) {
-        return new CommandResult(SHOWING_HELP_MESSAGE, true, false);
+        return new CommandResult(HELP_TEXT, true, false);
     }
 }

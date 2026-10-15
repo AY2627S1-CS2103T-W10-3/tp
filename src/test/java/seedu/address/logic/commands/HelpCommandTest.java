@@ -1,7 +1,7 @@
 package seedu.address.logic.commands;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
-import static seedu.address.logic.commands.HelpCommand.SHOWING_HELP_MESSAGE;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,21 @@ public class HelpCommandTest {
 
     @Test
     public void execute_help_success() {
-        CommandResult expectedCommandResult = new CommandResult(SHOWING_HELP_MESSAGE, true, false);
+        CommandResult expectedCommandResult = new CommandResult(HelpCommand.HELP_TEXT, true, false);
         assertCommandSuccess(new HelpCommand(), model, expectedCommandResult, expectedModel);
+    }
+
+    @Test
+    public void execute_help_containsOfflineMvpFormats() {
+        String help = new HelpCommand().execute(new ModelManager()).getFeedbackToUser();
+        assertTrue(help.contains("add n/NAME"));
+        assertTrue(help.contains("[s/SUBJECT]"));
+        assertTrue(help.contains("[l/EDUCATION_LEVEL]"));
+        assertTrue(help.contains("[gn/GUARDIAN_NAME]"));
+        assertTrue(help.contains("list\n"));
+        assertTrue(help.contains("delete INDEX"));
+        assertTrue(help.contains("help\n"));
+        assertTrue(help.contains("exit\n"));
+        assertTrue(help.contains("Guardian phone or email requires gn/"));
     }
 }
