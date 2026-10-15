@@ -77,7 +77,7 @@ Format: `help`
 
 Adds a student to TutorContacts. Only the student name is required; the remaining fields are optional.
 
-Format: `add n/NAME [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]…​`
+Format: `add n/NAME [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]…​`
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
 A student can have any number of tags, including zero. All supported prefixes can be supplied in any order.
@@ -85,13 +85,22 @@ A student can have any number of tags, including zero. All supported prefixes ca
 
 Guardian details are optional. If `gp/` or `ge/` is supplied, `gn/` must also be supplied. A guardian name may be recorded without a guardian phone number or email address. Different students may share the same guardian contact details.
 
+Subject and education level are optional and may be supplied independently. Education levels are case-insensitive when entered and are displayed in uppercase. For example, `l/jc1` is displayed as `JC1`. If either field is omitted, the student card displays `Not provided` for that field.
+
 Validation rules:
+* `s/` must not be blank, exceed 100 characters, or contain control characters.
+* `l/` must be one of `P1`–`P6`, `S1`–`S5`, or `JC1`–`JC2`, ignoring letter case.
 * `gn/` uses the same name rules as the student name.
 * `gp/` uses the same phone-number rules as the student phone number.
 * `ge/` uses the same email-address rules as the student email address.
 * Repeating any single-valued prefix, including a guardian prefix, is rejected.
 
 Examples:
+* Subject and education level: `add n/Alex Tan s/H2 Mathematics l/JC1`
+* Subject without education level: `add n/Ben Tan s/English Language`
+* Lowercase education level, displayed as `S3`: `add n/Chloe Tan l/s3`
+* Invalid because the education level is unsupported: `add n/Dan Lee s/Mathematics l/University`
+* Invalid because the subject is empty: `add n/Eva Lim s/ l/P6`
 * Complete guardian details: `add n/John Doe p/98765432 e/johnd@example.com gn/Jane Doe gp/91234567 ge/jane@example.com`
 * Guardian name only: `add n/Alex Tan gn/Mary Tan`
 * Two siblings may share guardian contacts: `add n/Ben Tan gn/Mary Tan gp/81234567` followed by `add n/Chloe Tan gn/Mary Tan gp/81234567`
@@ -202,7 +211,7 @@ _Details coming soon ..._
 
 Action | Format, Examples
 --------|------------------
-**Add** | `add n/NAME [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 gn/Mary Ho gp/81234567 ge/mary@example.com`
+**Add** | `add n/NAME [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]…​` <br> e.g., `add n/James Ho s/H2 Mathematics l/JC1 gn/Mary Ho gp/81234567`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`

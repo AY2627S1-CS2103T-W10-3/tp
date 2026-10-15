@@ -165,6 +165,14 @@ The `add` command accepts the feature-specific prefixes `gn/`, `gp/`, and `ge/`.
 
 `PersonCard` displays all three guardian fields. Missing guardian values are shown as `Not provided` only in the UI and command feedback; that display text is never written to the data file. Existing commands that replace a `Person`, such as `edit`, must carry the unchanged guardian value forward.
 
+### Subject and education level
+
+TutorContacts represents tutoring context using immutable `Subject` and `EducationLevel` value objects. `Person` stores each value independently as an `Optional`, allowing a tutor to record either field, both fields, or neither field.
+
+The `add` command accepts `s/` for a subject and `l/` for an education level. `ParserUtil` trims both values before validation. Subjects must be non-blank, contain no control characters, and contain at most 100 characters. Education levels accept `P1`–`P6`, `S1`–`S5`, or `JC1`–`JC2` case-insensitively and are normalized to uppercase.
+
+`JsonAdaptedPerson` stores the two values as separate nullable JSON properties, so valid data files created before these fields were introduced remain loadable. `PersonCard` and command feedback display `Not provided` for an absent value without writing that placeholder to storage. Commands that replace a `Person`, such as `edit`, preserve both values unchanged.
+
 ### \[Proposed\] Undo/redo feature
 
 #### Proposed Implementation
@@ -314,7 +322,7 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
 **MSS**
 
-1. User requests to add a student and provides the student's details.
+1. User requests to add a student and provides the student's details, which may include a subject and education level.
 2. TutorContacts validates the supplied details.
 3. TutorContacts adds the student.
 4. TutorContacts saves the updated student data.
@@ -339,6 +347,12 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * 1c. The user provides guardian contact details without a guardian name.
 
   * 1c1. TutorContacts reports that a guardian name is required when guardian contact details are provided.
+
+  Use case ends.
+
+* 1d. The user provides an unsupported education level or an invalid subject.
+
+  * 1d1. TutorContacts reports the relevant validation rule.
 
   Use case ends.
 
