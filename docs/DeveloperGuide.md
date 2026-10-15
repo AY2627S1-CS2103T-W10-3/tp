@@ -444,7 +444,7 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 4. TutorContacts should not require an Internet connection for its core contact-management features.
 5. TutorContacts should store user data locally in a human-editable text file.
 6. TutorContacts should not require a database management system or a remote server operated by the development team.
-7. TutorContacts should be able to manage at least 100 active and archived student records without noticeable sluggishness during typical usage.
+7. TutorContacts should be able to manage at least 100 student records without noticeable sluggishness during typical usage.
 8. A user with above-average typing speed should be able to perform common contact-management tasks faster using commands than by relying primarily on mouse interactions.
 9. TutorContacts should work well at screen resolutions of `1920 × 1080` or higher with display scaling of 100% or 125%.
 10. TutorContacts should remain functionally usable at screen resolutions of `1280 × 720` or higher with display scaling of 150%.
