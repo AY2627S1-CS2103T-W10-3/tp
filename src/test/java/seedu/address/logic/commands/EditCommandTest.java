@@ -100,6 +100,40 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_editStudentField_preservesGuardian() {
+        Person withGuardian = new PersonBuilder().withName("Guardian Student")
+                .withGuardian("Mary Guardian", "81234567", "mary@example.com").build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(withGuardian);
+        Model modelWithGuardian = new ModelManager(addressBook, new UserPrefs());
+        Person editedPerson = new PersonBuilder(withGuardian).withPhone(VALID_PHONE_BOB).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withPhone(VALID_PHONE_BOB).build());
+
+        Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
+        expectedModel.setPerson(withGuardian, editedPerson);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        assertCommandSuccess(editCommand, modelWithGuardian, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_editStudentField_preservesTutoringDetails() {
+        Person withTutoringDetails = new PersonBuilder().withName("Tutoring Student")
+                .withSubject("H2 Mathematics").withEducationLevel("JC1").build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(withTutoringDetails);
+        Model modelWithTutoringDetails = new ModelManager(addressBook, new UserPrefs());
+        Person editedPerson = new PersonBuilder(withTutoringDetails).withPhone(VALID_PHONE_BOB).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withPhone(VALID_PHONE_BOB).build());
+
+        Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
+        expectedModel.setPerson(withTutoringDetails, editedPerson);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        assertCommandSuccess(editCommand, modelWithTutoringDetails, expectedMessage, expectedModel);
+    }
+
+    @Test
     public void execute_filteredList_success() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
 

@@ -12,10 +12,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.Guardian;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Subject;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -29,6 +32,11 @@ class JsonAdaptedPerson {
     private final String phone;
     private final String email;
     private final String address;
+    private final String guardianName;
+    private final String guardianPhone;
+    private final String guardianEmail;
+    private final String subject;
+    private final String educationLevel;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
 
     /**
@@ -37,14 +45,31 @@ class JsonAdaptedPerson {
     @JsonCreator
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
-            @JsonProperty("tags") List<JsonAdaptedTag> tags) {
+            @JsonProperty("tags") List<JsonAdaptedTag> tags,
+            @JsonProperty("guardianName") String guardianName,
+            @JsonProperty("guardianPhone") String guardianPhone,
+            @JsonProperty("guardianEmail") String guardianEmail,
+            @JsonProperty("subject") String subject,
+            @JsonProperty("educationLevel") String educationLevel) {
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
+        this.guardianName = guardianName;
+        this.guardianPhone = guardianPhone;
+        this.guardianEmail = guardianEmail;
+        this.subject = subject;
+        this.educationLevel = educationLevel;
         if (tags != null) {
             this.tags.addAll(tags);
         }
+    }
+
+    /**
+     * Constructs a person without guardian fields, for older saved data and focused tests.
+     */
+    public JsonAdaptedPerson(String name, String phone, String email, String address, List<JsonAdaptedTag> tags) {
+        this(name, phone, email, address, tags, null, null, null, null, null);
     }
 
     /**
@@ -55,6 +80,11 @@ class JsonAdaptedPerson {
         phone = source.getPhone().map(value -> value.value).orElse(null);
         email = source.getEmail().map(value -> value.value).orElse(null);
         address = source.getAddress().map(value -> value.value).orElse(null);
+        guardianName = source.getGuardian().map(value -> value.getName().fullName).orElse(null);
+        guardianPhone = source.getGuardian().flatMap(Guardian::getPhone).map(value -> value.value).orElse(null);
+        guardianEmail = source.getGuardian().flatMap(Guardian::getEmail).map(value -> value.value).orElse(null);
+        subject = source.getSubject().map(Subject::getValue).orElse(null);
+        educationLevel = source.getEducationLevel().map(EducationLevel::getValue).orElse(null);
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
@@ -94,8 +124,41 @@ class JsonAdaptedPerson {
         }
         final Optional<Address> modelAddress = Optional.ofNullable(address).map(Address::new);
 
+        if (guardianName == null && (guardianPhone != null || guardianEmail != null)) {
+            throw new IllegalValueException("Guardian name is required when guardian contact details are provided.");
+        }
+        final Optional<Guardian> modelGuardian;
+        if (guardianName == null) {
+            modelGuardian = Optional.empty();
+        } else {
+            if (!Name.isValidName(guardianName)) {
+                throw new IllegalValueException(Name.MESSAGE_CONSTRAINTS);
+            }
+            if (guardianPhone != null && !Phone.isValidPhone(guardianPhone)) {
+                throw new IllegalValueException(Phone.MESSAGE_CONSTRAINTS);
+            }
+            if (guardianEmail != null && !Email.isValidEmail(guardianEmail)) {
+                throw new IllegalValueException(Email.MESSAGE_CONSTRAINTS);
+            }
+            modelGuardian = Optional.of(new Guardian(new Name(guardianName),
+                    Optional.ofNullable(guardianPhone).map(Phone::new),
+                    Optional.ofNullable(guardianEmail).map(Email::new)));
+        }
+
+        if (subject != null && !Subject.isValidSubject(subject)) {
+            throw new IllegalValueException(Subject.MESSAGE_CONSTRAINTS);
+        }
+        final Optional<Subject> modelSubject = Optional.ofNullable(subject).map(Subject::new);
+
+        if (educationLevel != null && !EducationLevel.isValidEducationLevel(educationLevel)) {
+            throw new IllegalValueException(EducationLevel.MESSAGE_CONSTRAINTS);
+        }
+        final Optional<EducationLevel> modelEducationLevel = Optional.ofNullable(educationLevel)
+                .map(EducationLevel::new);
+
         final Set<Tag> modelTags = new HashSet<>(personTags);
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags);
+        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelGuardian, modelSubject,
+                modelEducationLevel, modelTags);
     }
 
 }

@@ -1,18 +1,32 @@
 package seedu.address.logic;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.EDUCATION_LEVEL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.GUARDIAN_EMAIL_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.GUARDIAN_NAME_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.GUARDIAN_PHONE_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.SUBJECT_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_EDUCATION_LEVEL_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_EMAIL_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_NAME_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_PHONE_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_SUBJECT_AMY;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.AMY;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +36,7 @@ import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.parser.AddCommandParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -68,6 +83,68 @@ public class LogicManagerTest {
     public void execute_validCommand_success() throws Exception {
         String listCommand = ListCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand, ListCommand.MESSAGE_SUCCESS, model);
+    }
+
+    @Test
+    public void execute_addWithGuardian_success() throws Exception {
+        String addCommand = AddCommand.COMMAND_WORD + NAME_DESC_AMY + GUARDIAN_NAME_DESC_AMY
+                + GUARDIAN_PHONE_DESC_AMY + GUARDIAN_EMAIL_DESC_AMY;
+        Person expectedPerson = new PersonBuilder().withName(VALID_NAME_AMY).withoutPhone().withoutEmail()
+                .withoutAddress().withTags()
+                .withGuardian(VALID_GUARDIAN_NAME_AMY, VALID_GUARDIAN_PHONE_AMY, VALID_GUARDIAN_EMAIL_AMY)
+                .build();
+        ModelManager expectedModel = new ModelManager();
+        expectedModel.addPerson(expectedPerson);
+
+        assertCommandSuccess(addCommand,
+                String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(expectedPerson)), expectedModel);
+    }
+
+    @Test
+    public void execute_addWithTutoringDetails_success() throws Exception {
+        String addCommand = AddCommand.COMMAND_WORD + NAME_DESC_AMY + SUBJECT_DESC_AMY
+                + EDUCATION_LEVEL_DESC_AMY;
+        Person expectedPerson = new PersonBuilder().withName(VALID_NAME_AMY).withoutPhone().withoutEmail()
+                .withoutAddress().withTags().withSubject(VALID_SUBJECT_AMY)
+                .withEducationLevel(VALID_EDUCATION_LEVEL_AMY).build();
+        ModelManager expectedModel = new ModelManager();
+        expectedModel.addPerson(expectedPerson);
+
+        assertCommandSuccess(addCommand,
+                String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(expectedPerson)), expectedModel);
+    }
+
+    @Test
+    public void execute_rejectedAdd_preservesDisplayedAndSavedRecords() throws Exception {
+        logic.execute("add n/Alice Tan p/81234567 e/alice@example.com gn/Mary Tan gp/91234567");
+        Path dataFile = temporaryFolder.resolve("addressBook.json");
+        byte[] savedBefore = Files.readAllBytes(dataFile);
+        List<Person> displayedBefore = List.copyOf(logic.getFilteredPersonList());
+
+        String unknownPrefix = "add n/Bob Lee x/unexpected";
+        String duplicateName = "add n/ alice   tan p/90000000";
+        String repeatedPrefix = "add n/Bob Lee p/81234567 p/90000000";
+        String missingGuardianName = "add n/Bob Lee gp/90000000";
+        String guardianError = AddCommandParser.MESSAGE_GUARDIAN_NAME_REQUIRED;
+        assertThrows(ParseException.class, "Unsupported prefix in add command: x/", () -> logic.execute(unknownPrefix));
+        assertThrows(CommandException.class, AddCommand.MESSAGE_DUPLICATE_PERSON, () -> logic.execute(duplicateName));
+        assertThrows(ParseException.class, Messages.getErrorMessageForDuplicatePrefixes(
+                seedu.address.logic.parser.CliSyntax.PREFIX_PHONE), () -> logic.execute(repeatedPrefix));
+        assertThrows(ParseException.class, guardianError, () -> logic.execute(missingGuardianName));
+
+        assertEquals(displayedBefore, List.copyOf(logic.getFilteredPersonList()));
+        assertArrayEquals(savedBefore, Files.readAllBytes(dataFile));
+    }
+
+    @Test
+    public void execute_differentStudentsMayShareContacts() throws Exception {
+        String contacts = " p/81234567 e/shared@example.com gn/Mary Tan gp/91234567 ge/mary@example.com";
+        logic.execute("add n/Alice Tan" + contacts);
+        logic.execute("add n/Bob Lee" + contacts);
+
+        assertEquals(2, logic.getFilteredPersonList().size());
+        assertEquals(2, new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"))
+                .readAddressBook().orElseThrow().getPersonList().size());
     }
 
     @Test

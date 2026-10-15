@@ -25,17 +25,21 @@ public class PersonTest {
     @Test
     public void constructor_nameOnly_hasEmptyOptionalDetails() {
         Person person = new Person(new Name("Only Name"), Optional.empty(), Optional.empty(), Optional.empty(),
-                Set.of());
+                Optional.empty(), Optional.empty(), Optional.empty(), Set.of());
         assertEquals(Optional.empty(), person.getPhone());
         assertEquals(Optional.empty(), person.getEmail());
         assertEquals(Optional.empty(), person.getAddress());
+        assertEquals(Optional.empty(), person.getGuardian());
+        assertEquals(Optional.empty(), person.getSubject());
+        assertEquals(Optional.empty(), person.getEducationLevel());
         assertTrue(person.getTags().isEmpty());
     }
 
     @Test
     public void constructor_nullName_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
-                new Person(null, Optional.empty(), Optional.empty(), Optional.empty(), Set.of()));
+                new Person(null, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
+                        Optional.empty(), Optional.empty(), Set.of()));
     }
 
     @Test
@@ -53,6 +57,33 @@ public class PersonTest {
         Person withPhone = new PersonBuilder(nameOnly).withPhone(PersonBuilder.DEFAULT_PHONE).build();
         assertNotEquals(nameOnly, withPhone);
         assertTrue(nameOnly.isSamePerson(withPhone));
+    }
+
+    @Test
+    public void guardian_preservedByCopyBuilderAndIncludedInEquality() {
+        Person withGuardian = new PersonBuilder().withGuardian(
+                "Jane Bee", "81234567", "jane@example.com").build();
+        Person copied = new PersonBuilder(withGuardian).build();
+        Person withoutGuardian = new PersonBuilder(withGuardian).withoutGuardian().build();
+
+        assertEquals(withGuardian, copied);
+        assertTrue(withGuardian.getGuardian().isPresent());
+        assertNotEquals(withGuardian, withoutGuardian);
+        assertTrue(withGuardian.isSamePerson(withoutGuardian));
+    }
+
+    @Test
+    public void tutoringDetails_preservedByCopyBuilderAndIncludedInEquality() {
+        Person withTutoringDetails = new PersonBuilder().withSubject("H2 Mathematics")
+                .withEducationLevel("jc1").build();
+        Person copied = new PersonBuilder(withTutoringDetails).build();
+
+        assertEquals(withTutoringDetails, copied);
+        assertEquals("H2 Mathematics", withTutoringDetails.getSubject().orElseThrow().toString());
+        assertEquals("JC1", withTutoringDetails.getEducationLevel().orElseThrow().toString());
+        assertNotEquals(withTutoringDetails, new PersonBuilder(withTutoringDetails).withoutSubject().build());
+        assertNotEquals(withTutoringDetails,
+                new PersonBuilder(withTutoringDetails).withoutEducationLevel().build());
     }
 
     @Test
@@ -78,14 +109,16 @@ public class PersonTest {
         editedAlice = new PersonBuilder(ALICE).withName(VALID_NAME_BOB).build();
         assertFalse(ALICE.isSamePerson(editedAlice));
 
-        // name differs in case, all other attributes same -> returns false
+        // Duplicate student names are case-insensitive.
         Person editedBob = new PersonBuilder(BOB).withName(VALID_NAME_BOB.toLowerCase()).build();
-        assertFalse(BOB.isSamePerson(editedBob));
+        assertTrue(BOB.isSamePerson(editedBob));
 
-        // name has trailing spaces, all other attributes same -> returns false
+        // Surrounding and repeated whitespace does not make a new student.
         String nameWithTrailingSpaces = VALID_NAME_BOB + " ";
         editedBob = new PersonBuilder(BOB).withName(nameWithTrailingSpaces).build();
-        assertFalse(BOB.isSamePerson(editedBob));
+        assertTrue(BOB.isSamePerson(editedBob));
+        editedBob = new PersonBuilder(BOB).withName(VALID_NAME_BOB.replace(" ", "   ")).build();
+        assertTrue(BOB.isSamePerson(editedBob));
     }
 
     @Test
@@ -130,7 +163,9 @@ public class PersonTest {
     @Test
     public void toStringMethod() {
         String expected = Person.class.getCanonicalName() + "{name=" + ALICE.getName() + ", phone=" + ALICE.getPhone()
-                + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", tags=" + ALICE.getTags() + "}";
+                + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", guardian="
+                + ALICE.getGuardian() + ", subject=" + ALICE.getSubject() + ", educationLevel="
+                + ALICE.getEducationLevel() + ", tags=" + ALICE.getTags() + "}";
         assertEquals(expected, ALICE.toString());
     }
 }

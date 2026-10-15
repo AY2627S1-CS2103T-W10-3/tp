@@ -99,6 +99,9 @@ public class JsonAddressBookStorageTest {
         original.addPerson(new PersonBuilder().withName("Name Only").withoutPhone().withoutEmail()
                 .withoutAddress().withTags().build());
         original.addPerson(new PersonBuilder().withName("Complete Student").build());
+        original.addPerson(new PersonBuilder().withName("Guardian Student")
+                .withGuardian("Mary Guardian", "81234567", "mary@example.com")
+                .withSubject("H2 Mathematics").withEducationLevel("jc1").build());
         JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
 
         storage.saveAddressBook(original);
@@ -114,6 +117,12 @@ public class JsonAddressBookStorageTest {
         assertEquals(PersonBuilder.DEFAULT_PHONE, complete.path("phone").asText());
         assertEquals(PersonBuilder.DEFAULT_EMAIL, complete.path("email").asText());
         assertEquals(PersonBuilder.DEFAULT_ADDRESS, complete.path("address").asText());
+        JsonNode withGuardian = persons.get(2);
+        assertEquals("Mary Guardian", withGuardian.path("guardianName").asText());
+        assertEquals("81234567", withGuardian.path("guardianPhone").asText());
+        assertEquals("mary@example.com", withGuardian.path("guardianEmail").asText());
+        assertEquals("H2 Mathematics", withGuardian.path("subject").asText());
+        assertEquals("JC1", withGuardian.path("educationLevel").asText());
         assertEquals(original, new AddressBook(storage.readAddressBook().get()));
     }
 

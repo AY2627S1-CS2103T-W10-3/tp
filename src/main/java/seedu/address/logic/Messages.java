@@ -1,7 +1,7 @@
 package seedu.address.logic;
 
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import seedu.address.logic.parser.Prefix;
@@ -26,8 +26,8 @@ public class Messages {
     public static String getErrorMessageForDuplicatePrefixes(Prefix... duplicatePrefixes) {
         assert duplicatePrefixes.length > 0;
 
-        Set<String> duplicateFields =
-                Stream.of(duplicatePrefixes).map(Prefix::toString).collect(Collectors.toSet());
+        Set<String> duplicateFields = new TreeSet<>();
+        Stream.of(duplicatePrefixes).map(Prefix::toString).forEach(duplicateFields::add);
 
         return MESSAGE_DUPLICATE_FIELDS + String.join(" ", duplicateFields);
     }
@@ -44,6 +44,18 @@ public class Messages {
                 .append(person.getEmail().map(email -> email.value).orElse(NOT_PROVIDED))
                 .append("; Address: ")
                 .append(person.getAddress().map(address -> address.value).orElse(NOT_PROVIDED))
+                .append("; Subject: ")
+                .append(person.getSubject().map(subject -> subject.getValue()).orElse(NOT_PROVIDED))
+                .append("; Education level: ")
+                .append(person.getEducationLevel().map(level -> level.getValue()).orElse(NOT_PROVIDED))
+                .append("; Guardian: ")
+                .append(person.getGuardian().map(guardian -> guardian.getName().fullName).orElse(NOT_PROVIDED))
+                .append("; Guardian phone: ")
+                .append(person.getGuardian().flatMap(guardian -> guardian.getPhone())
+                        .map(phone -> phone.value).orElse(NOT_PROVIDED))
+                .append("; Guardian email: ")
+                .append(person.getGuardian().flatMap(guardian -> guardian.getEmail())
+                        .map(email -> email.value).orElse(NOT_PROVIDED))
                 .append("; Tags: ");
         person.getTags().forEach(builder::append);
         return builder.toString();

@@ -155,6 +155,16 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 This section describes some noteworthy details on how certain features are implemented.
 
+### Guardian details
+
+TutorContacts represents a student's guardian as an immutable `Guardian` value object containing a required `Name` and optional `Phone` and `Email` values. `Person` stores the whole value as `Optional<Guardian>`, so the model cannot represent guardian contact details without a guardian name.
+
+The `add` command accepts the feature-specific prefixes `gn/`, `gp/`, and `ge/`. `AddCommandParser` first rejects duplicate single-valued prefixes, then enforces the dependency that `gp/` and `ge/` require `gn/`. `ParserUtil` applies the existing name, phone, and email validation rules before constructing the `Guardian`.
+
+`JsonAdaptedPerson` stores guardian name, phone, and email as separate nullable JSON properties. All three properties may be absent when loading older files. If a saved file contains a guardian phone or email without a guardian name, loading fails rather than creating an invalid domain object.
+
+`PersonCard` displays all three guardian fields. Missing guardian values are shown as `Not provided` only in the UI and command feedback; that display text is never written to the data file. Existing commands that replace a `Person`, such as `edit`, must carry the unchanged guardian value forward.
+
 ### \[Proposed\] Undo/redo feature
 
 #### Proposed Implementation
