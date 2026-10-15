@@ -47,14 +47,6 @@ public class Person {
         this.tags.addAll(tags);
     }
 
-    /**
-     * Constructs a person without tutoring details.
-     */
-    public Person(Name name, Optional<Phone> phone, Optional<Email> email, Optional<Address> address,
-            Optional<Guardian> guardian, Set<Tag> tags) {
-        this(name, phone, email, address, guardian, Optional.empty(), Optional.empty(), tags);
-    }
-
     public Name getName() {
         return name;
     }

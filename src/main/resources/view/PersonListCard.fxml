@@ -31,6 +31,8 @@
       <Label fx:id="phone" styleClass="cell_small_label" text="\$phone" />
       <Label fx:id="address" styleClass="cell_small_label" text="\$address" />
       <Label fx:id="email" styleClass="cell_small_label" text="\$email" />
+      <Label fx:id="subject" styleClass="cell_small_label" text="\$subject" />
+      <Label fx:id="educationLevel" styleClass="cell_small_label" text="\$educationLevel" />
       <Label fx:id="guardianName" styleClass="cell_small_label" text="\$guardianName" />
       <Label fx:id="guardianPhone" styleClass="cell_small_label" text="\$guardianPhone" />
       <Label fx:id="guardianEmail" styleClass="cell_small_label" text="\$guardianEmail" />
