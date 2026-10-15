@@ -118,6 +118,11 @@ Rejected `add` commands leave the displayed records and saved data unchanged.
 ### Listing all students: `list`
 
 Shows all student records in their saved order. If there are no records, TutorContacts shows guidance for adding one.
+Student cards show the student's recorded contact, tutoring, and guardian details. Omitted details are shown as
+`Not provided`.
+
+After a command is submitted, the command box retains keyboard focus so you can type the next command immediately.
+Use the mouse or Tab to focus the list when you want to scroll it or use its normal list navigation keys.
 
 Format: `list`
 
@@ -158,18 +163,18 @@ Examples:
 
 ### Deleting a person: `delete`
 
-Deletes the specified person from the address book.
+Deletes the specified student from TutorContacts. The result panel confirms the deleted student's details.
 
 Format: `delete INDEX`
 
-* Deletes the person at the specified `INDEX`.
-* The index refers to the index number shown in the displayed person list.
+* Deletes the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, …​
 * Missing, malformed, zero, negative, extra, or out-of-range indices are rejected.
 
 Examples:
-* `list` followed by `delete 2` deletes the 2nd person in the address book.
-* `find Betsy` followed by `delete 1` deletes the 1st person in the results of the `find` command.
+* `list` followed by `delete 2` deletes the 2nd student in TutorContacts.
+* `find Betsy` followed by `delete 1` deletes the 1st student in the results of the `find` command.
 * `delete 0` and `delete 1 2` are rejected.
 
 ### Clearing all entries: `clear`
