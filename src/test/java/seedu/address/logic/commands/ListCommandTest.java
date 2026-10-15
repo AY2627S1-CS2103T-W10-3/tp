@@ -1,5 +1,6 @@
 package seedu.address.logic.commands;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.logic.commands.CommandTestUtil.showPersonAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
@@ -19,6 +20,11 @@ public class ListCommandTest {
 
     private Model model;
     private Model expectedModel;
+
+    @Test
+    public void listSuccessMessage_identifiesStudents() {
+        assertEquals("Listed all students.", ListCommand.MESSAGE_SUCCESS);
+    }
 
     @BeforeEach
     public void setUp() {

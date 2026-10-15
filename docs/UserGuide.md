@@ -3,7 +3,7 @@ layout: page
 title: User Guide
 ---
 
-AddressBook Level 3 (AB3) is a **desktop application for managing contacts, optimized for use through a Command Line Interface (CLI)** while retaining the benefits of a Graphical User Interface (GUI). If you type quickly, AB3 can help you manage contacts faster than traditional GUI applications.
+TutorContacts is an **offline desktop application for independent private tutors**, optimized for keyboard-first use through a Command Line Interface (CLI) while retaining a clear student-list view.
 
 * Table of Contents
 {:toc}
@@ -17,20 +17,20 @@ AddressBook Level 3 (AB3) is a **desktop application for managing contacts, opti
 
 1. Download the latest `.jar` file from [here](https://github.com/se-edu/addressbook-level3/releases).
 
-1. Copy the file to the folder you want to use as the _home folder_ for your AddressBook.
+1. Copy the file to the folder you want to use as TutorContacts' _home folder_.
 
 1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar addressbook.jar`.<br>
-   A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data.<br>
+   A GUI should appear in a few seconds. On first launch it has no student records and displays: **No students recorded. Use add to create your first student.**
    ![Ui](images/Ui.png)
 
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
 
-   * `list` : Lists all contacts.
+   * `list` : Lists all recorded students.
 
-   * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds a contact named `John Doe` to the Address Book.
+   * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds student `John Doe`.
 
-   * `delete 3` : Deletes the 3rd contact shown in the current list.
+   * `delete 3` : Deletes the 3rd student shown in the current list.
 
    * `clear` : Deletes all contacts.
 
@@ -89,7 +89,11 @@ Examples:
 
 ### Listing all persons: `list`
 
-Shows a list of all persons in the address book.
+Shows the current list of students. Student cards show the student's name and recorded phone, email, and address. Omitted contact details are shown as `Not provided`.
+
+When no students are shown, TutorContacts displays **No students recorded. Use add to create your first student.** The message disappears automatically after a student is added.
+
+After a command is submitted, the command box retains keyboard focus so you can type the next command immediately. Use the mouse or Tab to focus the list when you want to scroll it or use its normal list navigation keys.
 
 Format: `list`
 
@@ -128,12 +132,12 @@ Examples:
 
 ### Deleting a person: `delete`
 
-Deletes the specified person from the address book.
+Deletes the specified student from TutorContacts. The result panel confirms the deleted student's details.
 
 Format: `delete INDEX`
 
-* Deletes the person at the specified `INDEX`.
-* The index refers to the index number shown in the displayed person list.
+* Deletes the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, …​
 
 Examples:
