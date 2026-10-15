@@ -93,6 +93,9 @@ Only `n/` is required. Every other prefix is optional; each supported prefix can
 | `ge/` | Guardian email. Optional; uses the student-email rules and requires `gn/`. |
 | `t/` | One optional tag; letters and digits only. |
 
+Subject and education level may be supplied independently. Education levels are case-insensitive when entered and are
+displayed in uppercase. If either field is omitted, the student card displays `Not provided` for that field.
+
 Leading and trailing whitespace around field values is ignored. Repeated whitespace inside names, guardian names,
 subjects, and addresses is stored as one space. Whitespace within phone numbers, email addresses, education levels, and
 tags is not accepted. Text before the first prefix and unknown prefix-like tokens such as `x/value` are rejected.
@@ -111,6 +114,8 @@ Examples:
 * Invalid, because `gn/` is missing: `add n/Sam Lee gp/81234567`
 * Invalid, because a prefix repeats: `add n/Sam Lee p/81234567 p/92345678`
 * Invalid, because the education level is unsupported: `add n/Sam Lee l/University`
+* Invalid, because the subject is empty: `add n/Eva Lim s/ l/P6`
+* Invalid guardian email: `add n/Sam Lee gn/Pat Lee ge/pat.example.com`
 * Invalid, because of unexpected text: `add surprise n/Sam Lee` or `add n/Sam Lee x/value`
 
 Rejected `add` commands leave the displayed records and saved data unchanged.
