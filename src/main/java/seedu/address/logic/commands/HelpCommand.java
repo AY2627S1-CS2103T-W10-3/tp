@@ -15,8 +15,11 @@ public class HelpCommand extends Command {
     /** Command formats and essential validation rules are bundled with the application for offline use. */
     public static final String HELP_TEXT = "TutorContacts commands:\n"
             + AddCommand.FORMAT + "\n"
+            + "edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]...\n"
             + ListCommand.COMMAND_WORD + "\n"
+            + FindCommand.COMMAND_WORD + " KEYWORD [MORE_KEYWORDS]\n"
             + DeleteCommand.COMMAND_WORD + " INDEX\n"
+            + ClearCommand.COMMAND_WORD + "\n"
             + COMMAND_WORD + "\n"
             + ExitCommand.COMMAND_WORD + "\n\n"
             + "Only n/NAME is required. All other add fields are optional and may appear in any order.\n"

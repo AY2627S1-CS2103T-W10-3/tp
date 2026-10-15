@@ -25,8 +25,11 @@ public class HelpCommandTest {
         assertTrue(help.contains("[s/SUBJECT]"));
         assertTrue(help.contains("[l/EDUCATION_LEVEL]"));
         assertTrue(help.contains("[gn/GUARDIAN_NAME]"));
+        assertTrue(help.contains("edit INDEX"));
         assertTrue(help.contains("list\n"));
+        assertTrue(help.contains("find KEYWORD"));
         assertTrue(help.contains("delete INDEX"));
+        assertTrue(help.contains("clear\n"));
         assertTrue(help.contains("help\n"));
         assertTrue(help.contains("exit\n"));
         assertTrue(help.contains("Guardian phone or email requires gn/"));
