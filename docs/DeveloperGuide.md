@@ -169,11 +169,17 @@ Validation follows a fixed order: token structure, required `n/`, repeated prefi
 
 TutorContacts represents a student's guardian as an immutable `Guardian` value object containing a required `Name` and optional `Phone` and `Email` values. `Person` stores the whole value as `Optional<Guardian>`, so the model cannot represent guardian contact details without a guardian name.
 
-The `add` command accepts the feature-specific prefixes `gn/`, `gp/`, and `ge/`. `AddCommandParser` first rejects duplicate single-valued prefixes, then enforces the dependency that `gp/` and `ge/` require `gn/`. `ParserUtil` applies the existing name, phone, and email validation rules before constructing the `Guardian`.
+The `add` and `edit` commands accept the feature-specific prefixes `gn/`, `gp/`, and `ge/`. Their parsers reject duplicate single-valued prefixes and apply the existing name, phone, and email validation rules. When adding a guardian, `gp/` and `ge/` require `gn/` in the same command.
+
+For edits, `EditPersonDescriptor` stores each supplied guardian field independently. `EditCommand` combines those fields with the selected student's existing guardian: supplied values replace their matching fields, while unspecified values are preserved. This permits a tutor to update only an existing guardian's phone or email. If no guardian name is available from either the existing record or `gn/`, the command fails without changing the model.
+
+The sequence diagram below shows how an edit that changes an existing guardian's phone is parsed and executed. The alternative branch also covers an edit that cannot obtain a guardian name from either the command or the existing student.
+
+![Edit guardian sequence diagram](images/EditGuardianSequenceDiagram.png)
 
 `JsonAdaptedPerson` stores guardian name, phone, and email as separate nullable JSON properties. All three properties may be absent when loading older files. If a saved file contains a guardian phone or email without a guardian name, loading fails rather than creating an invalid domain object.
 
-`PersonCard` displays all three guardian fields. Missing guardian values are shown as `Not provided` only in the UI and command feedback; that display text is never written to the data file. Existing commands that replace a `Person`, such as `edit`, must carry the unchanged guardian value forward.
+`PersonCard` displays all three guardian fields. Missing guardian values are shown as `Not provided` only in the UI and command feedback; that display text is never written to the data file.
 
 ### Subject and education level
 
@@ -352,6 +358,41 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
+**Use case: UC04 — Update guardian details**
+
+**MSS**
+
+1. User requests to list students.
+2. TutorContacts displays the students with their current indices and guardian details.
+3. User requests to edit one or more guardian fields of a specified student.
+4. TutorContacts validates the specified index and guardian values.
+5. TutorContacts updates the guardian while preserving fields that were not supplied.
+6. TutorContacts saves the updated student data.
+7. TutorContacts displays the updated student and reports that the operation was successful.
+
+    Use case ends.
+
+**Extensions**
+
+* 3a. The user supplies a guardian phone or email for a student who has no guardian, without supplying a guardian name.
+
+  * 3a1. TutorContacts reports that a guardian name is required.
+
+  Use case ends.
+
+* 4a. A guardian value is invalid.
+
+  * 4a1. TutorContacts reports the relevant validation constraint.
+
+  Use case ends.
+
+* 6a. TutorContacts cannot save the updated data.
+
+  * 6a1. TutorContacts reports the save failure.
+  * 6a2. TutorContacts leaves the displayed and saved records unchanged.
+
+  Use case ends.
+
 ### Non-Functional Requirements
 
 1. TutorContacts should work on Windows, Linux, and macOS systems that have Java `25` installed.
@@ -426,6 +467,28 @@ testers are expected to do more *exploratory* testing.
 
    1. Test case: `add n/Chris Lim l/University`<br>
       Expected: The command is rejected with the education-level constraint. Existing student records remain unchanged.
+
+### Editing guardian details
+
+1. Editing an existing guardian
+
+   1. Prerequisites: Add a student using `add n/Alex Tan gn/Mary Tan gp/81234567 ge/mary@example.com`.
+
+   1. Test case: `edit 1 gp/92345678`<br>
+      Expected: Only the guardian phone changes. The guardian name and email remain unchanged in the card and result panel.
+
+   1. Test case: `edit 1 gn/Jane Tan ge/jane@example.com`<br>
+      Expected: The guardian name and email change. The existing guardian phone remains unchanged.
+
+1. Adding and validating guardian details through edit
+
+   1. Prerequisites: Add a student without a guardian using `add n/Ben Lee`.
+
+   1. Test case: `edit 2 gn/Pat Lee gp/83456789`<br>
+      Expected: The guardian is added to the student and saved.
+
+   1. Test case: `edit 2 gp/84567890` after adding a fresh student without a guardian.<br>
+      Expected: The command is rejected because no guardian name is available. Existing records remain unchanged.
 
 ### Student-list UI, keyboard, and deletion feedback
 

@@ -1,0 +1,88 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
+participant ":EditCommandParser" as EditCommandParser LOGIC_COLOR
+participant "c:EditCommand" as EditCommand LOGIC_COLOR
+participant "d:EditPersonDescriptor" as Descriptor LOGIC_COLOR
+participant "r:CommandResult" as CommandResult LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "m:Model" as Model MODEL_COLOR
+participant "p:Person" as Person MODEL_COLOR
+participant "g:Guardian" as Guardian MODEL_COLOR
+end box
+
+[-> LogicManager : execute("edit 1 gp/92345678")
+activate LogicManager
+
+LogicManager -> AddressBookParser : parseCommand(userInput)
+activate AddressBookParser
+AddressBookParser -> EditCommandParser : parse("1 gp/92345678")
+activate EditCommandParser
+
+create Descriptor
+EditCommandParser -> Descriptor : EditPersonDescriptor()
+activate Descriptor
+EditCommandParser -> Descriptor : setGuardianPhone(phone)
+deactivate Descriptor
+
+create EditCommand
+EditCommandParser -> EditCommand : EditCommand(index, d)
+activate EditCommand
+EditCommand --> EditCommandParser : c
+deactivate EditCommand
+
+EditCommandParser --> AddressBookParser : c
+deactivate EditCommandParser
+AddressBookParser --> LogicManager : c
+deactivate AddressBookParser
+
+LogicManager -> EditCommand : execute(m)
+activate EditCommand
+EditCommand -> Model : getFilteredPersonList()
+activate Model
+Model --> EditCommand : persons
+deactivate Model
+
+EditCommand -> EditCommand : createUpdatedGuardian(p, d)
+activate EditCommand
+EditCommand -> Person : getGuardian()
+activate Person
+Person --> EditCommand : existingGuardian
+deactivate Person
+
+alt existing guardian or gn/ supplied
+    create Guardian
+    EditCommand -> Guardian : Guardian(name, phone, email)
+    activate Guardian
+    Guardian --> EditCommand : updatedGuardian
+    deactivate Guardian
+    EditCommand --> EditCommand : updatedGuardian
+    deactivate EditCommand
+
+    EditCommand -> Model : setPerson(p, editedPerson)
+    activate Model
+    Model --> EditCommand
+    deactivate Model
+
+    create CommandResult
+    EditCommand -> CommandResult : CommandResult(successMessage)
+    activate CommandResult
+    CommandResult --> EditCommand : r
+    deactivate CommandResult
+    EditCommand --> LogicManager : r
+else no guardian name available
+    EditCommand --> EditCommand : throws CommandException
+    deactivate EditCommand
+    EditCommand --> LogicManager : throws CommandException
+end
+
+deactivate EditCommand
+[<-- LogicManager
+deactivate LogicManager
+@enduml

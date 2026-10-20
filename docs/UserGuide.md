@@ -137,19 +137,24 @@ Example: `list`
 
 Edits an existing student in TutorContacts.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`
+Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]…​`
 
 * Edits the student at the specified `INDEX`. The index refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
+* `gn/`, `gp/`, and `ge/` update the guardian name, phone, and email respectively. Guardian fields that are not supplied remain unchanged.
+* If the student already has a guardian, `gp/` or `ge/` can be used without repeating `gn/`. Otherwise, a guardian name must be supplied when adding guardian contact details.
 * When editing tags, all of the student's existing tags are removed; adding tags is not cumulative.
 * To remove all of a student's tags, enter `t/` without a tag after it.
-* Subject, education-level, and guardian details cannot currently be changed using `edit`. To change one of these
+* Subject and education-level details cannot currently be changed using `edit`. To change one of these
   details, delete the student record and add it again with the corrected information.
 
 Examples:
 * `edit 1 p/91234567 e/johndoe@example.com` edits the phone number and email address of the 1st student.
 * `edit 2 n/Betsy Crower t/` changes the name of the 2nd student to `Betsy Crower` and clears all existing tags.
+* `edit 1 gp/92345678` updates only the phone number of the 1st student's existing guardian.
+* `edit 2 gn/Mary Lee gp/81234567 ge/mary@example.com` adds or replaces the guardian details of the 2nd student.
+* `edit 2 gp/81234567` is rejected if the 2nd student does not have an existing guardian, because no guardian name is available.
 
 ### Locating students by name: `find`
 
@@ -237,7 +242,7 @@ Action | Format, Examples
 **Add** | `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]` <br> e.g., `add n/James Ho p/22224444 s/Mathematics l/S3 gn/Mary Ho gp/81234567`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
-**Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
+**Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]…​`<br> e.g., `edit 2 gn/Mary Lee gp/81234567`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List** | `list`
 **Help** | `help`
