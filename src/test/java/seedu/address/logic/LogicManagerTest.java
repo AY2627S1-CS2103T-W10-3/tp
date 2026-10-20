@@ -35,6 +35,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.AddCommandParser;
@@ -113,6 +114,34 @@ public class LogicManagerTest {
 
         assertCommandSuccess(addCommand,
                 String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(expectedPerson)), expectedModel);
+    }
+
+    @Test
+    public void execute_editGuardianDetails_savesUpdatedGuardian() throws Exception {
+        logic.execute("add n/Alice Tan gn/Mary Tan gp/81234567 ge/mary@example.com");
+
+        logic.execute("edit 1 gn/Jane Tan gp/92345678 ge/jane@example.com");
+
+        Person expectedPerson = new PersonBuilder().withName("Alice Tan").withoutPhone().withoutEmail()
+                .withoutAddress().withTags().withGuardian("Jane Tan", "92345678", "jane@example.com").build();
+        assertEquals(expectedPerson, logic.getFilteredPersonList().get(0));
+        ReadOnlyAddressBook savedAddressBook = new JsonAddressBookStorage(
+                temporaryFolder.resolve("addressBook.json")).readAddressBook().orElseThrow();
+        assertEquals(expectedPerson, savedAddressBook.getPersonList().get(0));
+    }
+
+    @Test
+    public void execute_editGuardianContactWithoutName_preservesRecords() throws Exception {
+        logic.execute("add n/Alice Tan");
+        Path dataFile = temporaryFolder.resolve("addressBook.json");
+        byte[] savedBefore = Files.readAllBytes(dataFile);
+        List<Person> displayedBefore = List.copyOf(logic.getFilteredPersonList());
+
+        assertThrows(CommandException.class, EditCommand.MESSAGE_GUARDIAN_NAME_REQUIRED, () ->
+                logic.execute("edit 1 gp/92345678"));
+
+        assertEquals(displayedBefore, List.copyOf(logic.getFilteredPersonList()));
+        assertArrayEquals(savedBefore, Files.readAllBytes(dataFile));
     }
 
     @Test

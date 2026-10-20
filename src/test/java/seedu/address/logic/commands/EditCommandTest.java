@@ -5,6 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.DESC_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_EMAIL_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_EMAIL_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_NAME_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_NAME_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_PHONE_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_GUARDIAN_PHONE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
@@ -114,6 +120,75 @@ public class EditCommandTest {
         expectedModel.setPerson(withGuardian, editedPerson);
         String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
         assertCommandSuccess(editCommand, modelWithGuardian, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_addGuardianToStudent_success() {
+        Person withoutGuardian = new PersonBuilder().withName("Guardian Student").withoutGuardian().build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(withoutGuardian);
+        Model modelWithoutGuardian = new ModelManager(addressBook, new UserPrefs());
+        Person editedPerson = new PersonBuilder(withoutGuardian).withGuardian(
+                VALID_GUARDIAN_NAME_AMY, VALID_GUARDIAN_PHONE_AMY, VALID_GUARDIAN_EMAIL_AMY).build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withGuardianName(VALID_GUARDIAN_NAME_AMY)
+                .withGuardianPhone(VALID_GUARDIAN_PHONE_AMY)
+                .withGuardianEmail(VALID_GUARDIAN_EMAIL_AMY)
+                .build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
+        expectedModel.setPerson(withoutGuardian, editedPerson);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        assertCommandSuccess(editCommand, modelWithoutGuardian, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_editGuardianPhone_preservesOtherGuardianFields() {
+        Person withGuardian = new PersonBuilder().withName("Guardian Student").withGuardian(
+                VALID_GUARDIAN_NAME_AMY, VALID_GUARDIAN_PHONE_AMY, VALID_GUARDIAN_EMAIL_AMY).build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(withGuardian);
+        Model modelWithGuardian = new ModelManager(addressBook, new UserPrefs());
+        Person editedPerson = new PersonBuilder(withGuardian).withGuardian(
+                VALID_GUARDIAN_NAME_AMY, VALID_GUARDIAN_PHONE_BOB, VALID_GUARDIAN_EMAIL_AMY).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withGuardianPhone(VALID_GUARDIAN_PHONE_BOB).build());
+
+        Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
+        expectedModel.setPerson(withGuardian, editedPerson);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        assertCommandSuccess(editCommand, modelWithGuardian, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_editGuardianName_preservesGuardianContacts() {
+        Person withGuardian = new PersonBuilder().withName("Guardian Student").withGuardian(
+                VALID_GUARDIAN_NAME_AMY, VALID_GUARDIAN_PHONE_AMY, VALID_GUARDIAN_EMAIL_AMY).build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(withGuardian);
+        Model modelWithGuardian = new ModelManager(addressBook, new UserPrefs());
+        Person editedPerson = new PersonBuilder(withGuardian).withGuardian(
+                VALID_GUARDIAN_NAME_BOB, VALID_GUARDIAN_PHONE_AMY, VALID_GUARDIAN_EMAIL_AMY).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withGuardianName(VALID_GUARDIAN_NAME_BOB).build());
+
+        Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
+        expectedModel.setPerson(withGuardian, editedPerson);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        assertCommandSuccess(editCommand, modelWithGuardian, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_addGuardianContactWithoutName_failure() {
+        Person withoutGuardian = new PersonBuilder().withName("Guardian Student").withoutGuardian().build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(withoutGuardian);
+        Model modelWithoutGuardian = new ModelManager(addressBook, new UserPrefs());
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withGuardianEmail(VALID_GUARDIAN_EMAIL_BOB).build());
+
+        assertCommandFailure(editCommand, modelWithoutGuardian, EditCommand.MESSAGE_GUARDIAN_NAME_REQUIRED);
     }
 
     @Test
