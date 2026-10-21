@@ -28,6 +28,8 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 
    * `list` : Lists all students.
 
+   * `filter s/Mathematics l/JC1` : Shows JC1 Mathematics students.
+
    * `add n/John Doe p/98765432 gn/Jane Doe gp/91234567` : Adds a student named `John Doe` with optional student and guardian contact details.
 
    * `delete 3` : Deletes the 3rd student shown in the current list.
@@ -141,6 +143,15 @@ Format: `list`
 
 Example: `list`
 
+`list` also resets any `find` or `filter` result and restores the complete active-student list.
+
+### Understanding result views and indices
+
+`list`, `find`, and `filter` display an active-student result view. Every result view is numbered consecutively from
+1 in the order shown. An index-based command such as `edit 1` or `delete 1` acts on the student currently displayed
+with index 1, rather than the first student in the complete saved list. Run `list` whenever you want to restore the
+complete active-student view before using an index.
+
 ### Editing a student: `edit`
 
 Edits an existing student in TutorContacts.
@@ -166,16 +177,39 @@ Finds students whose names contain any of the given keywords.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
-* The search is case-insensitive; for example, `hans` matches `Hans`.
-* Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
+* Matching is case-insensitive and partial; for example, `han` matches `Hans` and `Johanna`.
+* Keyword order does not matter; each supplied keyword is matched independently.
 * The search considers only names.
-* Only full words match; for example, `Han` does not match `Hans`.
 * Students matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
+* Each matching student appears once in the same order as the complete active list, even if several or repeated
+  keywords match that student.
+* If no student matches, TutorContacts displays `No students found.` and shows an empty result view.
 
 Examples:
-* `find John` returns `john` and `John Doe`
+* `find jo` returns `John Doe` and `Marjorie Tan`
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
+
+### Filtering students by tutoring details: `filter`
+
+Filters active students by subject, education level, or both.
+
+Format: `filter [s/SUBJECT] [l/EDUCATION_LEVEL]`
+
+* At least one of `s/` or `l/` must be supplied, and each can appear only once.
+* Subject and education-level matching is case-insensitive and uses the complete normalized value. For example,
+  `s/math` does not match `Mathematics`, while `s/mathematics` does.
+* When both fields are supplied, a student must match both (`AND`).
+* A student without a supplied filter field does not match that filter.
+* Results remain in the same order as the complete active list and receive consecutive displayed indices.
+* If no student matches, TutorContacts displays `No students match the filters.`
+* Run `list` to restore the complete active-student list.
+
+Examples:
+* `filter s/H2 Mathematics` shows students whose subject is H2 Mathematics.
+* `filter l/jc1` shows JC1 students; education-level input is case-insensitive.
+* `filter s/H2 Mathematics l/JC1` shows only students matching both criteria.
+* `filter`, `filter s/`, and `filter l/University` are rejected.
 
 ### Deleting a student: `delete`
 
@@ -298,6 +332,7 @@ Action | Format, Examples
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
+**Filter** | `filter [s/SUBJECT] [l/EDUCATION_LEVEL]`<br> e.g., `filter s/Mathematics l/S3`
 **List** | `list`
 **Schedule** | `schedule INDEX at/YYYY-MM-DD HH:mm`<br> e.g., `schedule 1 at/2099-10-30 16:00`
 **Unschedule** | `unschedule INDEX`<br> e.g., `unschedule 1`

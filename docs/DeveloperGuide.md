@@ -232,6 +232,28 @@ Design considerations:
   * Pros: Supports history and multiple future lessons.
   * Cons: Requires extra commands and indices to identify a particular lesson, which is outside the agreed scope.
 
+### Query result views
+
+`ModelManager` exposes an unmodifiable `FilteredList<Person>` as the current active result view. `list` applies the
+show-all predicate, `find` applies `NameContainsKeywordsPredicate`, and `filter` applies
+`PersonMatchesFiltersPredicate`. JavaFX keeps the original source-list order when applying these predicates, while
+`PersonListPanel` derives each visible one-based index from the filtered list position.
+
+Partial-name matching converts both names and keywords using `Locale.ROOT` and applies substring matching. Multiple
+keywords use OR. Because each `Person` is evaluated once by one predicate, repeated or overlapping keywords cannot
+duplicate a result. Subject and education-level filters use exact normalized matching and combine two supplied fields
+with AND; an absent field cannot satisfy a supplied criterion.
+
+Index-based active commands obtain their target from `Model#getFilteredPersonList`, so an edit or delete after a query
+acts on the record currently carrying that displayed index. `list` restores the complete active view. Archive and
+upcoming views will extend this contract when their owning features are integrated; their state protection and
+cross-feature tests cannot be completed before those commands exist.
+
+The sequence diagram below shows a filter creating a result view followed by an edit targeting its first displayed
+student.
+
+![Query result-view sequence diagram](images/QueryResultViewSequenceDiagram.png)
+
 ## **Documentation, logging, testing, dev-ops**
 
 * [Documentation guide](Documentation.md)
@@ -275,7 +297,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* *` | new user | view command instructions | learn or recall how to use the application |
 | `* *` | private tutor | edit an existing student record | correct information without deleting and recreating the record |
 | `* *` | private tutor | find a student by name | retrieve a record without scanning the full list |
-| `* *` | private tutor | tag and filter students by subject or education level | retrieve a relevant group of students quickly |
+| `* *` | private tutor | filter students by subject or education level | retrieve a relevant group of students quickly |
 | `* *` | private tutor | record upcoming lessons | keep track of tutoring arrangements |
 | `* *` | private tutor | reschedule or clear a student's lesson | keep lesson arrangements accurate when plans change |
 | `* *` | private tutor | record learning focuses and follow-up actions | remember what should be covered in future lessons |
@@ -495,6 +517,38 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
   * 5a2. TutorContacts leaves the displayed and saved lessons unchanged.
 
   Use case ends.
+
+**Use case: UC06 — Query active students**
+
+**MSS**
+
+1. User requests to find students by one or more partial-name keywords, or to filter by subject or education level.
+2. TutorContacts validates the supplied query.
+3. TutorContacts displays each matching active student once, in stable order, with consecutive indices.
+4. User runs an index-based command on one of the displayed students.
+5. TutorContacts applies the command to the student carrying that index in the current result view.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. No query criterion is supplied, or a criterion is invalid.
+
+  * 2a1. TutorContacts reports the required format or validation rule.
+
+  Use case ends.
+
+* 3a. No active student matches.
+
+  * 3a1. TutorContacts reports that no student matches and displays an empty result view.
+
+  Use case ends.
+
+* 4a. User requests the complete active list.
+
+  * 4a1. TutorContacts restores all active students in saved order with consecutive indices.
+
+  Use case resumes at step 4.
 
 ### Non-Functional Requirements
 

@@ -28,6 +28,7 @@ public class HelpCommandTest {
         assertTrue(help.contains("edit INDEX"));
         assertTrue(help.contains("list\n"));
         assertTrue(help.contains("find KEYWORD"));
+        assertTrue(help.contains("filter [s/SUBJECT] [l/EDUCATION_LEVEL]"));
         assertTrue(help.contains("delete INDEX"));
         assertTrue(help.contains("schedule INDEX at/YYYY-MM-DD HH:mm"));
         assertTrue(help.contains("unschedule INDEX"));
@@ -35,5 +36,7 @@ public class HelpCommandTest {
         assertTrue(help.contains("help\n"));
         assertTrue(help.contains("exit\n"));
         assertTrue(help.contains("Guardian phone or email requires gn/"));
+        assertTrue(help.contains("partial-name matching with OR"));
+        assertTrue(help.contains("Displayed indices belong to the current result list"));
     }
 }
