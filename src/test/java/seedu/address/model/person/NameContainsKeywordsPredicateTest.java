@@ -39,20 +39,24 @@ public class NameContainsKeywordsPredicateTest {
 
     @Test
     public void test_nameContainsKeywords_returnsTrue() {
-        // One keyword
-        NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(List.of("Alice"));
+        // Partial keyword at the start of the name
+        NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(List.of("Ali"));
         assertTrue(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
 
-        // Multiple keywords
-        predicate = new NameContainsKeywordsPredicate(List.of("Alice", "Bob"));
+        // Partial keyword in the middle of a name
+        predicate = new NameContainsKeywordsPredicate(List.of("ice"));
         assertTrue(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
 
-        // Only one matching keyword
-        predicate = new NameContainsKeywordsPredicate(List.of("Bob", "Carol"));
+        // Partial keyword at the end of the name
+        predicate = new NameContainsKeywordsPredicate(List.of("ob"));
+        assertTrue(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
+
+        // Only one of multiple keywords matches
+        predicate = new NameContainsKeywordsPredicate(List.of("not-present", "car"));
         assertTrue(predicate.test(new PersonBuilder().withName("Alice Carol").build()));
 
-        // Mixed-case keywords
-        predicate = new NameContainsKeywordsPredicate(List.of("aLIce", "bOB"));
+        // Mixed-case partial keyword
+        predicate = new NameContainsKeywordsPredicate(List.of("LIcE"));
         assertTrue(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
     }
 
