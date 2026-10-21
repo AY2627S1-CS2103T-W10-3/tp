@@ -249,8 +249,8 @@ acts on the record currently carrying that displayed index. `list` restores the 
 upcoming views will extend this contract when their owning features are integrated; their state protection and
 cross-feature tests cannot be completed before those commands exist.
 
-The sequence diagram below shows a filter creating a result view followed by an edit targeting its first displayed
-student.
+The sequence diagram below focuses on the model interactions when a filter creates a result view and an edit targets
+its first displayed student. Parsing and the resulting UI refresh are omitted to keep the diagram within this scope.
 
 ![Query result-view sequence diagram](images/QueryResultViewSequenceDiagram.png)
 

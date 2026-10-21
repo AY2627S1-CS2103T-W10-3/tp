@@ -3,61 +3,22 @@
 skinparam ArrowFontStyle plain
 
 box Logic LOGIC_COLOR_T1
-participant ":LogicManager" as LogicManager LOGIC_COLOR
-participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
-participant ":FilterCommandParser" as FilterCommandParser LOGIC_COLOR
 participant "f:FilterCommand" as FilterCommand LOGIC_COLOR
 participant "e:EditCommand" as EditCommand LOGIC_COLOR
 end box
 
 box Model MODEL_COLOR_T1
-participant "p:PersonMatchesFiltersPredicate" as Predicate MODEL_COLOR
-participant "m:Model" as Model MODEL_COLOR
+participant "m:ModelManager" as ModelManager MODEL_COLOR
 participant "result:FilteredList<Person>" as ResultView MODEL_COLOR
+participant "p:PersonMatchesFiltersPredicate" as Predicate MODEL_COLOR
 end box
 
-[-> LogicManager : execute("filter s/Mathematics")
-activate LogicManager
-LogicManager -> AddressBookParser : parseCommand("filter s/Mathematics")
-activate AddressBookParser
-
-create FilterCommandParser
-AddressBookParser -> FilterCommandParser
-activate FilterCommandParser
-
-FilterCommandParser --> AddressBookParser
-deactivate FilterCommandParser
-
-AddressBookParser -> FilterCommandParser : parse("s/Mathematics")
-activate FilterCommandParser
-
-create Predicate
-FilterCommandParser -> Predicate
-activate Predicate
-Predicate --> FilterCommandParser
-deactivate Predicate
-
-create FilterCommand
-FilterCommandParser -> FilterCommand
+[-> FilterCommand : execute(m)
 activate FilterCommand
-FilterCommand --> FilterCommandParser
-deactivate FilterCommand
 
-FilterCommandParser --> AddressBookParser : f
-deactivate FilterCommandParser
-
-'Hidden arrow positions the destroy marker below the activation bar.
-FilterCommandParser -[hidden]-> AddressBookParser
-destroy FilterCommandParser
-
-AddressBookParser --> LogicManager : f
-deactivate AddressBookParser
-
-LogicManager -> FilterCommand : execute(m)
-activate FilterCommand
-FilterCommand -> Model : updateFilteredPersonList(p)
-activate Model
-Model -> ResultView : setPredicate(p)
+FilterCommand -> ModelManager : updateFilteredPersonList(p)
+activate ModelManager
+ModelManager -> ResultView : setPredicate(p)
 activate ResultView
 
 loop for each student
@@ -67,51 +28,43 @@ loop for each student
     deactivate Predicate
 end
 
-ResultView --> Model
+ResultView --> ModelManager
 deactivate ResultView
-Model --> FilterCommand
-deactivate Model
-
-FilterCommand --> LogicManager : CommandResult
+ModelManager --> FilterCommand
+deactivate ModelManager
+FilterCommand -->] : CommandResult
 deactivate FilterCommand
 
-[<-- LogicManager : matching students with displayed indices
-deactivate LogicManager
-
-[-> LogicManager : execute("edit 1 p/91234567")
-activate LogicManager
-note over LogicManager, EditCommand
-Parsing of edit is omitted.
+note across
+The UI observes result and displays consecutive one-based indices.
 end note
-LogicManager -> EditCommand : execute(m)
+
+[-> EditCommand : execute(m)
 activate EditCommand
-EditCommand -> Model : getFilteredPersonList()
-activate Model
-Model --> EditCommand : result
-deactivate Model
+EditCommand -> ModelManager : getFilteredPersonList()
+activate ModelManager
+ModelManager --> EditCommand : result
+deactivate ModelManager
 
 EditCommand -> ResultView : get(0)
 activate ResultView
 ResultView --> EditCommand : displayed student 1
 deactivate ResultView
 
-EditCommand -> Model : setPerson(displayed student 1, edited)
-activate Model
-Model --> EditCommand
-deactivate Model
+EditCommand -> ModelManager : setPerson(displayed student 1, edited)
+activate ModelManager
+ModelManager --> EditCommand
+deactivate ModelManager
 
-EditCommand -> Model : updateFilteredPersonList(show all)
-activate Model
-Model -> ResultView : setPredicate(show all)
+EditCommand -> ModelManager : updateFilteredPersonList(show all)
+activate ModelManager
+ModelManager -> ResultView : setPredicate(show all)
 activate ResultView
-ResultView --> Model
+ResultView --> ModelManager
 deactivate ResultView
-Model --> EditCommand
-deactivate Model
+ModelManager --> EditCommand
+deactivate ModelManager
 
-EditCommand --> LogicManager : CommandResult
+EditCommand -->] : CommandResult
 deactivate EditCommand
-
-[<-- LogicManager : edit confirmation
-deactivate LogicManager
 @enduml
