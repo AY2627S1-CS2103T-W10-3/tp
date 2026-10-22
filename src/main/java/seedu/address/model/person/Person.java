@@ -25,6 +25,8 @@ public class Person {
     private final Optional<Guardian> guardian;
     private final Optional<Subject> subject;
     private final Optional<EducationLevel> educationLevel;
+    private final Optional<LearningFocus> learningFocus;
+    private final Optional<NextAction> nextAction;
 
     // Data fields
     private final Optional<Address> address;
@@ -36,8 +38,9 @@ public class Person {
      */
     public Person(Name name, Optional<Phone> phone, Optional<Email> email, Optional<Address> address,
             Optional<Guardian> guardian, Optional<Subject> subject, Optional<EducationLevel> educationLevel,
-            Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, guardian, subject, educationLevel, tags);
+            Optional<LearningFocus> learningFocus, Optional<NextAction> nextAction, Set<Tag> tags) {
+        requireAllNonNull(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
+                nextAction, tags);
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -45,6 +48,8 @@ public class Person {
         this.guardian = guardian;
         this.subject = subject;
         this.educationLevel = educationLevel;
+        this.learningFocus = learningFocus;
+        this.nextAction = nextAction;
         this.tags.addAll(tags);
     }
 
@@ -74,6 +79,14 @@ public class Person {
 
     public Optional<EducationLevel> getEducationLevel() {
         return educationLevel;
+    }
+
+    public Optional<LearningFocus> getLearningFocus() {
+        return learningFocus;
+    }
+
+    public Optional<NextAction> getNextAction() {
+        return nextAction;
     }
 
     /**
@@ -120,13 +133,16 @@ public class Person {
                 && guardian.equals(otherPerson.guardian)
                 && subject.equals(otherPerson.subject)
                 && educationLevel.equals(otherPerson.educationLevel)
+                && learningFocus.equals(otherPerson.learningFocus)
+                && nextAction.equals(otherPerson.nextAction)
                 && tags.equals(otherPerson.tags);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, guardian, subject, educationLevel, tags);
+        return Objects.hash(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
+                nextAction, tags);
     }
 
     @Override
@@ -139,6 +155,8 @@ public class Person {
                 .add("guardian", guardian)
                 .add("subject", subject)
                 .add("educationLevel", educationLevel)
+                .add("learningFocus", learningFocus)
+                .add("nextAction", nextAction)
                 .add("tags", tags)
                 .toString();
     }
