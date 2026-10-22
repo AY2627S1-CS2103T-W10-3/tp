@@ -132,6 +132,11 @@
     -fx-text-fill: #010504;
 }
 
+.list-cell .label.lesson_overdue {
+    -fx-text-fill: #b00020;
+    -fx-font-weight: bold;
+}
+
 .cell_field_label {
     -fx-font-family: "Segoe UI Semibold";
     -fx-font-size: 13px;

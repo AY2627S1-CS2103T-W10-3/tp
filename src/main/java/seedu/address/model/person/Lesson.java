@@ -55,6 +55,11 @@ public final class Lesson {
         return dateTime.isAfter(now);
     }
 
+    /** Returns true if this lesson has started by {@code now}, so it is no longer upcoming. */
+    public boolean isOverdue(LocalDateTime now) {
+        return !isAfter(now);
+    }
+
     /** Returns the lesson in the same format accepted by {@link #isValidLesson(String)}. */
     public String getValue() {
         return dateTime.format(FORMATTER);
