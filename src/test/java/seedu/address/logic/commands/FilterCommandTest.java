@@ -84,6 +84,18 @@ public class FilterCommandTest {
     }
 
     @Test
+    public void execute_matchingArchivedStudent_excludesArchivedStudent() {
+        model.setPerson(ALICE, ALICE.withArchived(true));
+        PersonMatchesFiltersPredicate predicate = predicate("H2 Mathematics", "JC1");
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.updateFilteredPersonList(predicate);
+
+        assertCommandSuccess(new FilterCommand(predicate), model,
+                FilterCommand.MESSAGE_NO_MATCHES, expectedModel);
+        assertEquals(List.of(), model.getFilteredPersonList());
+    }
+
+    @Test
     public void execute_filterThenList_restoresAllStudents() {
         new FilterCommand(predicate("English", null)).execute(model);
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());

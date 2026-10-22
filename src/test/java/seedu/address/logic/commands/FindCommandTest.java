@@ -74,6 +74,18 @@ public class FindCommandTest {
     }
 
     @Test
+    public void execute_matchingArchivedStudent_excludesArchivedStudent() {
+        model.setPerson(CARL, CARL.withArchived(true));
+        NameContainsKeywordsPredicate predicate = preparePredicate(CARL.getName().fullName);
+        expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.updateFilteredPersonList(predicate);
+
+        assertCommandSuccess(new FindCommand(predicate), model,
+                String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 0), expectedModel);
+        assertEquals(List.of(), model.getFilteredPersonList());
+    }
+
+    @Test
     public void toStringMethod() {
         NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(List.of("keyword"));
         FindCommand findCommand = new FindCommand(predicate);

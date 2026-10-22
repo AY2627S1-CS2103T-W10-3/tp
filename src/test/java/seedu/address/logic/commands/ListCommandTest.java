@@ -11,7 +11,10 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
+import seedu.address.model.ResultViewScope;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.person.Person;
+import seedu.address.testutil.PersonBuilder;
 
 /**
  * Contains integration tests (interaction with the Model) and unit tests for ListCommand.
@@ -41,5 +44,30 @@ public class ListCommandTest {
     public void execute_listIsFiltered_showsEverything() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
         assertCommandSuccess(new ListCommand(), model, ListCommand.MESSAGE_SUCCESS, expectedModel);
+    }
+
+    @Test
+    public void execute_archivedStudents_showsArchivedOnly() {
+        Person archived = new PersonBuilder(model.getFilteredPersonList().get(0)).withArchived(true).build();
+        model.setPerson(model.getFilteredPersonList().get(0), archived);
+        expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.updateFilteredPersonList(person -> true, ResultViewScope.ARCHIVED);
+
+        assertCommandSuccess(ListCommand.archived(), model,
+                ListCommand.MESSAGE_ARCHIVED_SUCCESS, expectedModel);
+    }
+
+    @Test
+    public void execute_noArchivedStudents_showsActionableEmptyMessage() {
+        expectedModel.updateFilteredPersonList(person -> true, ResultViewScope.ARCHIVED);
+
+        assertCommandSuccess(ListCommand.archived(), model,
+                ListCommand.MESSAGE_NO_ARCHIVED_STUDENTS, expectedModel);
+    }
+
+    @Test
+    public void equals_sameScope_returnsTrue() {
+        assertEquals(new ListCommand(), new ListCommand());
+        assertEquals(ListCommand.archived(), ListCommand.archived());
     }
 }

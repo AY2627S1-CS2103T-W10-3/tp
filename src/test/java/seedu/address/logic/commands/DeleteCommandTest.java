@@ -16,6 +16,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
+import seedu.address.model.ResultViewScope;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
 
@@ -69,6 +70,21 @@ public class DeleteCommandTest {
         showNoPerson(expectedModel);
 
         assertCommandSuccess(deleteCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_validIndexArchivedList_deletesPermanently() {
+        Person archived = model.getFilteredPersonList().get(0).withArchived(true);
+        model.setPerson(model.getFilteredPersonList().get(0), archived);
+        model.updateFilteredPersonList(person -> true, ResultViewScope.ARCHIVED);
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.updateFilteredPersonList(person -> true, ResultViewScope.ARCHIVED);
+        expectedModel.deletePerson(archived);
+
+        String expectedMessage = String.format(DeleteCommand.MESSAGE_DELETE_PERSON_SUCCESS,
+                Messages.format(archived));
+        assertCommandSuccess(new DeleteCommand(INDEX_FIRST_PERSON), model, expectedMessage, expectedModel);
+        assertFalse(model.getAddressBook().getPersonList().contains(archived));
     }
 
     @Test
