@@ -231,8 +231,8 @@ are rejected instead of being adjusted to a nearby date.
 `CommandArgumentTokenizer` for the `at/` prefix and `ParserUtil#parseLesson` to validate the format. Whether the lesson
 is in the future is checked by `ScheduleCommand` rather than the parser, because it depends on the time at which the
 command runs. `ScheduleCommand` compares the lesson against `LocalDateTime.now(clock)`. The application uses the
-system clock in the computer's default time zone; tests pass a fixed `Clock` so that time-based behaviour is
-deterministic.
+system clock in the computer's default time zone; tests pass a fixed `Clock` so that time-based behaviour, such as a
+lesson in the current minute being rejected, is deterministic.
 
 The sequence diagram below shows how `schedule 1 at/2099-10-30 16:00` is executed.
 
@@ -253,7 +253,8 @@ stay unchanged.
 Design considerations:
 
 * **Alternative 1 (current choice):** Store one optional lesson per student.
-  * Pros: Matches the target user's need to see the next arrangement for each student and keeps commands short.
+  * Pros: Matches the target user's need to see the next arrangement for each student, keeps commands short, and
+    keeps the data file easy to edit.
   * Cons: Lesson history and recurring lessons cannot be represented.
 * **Alternative 2:** Store a list of lessons per student.
   * Pros: Supports history and multiple future lessons.
@@ -692,9 +693,9 @@ testers are expected to do more *exploratory* testing.
    1. Test case: `schedule 1 at/2020-01-01 10:00`<br>
       Expected: The lesson is unchanged. The result panel reports that the lesson must be in the future.
 
-   1. Other incorrect schedule commands to try: `schedule 1 at/2099-02-30 10:00`,
-      `schedule 1 at/2099-10-30 24:00`, `schedule 1 at/30-10-2099 16:00`, `schedule 1`,
-      `schedule 0 at/2099-10-30 16:00`, `schedule x at/2099-10-30 16:00` (where x is larger than the list size)<br>
+   1. Other incorrect schedule commands to try: `schedule 1 at/2099-02-30 10:00`, `schedule 1 at/2099-10-30 24:00`,
+      `schedule 1 at/30-10-2099 16:00`, `schedule 1`, `schedule 0 at/2099-10-30 16:00`,
+      `schedule x at/2099-10-30 16:00` (where x is larger than the list size)<br>
       Expected: No lesson changes. The result panel shows error details.
 
 1. Clearing a lesson

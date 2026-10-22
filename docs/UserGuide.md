@@ -99,7 +99,7 @@ Only `n/` is required. Every other prefix is optional; each supported prefix can
 | `gp/` | Guardian phone. Optional; uses the student-phone rules and requires `gn/`. |
 | `ge/` | Guardian email. Optional; uses the student-email rules and requires `gn/`. |
 | `lf/` | Current learning focus. Optional; 1–200 characters without control characters. |
-| `na/` | Next tutoring action. Optional; 1–200 characters without control characters. |
+| `na/` | Next action. Optional; 1–200 characters without control characters. |
 | `t/` | One optional tag; letters and digits only. |
 
 Subject and education level may be supplied independently. Education levels are case-insensitive when entered and are
@@ -134,6 +134,7 @@ Examples:
 * Invalid, because a prefix repeats: `add n/Sam Lee p/81234567 p/92345678`
 * Invalid, because the education level is unsupported: `add n/Sam Lee l/University`
 * Invalid, because the subject is empty: `add n/Eva Lim s/ l/P6`
+* Invalid, because a learning focus supplied to `add` cannot be empty: `add n/Eva Lim lf/`
 * Invalid guardian email: `add n/Sam Lee gn/Pat Lee ge/pat.example.com`
 * Invalid, because of unexpected text: `add surprise n/Sam Lee` or `add n/Sam Lee x/value`
 
@@ -141,8 +142,8 @@ Rejected `add` commands leave the displayed records and saved data unchanged.
 
 ### Listing all students: `list`
 
-Shows all active student records in their saved order. Archived students are excluded. If there are no active records,
-TutorContacts shows guidance for adding one.
+Shows all active student records in their saved order. Archived students are excluded. If there are no records,
+TutorContacts shows guidance for adding one. If records exist only in the archive, it suggests `list archived` instead.
 Student cards show the student's recorded contact, tutoring, guardian, learning-context, and lesson details. Omitted
 details are shown as `Not provided`, and a student without a lesson is shown as `Not scheduled`.
 
@@ -204,7 +205,7 @@ Moves a former student out of active workflows while preserving the complete rec
 
 Format: `archive INDEX`
 
-* `INDEX` refers to the student shown in the current active `list` or `find` result.
+* `INDEX` refers to the student shown in the current active result view, including `list`, `find`, or `filter` results.
 * Archived students do not appear in active `list`, `find`, or `filter` results.
 * The command is rejected from the archived view. Run `list` first to return to an active view.
 * Archiving is reversible and is different from permanent `delete`.
@@ -230,6 +231,13 @@ Format: `unarchive INDEX`
 
 Example: `list archived` followed by `unarchive 1` restores the first archived student.
 
+Complete lifecycle example:
+
+1. Run `list` and note the student shown at index 1.
+1. Run `archive 1`; that student disappears from active results.
+1. Run `list archived`; the archived student appears with a consecutive archived-view index.
+1. Run `unarchive 1`, then `list`; the complete record returns to its original saved-order position.
+
 ### Deleting a student: `delete`
 
 Permanently deletes the specified student from TutorContacts. The result panel confirms the deleted student's details.
@@ -245,6 +253,7 @@ Format: `delete INDEX`
 Examples:
 * `list` followed by `delete 2` deletes the 2nd student in TutorContacts.
 * `find Betsy` followed by `delete 1` deletes the 1st student in the results of the `find` command.
+* `list archived` followed by `delete 1` permanently deletes the 1st archived student instead of restoring it.
 * `delete 0` and `delete 1 2` are rejected.
 
 ### Scheduling a lesson: `schedule`
