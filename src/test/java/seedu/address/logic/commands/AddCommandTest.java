@@ -19,8 +19,11 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
+import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.ReadOnlyUserPrefs;
+import seedu.address.model.ResultViewScope;
+import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
 import seedu.address.testutil.PersonBuilder;
 
@@ -50,6 +53,19 @@ public class AddCommandTest {
         ModelStub modelStub = new ModelStubWithPerson(validPerson);
 
         assertThrows(CommandException.class, AddCommand.MESSAGE_DUPLICATE_PERSON, () -> addCommand.execute(modelStub));
+    }
+
+    @Test
+    public void execute_duplicateArchivedPerson_showsArchiveGuidance() {
+        Person archivedPerson = new PersonBuilder().withArchived(true).build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(archivedPerson);
+        Model model = new ModelManager(addressBook, new UserPrefs());
+        AddCommand addCommand = new AddCommand(new PersonBuilder(archivedPerson).withArchived(false).build());
+        String expectedMessage = "An archived student with this name already exists. "
+                + "Use `list archived`, then `unarchive INDEX` to restore them.";
+
+        assertThrows(CommandException.class, expectedMessage, () -> addCommand.execute(model));
     }
 
     @Test
@@ -141,6 +157,11 @@ public class AddCommandTest {
         public void updateFilteredPersonList(Predicate<Person> predicate) {
             throw new AssertionError("This method should not be called.");
         }
+
+        @Override
+        public void updateFilteredPersonList(Predicate<Person> predicate, ResultViewScope scope) {
+            throw new AssertionError("This method should not be called.");
+        }
     }
 
     /**
@@ -148,16 +169,23 @@ public class AddCommandTest {
      */
     private class ModelStubWithPerson extends ModelStub {
         private final Person person;
+        private final AddressBook addressBook = new AddressBook();
 
         ModelStubWithPerson(Person person) {
             requireNonNull(person);
             this.person = person;
+            addressBook.addPerson(person);
         }
 
         @Override
         public boolean hasPerson(Person person) {
             requireNonNull(person);
             return this.person.isSamePerson(person);
+        }
+
+        @Override
+        public ReadOnlyAddressBook getAddressBook() {
+            return addressBook;
         }
     }
 

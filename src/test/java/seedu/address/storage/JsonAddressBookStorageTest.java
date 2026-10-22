@@ -132,6 +132,20 @@ public class JsonAddressBookStorageTest {
     }
 
     @Test
+    public void readAndSaveAddressBook_archivedStudent_preservesArchiveState() throws Exception {
+        Path filePath = testFolder.resolve("ArchivedStudent.json");
+        AddressBook original = new AddressBook();
+        original.addPerson(new PersonBuilder().withName("Archived Student").withArchived(true).build());
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
+
+        storage.saveAddressBook(original);
+
+        AddressBook reloaded = new AddressBook(storage.readAddressBook().orElseThrow());
+        assertEquals(original, reloaded);
+        assertTrue(reloaded.getPersonList().get(0).isArchived());
+    }
+
+    @Test
     public void saveAddressBook_nullAddressBook_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> saveAddressBook(null, "SomeFile.json"));
     }

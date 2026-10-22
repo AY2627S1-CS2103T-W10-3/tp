@@ -18,6 +18,9 @@ public class Messages {
     public static final String MESSAGE_PERSONS_LISTED_OVERVIEW = "%1$d person(s) listed!";
     public static final String MESSAGE_DUPLICATE_FIELDS =
                 "Multiple values specified for the following single-valued field(s): ";
+    public static final String MESSAGE_DUPLICATE_ARCHIVED_PERSON =
+            "An archived student with this name already exists. "
+                    + "Use `list archived`, then `unarchive INDEX` to restore them.";
     public static final String NOT_PROVIDED = "Not provided";
     public static final String NOT_SCHEDULED = "Not scheduled";
 
