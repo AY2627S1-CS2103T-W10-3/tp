@@ -174,6 +174,8 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUC
   normalized student name are rejected without changing displayed or saved data.
 * Enclose a free-text value in double quotes if it contains separate prefix-like text, for example
   `a/"Block n/7"` or `s/"English l/Literature"`.
+* After a successful edit the full student list is shown again, so a `find` or `filter` view is cleared. For example,
+  `find Betsy` followed by `edit 1 p/91234567` ends with every student displayed rather than only the search results.
 
 Examples:
 * `edit 1 p/91234567 s/H2 Mathematics l/JC2` updates three fields of the first displayed student while preserving

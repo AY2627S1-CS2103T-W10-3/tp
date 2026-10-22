@@ -192,8 +192,11 @@ including its phone and email. Supplying a guardian phone or email is rejected w
 only a guardian phone or email preserves the guardian name and the other contact field.
 
 If parsing, validation, index checking, or duplicate detection fails, the model is not modified. After a successful
-command, `LogicManager` saves the updated address book. If saving fails, it restores the address book snapshot taken
-before command execution, keeping the in-memory display and saved data consistent.
+command, `LogicManager` saves the updated address book. If saving fails, it restores the in-memory address book
+snapshot taken before command execution, so the displayed data reverts to its previous state. This restores only the
+in-memory model: `FileUtil.writeToFile` writes directly to the existing file, so an `IOException` during writing can
+leave the file partially overwritten, and restoring the snapshot does not guarantee that the previously persisted data
+is preserved.
 
 ### Guardian details
 
