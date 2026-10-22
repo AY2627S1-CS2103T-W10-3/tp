@@ -125,7 +125,7 @@ How the parsing works:
 The `Model` component,
 
 * stores the address book data i.e., all `Person` objects (which are contained in a `UniquePersonList` object).
-* stores the `Person` objects selected by the current filter, such as search results, in a separate _filtered_ list. It exposes this list as an unmodifiable `ObservableList<Person>` that the UI can observe and bind to, so the UI updates when the list changes.
+* stores the `Person` objects selected by the current filter, such as search results, in a separate _filtered_ list, which can also be ordered, as `upcoming` does. It exposes this list as an unmodifiable `ObservableList<Person>` that the UI can observe and bind to, so the UI updates when the list changes.
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
@@ -779,7 +779,7 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
 * 2b. User requests to schedule, clear, archive, or delete a lesson's student at a displayed index.
 
-  * 2b1. TutorContacts acts on the student shown at that index in the upcoming list (UC08, UC09).
+  * 2b1. TutorContacts acts on the student shown at that index in the upcoming list (UC03, UC05, UC08, UC09).
 
   Use case ends.
 

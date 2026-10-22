@@ -64,6 +64,7 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 * Extraneous parameters for commands that take no parameters, such as `help`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
   `list` accepts only no argument or the exact argument `archived`; for example, `list 1` is rejected.
+  `upcoming` accepts no arguments; for example, `upcoming 3` is rejected.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </div>
