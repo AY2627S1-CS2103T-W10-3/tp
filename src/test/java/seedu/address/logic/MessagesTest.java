@@ -17,6 +17,7 @@ public class MessagesTest {
 
         assertEquals("Only Name; Phone: Not provided; Email: Not provided; Address: Not provided; "
                         + "Subject: Not provided; Education level: Not provided; "
+                        + "Learning focus: Not provided; Next action: Not provided; "
                         + "Guardian: Not provided; Guardian phone: Not provided; Guardian email: Not provided; Tags: ",
                 Messages.format(person));
     }
@@ -30,7 +31,21 @@ public class MessagesTest {
 
         assertEquals("Student Name; Phone: Not provided; Email: Not provided; Address: Not provided; "
                         + "Subject: H2 Mathematics; Education level: JC1; "
+                        + "Learning focus: Not provided; Next action: Not provided; "
                         + "Guardian: Guardian Name; Guardian phone: 81234567; "
                         + "Guardian email: guardian@example.com; Tags: ", Messages.format(person));
+    }
+
+    @Test
+    public void format_learningContext_showsBothValues() {
+        Person person = new PersonBuilder().withName("Student Name").withoutPhone().withoutEmail()
+                .withoutAddress().withTags().withLearningFocus("Fractions and ratios")
+                .withNextAction("Complete worksheet 2").build();
+
+        assertEquals("Student Name; Phone: Not provided; Email: Not provided; Address: Not provided; "
+                        + "Subject: Not provided; Education level: Not provided; "
+                        + "Learning focus: Fractions and ratios; Next action: Complete worksheet 2; "
+                        + "Guardian: Not provided; Guardian phone: Not provided; Guardian email: Not provided; Tags: ",
+                Messages.format(person));
     }
 }
