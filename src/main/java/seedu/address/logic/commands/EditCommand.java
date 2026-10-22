@@ -71,7 +71,7 @@ public class EditCommand extends Command {
 
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited person: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
-    public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
+    public static final String MESSAGE_DUPLICATE_PERSON = "This student already exists in TutorContacts.";
     public static final String MESSAGE_REQUIRES_ACTIVE_VIEW =
             "Edit can only be used from an active student view. Run `list` first.";
     public static final String MESSAGE_GUARDIAN_NAME_REQUIRED =
