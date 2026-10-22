@@ -40,6 +40,8 @@ public class HelpCommandTest {
         assertTrue(help.contains("help\n"));
         assertTrue(help.contains("exit\n"));
         assertTrue(help.contains("Guardian phone or email requires gn/"));
+        assertTrue(help.contains("An empty optional edit prefix clears that field"));
+        assertTrue(help.contains("Clearing gn/ also clears gp/ and ge/"));
         assertTrue(help.contains("Archived students remain saved until permanently deleted"));
     }
 }

@@ -191,6 +191,22 @@ public class LogicManagerTest {
     }
 
     @Test
+    public void execute_clearOptionalFields_persistsClearedValues() throws Exception {
+        logic.execute("add n/Alice Tan p/81234567 e/alice@example.com a/1 Main Street"
+                + " gn/Mary Tan gp/91234567 ge/mary@example.com s/Mathematics l/S3"
+                + " lf/Fractions na/Worksheet 1");
+
+        logic.execute("edit 1 p/ e/ a/ gn/ s/ l/ lf/ na/");
+
+        Person expected = new PersonBuilder().withName("Alice Tan").withoutPhone().withoutEmail()
+                .withoutAddress().withoutGuardian().withoutSubject().withoutEducationLevel()
+                .withoutLearningFocus().withoutNextAction().withTags().build();
+        ReadOnlyAddressBook savedAddressBook = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"))
+                .readAddressBook().orElseThrow();
+        assertEquals(List.of(expected), savedAddressBook.getPersonList());
+    }
+
+    @Test
     public void getFilteredPersonList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> logic.getFilteredPersonList().remove(0));
     }

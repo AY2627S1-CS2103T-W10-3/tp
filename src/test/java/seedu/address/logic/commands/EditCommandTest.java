@@ -224,6 +224,72 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_clearAllOptionalFields_success() {
+        Person original = new PersonBuilder().withName("Complete Student")
+                .withPhone("81234567").withEmail("student@example.com").withAddress("1 Main Street")
+                .withGuardian("Guardian Name", "82345678", "guardian@example.com")
+                .withSubject("Mathematics").withEducationLevel("S3")
+                .withLearningFocus("Fractions").withNextAction("Worksheet 1").withTags("active").build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(original);
+        Model actualModel = new ModelManager(addressBook, new UserPrefs());
+        Person clearedPerson = new PersonBuilder(original).withoutPhone().withoutEmail().withoutAddress()
+                .withoutGuardian().withoutSubject().withoutEducationLevel()
+                .withoutLearningFocus().withoutNextAction().withTags().build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withoutPhone().withoutEmail().withoutAddress().withoutGuardianName()
+                .withoutSubject().withoutEducationLevel().withoutLearningFocus().withoutNextAction()
+                .withTags().build();
+        Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
+        expectedModel.setPerson(original, clearedPerson);
+
+        assertCommandSuccess(new EditCommand(INDEX_FIRST_PERSON, descriptor), actualModel,
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(clearedPerson)), expectedModel);
+    }
+
+    @Test
+    public void execute_clearGuardianName_clearsGuardianContacts() {
+        Person original = new PersonBuilder().withName("Guardian Student")
+                .withGuardian("Guardian Name", "82345678", "guardian@example.com").build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(original);
+        Model actualModel = new ModelManager(addressBook, new UserPrefs());
+        Person clearedPerson = new PersonBuilder(original).withoutGuardian().build();
+        Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
+        expectedModel.setPerson(original, clearedPerson);
+
+        assertCommandSuccess(new EditCommand(INDEX_FIRST_PERSON,
+                        new EditPersonDescriptorBuilder().withoutGuardianName().build()), actualModel,
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(clearedPerson)), expectedModel);
+    }
+
+    @Test
+    public void execute_clearGuardianNameAndSetContact_failure() {
+        Person original = new PersonBuilder().withName("Guardian Student")
+                .withGuardian("Guardian Name", "82345678", "guardian@example.com").build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(original);
+        Model actualModel = new ModelManager(addressBook, new UserPrefs());
+        EditCommand command = new EditCommand(INDEX_FIRST_PERSON, new EditPersonDescriptorBuilder()
+                .withoutGuardianName().withGuardianPhone("83456789").build());
+
+        assertCommandFailure(command, actualModel, EditCommand.MESSAGE_GUARDIAN_NAME_REQUIRED);
+    }
+
+    @Test
+    public void execute_clearAlreadyAbsentField_success() {
+        Person original = new PersonBuilder().withName("Name Only").withoutPhone().build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(original);
+        Model actualModel = new ModelManager(addressBook, new UserPrefs());
+        Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
+
+        assertCommandSuccess(new EditCommand(INDEX_FIRST_PERSON,
+                        new EditPersonDescriptorBuilder().withoutPhone().build()), actualModel,
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(original)), expectedModel);
+    }
+
+    @Test
     public void execute_filteredList_success() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
 
