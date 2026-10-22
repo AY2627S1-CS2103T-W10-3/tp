@@ -64,6 +64,15 @@ public class LessonTest {
     }
 
     @Test
+    public void isOverdue() {
+        Lesson lesson = new Lesson("2026-10-30 16:00");
+
+        assertFalse(lesson.isOverdue(LocalDateTime.of(2026, 10, 30, 15, 59)));
+        assertTrue(lesson.isOverdue(LocalDateTime.of(2026, 10, 30, 16, 0)));
+        assertTrue(lesson.isOverdue(LocalDateTime.of(2026, 10, 31, 9, 0)));
+    }
+
+    @Test
     public void getValueAndToString_validLesson_returnsInputFormat() {
         Lesson lesson = new Lesson("2026-10-30 09:05");
 
