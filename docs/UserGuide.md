@@ -160,13 +160,15 @@ Example: `list`
 
 ### Understanding result views and indices
 
-`list`, `find`, and `filter` display an active-student result view, while `list archived` displays the archived-student
-result view. Every result view is numbered consecutively from 1 in the order shown. An index-based command acts on the
-student currently displayed with that index, rather than the student at the same position in the complete saved data.
+`list`, `find`, `filter`, and `upcoming` display an active-student result view, while `list archived` displays the
+archived-student result view. Every result view is numbered consecutively from 1 in the order shown. An index-based
+command acts on the student currently displayed with that index, rather than the student at the same position in the
+complete saved data. `upcoming` orders its results by lesson time; the other views use saved order.
 
 `edit`, `archive`, `schedule`, and `unschedule` are active-only commands. If the archived view is showing, run `list`
 before using one of them. `unarchive` works only in the archived view. `delete` works in either view and permanently
-removes the displayed record. Run `list` whenever you want to restore the complete active-student view.
+removes the displayed record. A new `list`, `find`, `filter`, or `upcoming` command replaces the previous result view.
+Run `list` whenever you want to restore the complete active-student view in saved order.
 
 ### Editing a student: `edit`
 

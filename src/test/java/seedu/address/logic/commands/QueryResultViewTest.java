@@ -31,6 +31,7 @@ public class QueryResultViewTest {
     private static final Clock CLOCK = Clock.fixed(
             LocalDateTime.of(2026, 10, 22, 16, 0).atZone(ZONE).toInstant(), ZONE);
     private static final Lesson FUTURE_LESSON = new Lesson("2099-10-30 16:00");
+    private static final Lesson LATER_LESSON = new Lesson("2099-11-02 09:30");
     private static final Person BOB = new PersonBuilder().withName("Bob")
             .withSubject("English").build();
     private static final Person ALICE = new PersonBuilder().withName("Alice")
@@ -128,6 +129,53 @@ public class QueryResultViewTest {
 
         assertEquals(List.of(BOB, ALICE, CARLA), model.getAddressBook().getPersonList());
         assertEquals(List.of(ALICE, CARLA), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_editAfterUpcoming_targetsDisplayedIndexAndRestoresFullView() throws Exception {
+        Person scheduledBob = BOB.withLesson(Optional.of(LATER_LESSON));
+        Person scheduledAlice = ALICE.withLesson(Optional.of(FUTURE_LESSON));
+        model.setPerson(BOB, scheduledBob);
+        model.setPerson(ALICE, scheduledAlice);
+        new UpcomingCommand(CLOCK).execute(model);
+        assertEquals(List.of(scheduledAlice, scheduledBob), model.getFilteredPersonList());
+
+        new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withPhone("91234567").build()).execute(model);
+
+        Person editedAlice = new PersonBuilder(scheduledAlice).withPhone("91234567").build();
+        assertEquals(List.of(scheduledBob, editedAlice, CARLA), model.getAddressBook().getPersonList());
+        assertEquals(List.of(scheduledBob, editedAlice, CARLA), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_upcomingAfterFind_replacesPreviousQueryAndOrdersLessons() throws Exception {
+        Person scheduledBob = BOB.withLesson(Optional.of(LATER_LESSON));
+        Person scheduledAlice = ALICE.withLesson(Optional.of(FUTURE_LESSON));
+        model.setPerson(BOB, scheduledBob);
+        model.setPerson(ALICE, scheduledAlice);
+        new FindCommand(new NameContainsKeywordsPredicate(List.of("bob"))).execute(model);
+        assertEquals(List.of(scheduledBob), model.getFilteredPersonList());
+
+        new UpcomingCommand(CLOCK).execute(model);
+
+        assertEquals(List.of(scheduledAlice, scheduledBob), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_filterAfterUpcoming_restoresSavedOrderForFilteredStudents() throws Exception {
+        Person scheduledBob = BOB.withLesson(Optional.of(LATER_LESSON));
+        Person scheduledAlice = ALICE.withLesson(Optional.of(FUTURE_LESSON));
+        model.setPerson(BOB, scheduledBob);
+        model.setPerson(ALICE, scheduledAlice);
+        new UpcomingCommand(CLOCK).execute(model);
+        assertEquals(List.of(scheduledAlice, scheduledBob), model.getFilteredPersonList());
+
+        PersonMatchesFiltersPredicate mathematics = new PersonMatchesFiltersPredicate(
+                Optional.of(new Subject("mathematics")), Optional.empty());
+        new FilterCommand(mathematics).execute(model);
+
+        assertEquals(List.of(scheduledAlice, CARLA), model.getFilteredPersonList());
     }
 
     @Test

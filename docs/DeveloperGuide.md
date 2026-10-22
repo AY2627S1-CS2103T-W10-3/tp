@@ -300,11 +300,12 @@ Design considerations:
 
 ### Query result views
 
-`ModelManager` exposes an unmodifiable `FilteredList<Person>` as the current result view and records whether its
-`ResultViewScope` is `ACTIVE` or `ARCHIVED`. `list`, `find`, and `filter` use the active scope; `list archived` uses the
-archived scope. The scope predicate is combined with the command's query predicate, so archived students cannot appear
-in active queries. JavaFX keeps the original source-list order when applying these predicates, while `PersonListPanel`
-derives each visible one-based index from the filtered list position.
+`ModelManager` maintains a `FilteredList<Person>` wrapped by a `SortedList<Person>` and exposes the sorted list as the
+current result view. It records whether the view's `ResultViewScope` is `ACTIVE` or `ARCHIVED`. `list`, `find`, `filter`,
+and `upcoming` use the active scope; `list archived` uses the archived scope. The scope predicate is combined with the
+command's query predicate, so archived students cannot appear in active queries. Updating a filter first clears any
+existing comparator, which returns `list`, `find`, `filter`, and `list archived` to saved order. `upcoming` then applies
+its lesson-time comparator. `PersonListPanel` derives each visible one-based index from the displayed list position.
 
 Partial-name matching converts both names and keywords using `Locale.ROOT` and applies substring matching. Multiple
 keywords use OR. Because each `Person` is evaluated once by one predicate, repeated or overlapping keywords cannot
@@ -312,11 +313,13 @@ duplicate a result. Subject and education-level filters use exact normalized mat
 with AND; an absent field cannot satisfy a supplied criterion.
 
 Index-based commands obtain their target from `Model#getFilteredPersonList`, so edit, delete, archive, schedule, and
-unschedule after a query act on the record carrying the displayed index. `list` restores the complete active view.
+unschedule after a query act on the record carrying the displayed index, including when `upcoming` has reordered the
+students. A new query replaces the previous predicate and order; `list` restores the complete active view in saved
+order.
 Active-only mutations check the scope before resolving an index: `edit`, `archive`, `schedule`, and `unschedule` reject
 the archived view, while `unarchive` requires it. Permanent `delete` remains available in either scope. Cross-feature
-tests verify targets selected from find, filter, and archived views, including archive removal and lesson changes. The
-upcoming view will extend this contract when its owning feature is integrated.
+tests verify targets selected from find, filter, upcoming, and archived views, including archive removal, lesson
+changes, sorted indices, and the reset from one query to another.
 
 The sequence diagram below focuses on the model interactions when a filter creates a result view and an edit targets
 its first displayed student. Parsing and the resulting UI refresh are omitted to keep the diagram within this scope.
