@@ -157,6 +157,14 @@ public class JsonAdaptedPersonTest {
     }
 
     @Test
+    public void toModelType_archivedStudentWithLesson_keepsBoth() throws Exception {
+        Person expected = new PersonBuilder(BENSON).withLesson("2026-10-30 16:00").withArchived(true).build();
+
+        assertEquals(expected, JsonUtil.fromJsonString(JsonUtil.toJsonString(new JsonAdaptedPerson(expected)),
+                JsonAdaptedPerson.class).toModelType());
+    }
+
+    @Test
     public void toModelType_pastLesson_returnsPersonWithLesson() throws Exception {
         JsonAdaptedPerson person = JsonUtil.fromJsonString(
                 "{\"name\":\"Student\",\"lesson\":\"2020-01-01 09:00\"}", JsonAdaptedPerson.class);

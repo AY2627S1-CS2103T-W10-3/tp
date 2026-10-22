@@ -221,6 +221,25 @@ public class PersonTest {
     }
 
     @Test
+    public void withLesson_archivedStudent_keepsArchiveState() {
+        Person archivedAlice = ALICE.withArchived(true);
+        Person scheduledAlice = archivedAlice.withLesson(Optional.of(new Lesson("2026-10-30 16:00")));
+
+        assertTrue(scheduledAlice.isArchived());
+        assertTrue(scheduledAlice.withLesson(Optional.empty()).isArchived());
+        assertEquals(archivedAlice, scheduledAlice.withLesson(Optional.empty()));
+    }
+
+    @Test
+    public void withArchived_scheduledStudent_keepsLesson() {
+        Optional<Lesson> lesson = Optional.of(new Lesson("2026-10-30 16:00"));
+        Person scheduledAlice = ALICE.withLesson(lesson);
+
+        assertEquals(lesson, scheduledAlice.withArchived(true).getLesson());
+        assertEquals(scheduledAlice, scheduledAlice.withArchived(true).withArchived(false));
+    }
+
+    @Test
     public void toStringMethod() {
         String expected = Person.class.getCanonicalName() + "{name=" + ALICE.getName() + ", phone=" + ALICE.getPhone()
                 + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", guardian="
