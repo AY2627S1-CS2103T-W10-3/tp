@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.function.Predicate;
 
 import seedu.address.model.Model;
+import seedu.address.model.ResultViewScope;
 import seedu.address.model.person.Lesson;
 import seedu.address.model.person.Person;
 
@@ -59,9 +60,10 @@ public class UpcomingCommand extends Command {
                 .map(lesson -> lesson.isAfter(now))
                 .orElse(false);
 
-        model.updateFilteredPersonList(hasUpcomingLesson);
+        model.updateFilteredPersonList(hasUpcomingLesson, ResultViewScope.ACTIVE);
         model.updateSortedPersonList(LESSON_ORDER);
-        assert model.getFilteredPersonList().stream().allMatch(hasUpcomingLesson);
+        assert model.getFilteredPersonList().stream().allMatch(person -> hasUpcomingLesson.test(person)
+                && !person.isArchived());
 
         int count = model.getFilteredPersonList().size();
         if (count == 0) {
