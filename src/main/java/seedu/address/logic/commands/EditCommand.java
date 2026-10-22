@@ -113,7 +113,7 @@ public class EditCommand extends Command {
 
         return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress,
                 personToEdit.getGuardian(), personToEdit.getSubject(), personToEdit.getEducationLevel(),
-                updatedLearningFocus, updatedNextAction, updatedTags);
+                updatedLearningFocus, updatedNextAction, personToEdit.getLesson(), updatedTags);
     }
 
     @Override

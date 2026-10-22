@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Collections;
@@ -29,18 +30,31 @@ public class Person {
     private final Optional<NextAction> nextAction;
 
     // Data fields
+    private final Optional<Lesson> lesson;
     private final Optional<Address> address;
     private final Set<Tag> tags = new HashSet<>();
 
     /**
-     * Constructs a person with a required name and optional contact details.
+     * Constructs a person with a required name, optional contact details, and no scheduled lesson.
      * Optional wrappers and tags must not be null; use empty values for omitted details.
      */
     public Person(Name name, Optional<Phone> phone, Optional<Email> email, Optional<Address> address,
             Optional<Guardian> guardian, Optional<Subject> subject, Optional<EducationLevel> educationLevel,
             Optional<LearningFocus> learningFocus, Optional<NextAction> nextAction, Set<Tag> tags) {
+        this(name, phone, email, address, guardian, subject, educationLevel, learningFocus, nextAction,
+                Optional.empty(), tags);
+    }
+
+    /**
+     * Constructs a person with a required name, optional contact details, and an optional scheduled lesson.
+     * Optional wrappers and tags must not be null; use empty values for omitted details.
+     */
+    public Person(Name name, Optional<Phone> phone, Optional<Email> email, Optional<Address> address,
+            Optional<Guardian> guardian, Optional<Subject> subject, Optional<EducationLevel> educationLevel,
+            Optional<LearningFocus> learningFocus, Optional<NextAction> nextAction, Optional<Lesson> lesson,
+            Set<Tag> tags) {
         requireAllNonNull(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, tags);
+                nextAction, lesson, tags);
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -50,6 +64,7 @@ public class Person {
         this.educationLevel = educationLevel;
         this.learningFocus = learningFocus;
         this.nextAction = nextAction;
+        this.lesson = lesson;
         this.tags.addAll(tags);
     }
 
@@ -87,6 +102,17 @@ public class Person {
 
     public Optional<NextAction> getNextAction() {
         return nextAction;
+    }
+
+    public Optional<Lesson> getLesson() {
+        return lesson;
+    }
+
+    /** Returns a copy of this student with {@code lesson} as the scheduled lesson, replacing any existing one. */
+    public Person withLesson(Optional<Lesson> lesson) {
+        requireNonNull(lesson);
+        return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
+                nextAction, lesson, tags);
     }
 
     /**
@@ -135,6 +161,7 @@ public class Person {
                 && educationLevel.equals(otherPerson.educationLevel)
                 && learningFocus.equals(otherPerson.learningFocus)
                 && nextAction.equals(otherPerson.nextAction)
+                && lesson.equals(otherPerson.lesson)
                 && tags.equals(otherPerson.tags);
     }
 
@@ -142,7 +169,7 @@ public class Person {
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, tags);
+                nextAction, lesson, tags);
     }
 
     @Override
@@ -157,6 +184,7 @@ public class Person {
                 .add("educationLevel", educationLevel)
                 .add("learningFocus", learningFocus)
                 .add("nextAction", nextAction)
+                .add("lesson", lesson)
                 .add("tags", tags)
                 .toString();
     }

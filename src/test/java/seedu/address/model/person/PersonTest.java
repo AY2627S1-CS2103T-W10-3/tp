@@ -179,6 +179,22 @@ public class PersonTest {
         // different tags -> returns false
         editedAlice = new PersonBuilder(ALICE).withTags(VALID_TAG_HUSBAND).build();
         assertFalse(ALICE.equals(editedAlice));
+
+        // different lesson -> returns false
+        editedAlice = new PersonBuilder(ALICE).withLesson("2026-10-30 16:00").build();
+        assertFalse(ALICE.equals(editedAlice));
+    }
+
+    @Test
+    public void withLesson_replacesOnlyLesson() {
+        Lesson lesson = new Lesson("2026-10-30 16:00");
+        Person scheduledAlice = ALICE.withLesson(Optional.of(lesson));
+
+        assertEquals(Optional.of(lesson), scheduledAlice.getLesson());
+        assertEquals(new PersonBuilder(ALICE).withLesson("2026-10-30 16:00").build(), scheduledAlice);
+        assertTrue(scheduledAlice.isSamePerson(ALICE));
+        assertEquals(ALICE, scheduledAlice.withLesson(Optional.empty()));
+        assertThrows(NullPointerException.class, () -> ALICE.withLesson(null));
     }
 
     @Test
@@ -187,7 +203,7 @@ public class PersonTest {
                 + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", guardian="
                 + ALICE.getGuardian() + ", subject=" + ALICE.getSubject() + ", educationLevel="
                 + ALICE.getEducationLevel() + ", learningFocus=" + ALICE.getLearningFocus() + ", nextAction="
-                + ALICE.getNextAction() + ", tags=" + ALICE.getTags() + "}";
+                + ALICE.getNextAction() + ", lesson=" + ALICE.getLesson() + ", tags=" + ALICE.getTags() + "}";
         assertEquals(expected, ALICE.toString());
     }
 }

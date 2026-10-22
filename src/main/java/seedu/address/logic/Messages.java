@@ -19,6 +19,7 @@ public class Messages {
     public static final String MESSAGE_DUPLICATE_FIELDS =
                 "Multiple values specified for the following single-valued field(s): ";
     public static final String NOT_PROVIDED = "Not provided";
+    public static final String NOT_SCHEDULED = "Not scheduled";
 
     /**
      * Returns an error message indicating the duplicate prefixes.
@@ -52,6 +53,8 @@ public class Messages {
                 .append(person.getLearningFocus().map(focus -> focus.getValue()).orElse(NOT_PROVIDED))
                 .append("; Next action: ")
                 .append(person.getNextAction().map(action -> action.getValue()).orElse(NOT_PROVIDED))
+                .append("; Lesson: ")
+                .append(person.getLesson().map(lesson -> lesson.getValue()).orElse(NOT_SCHEDULED))
                 .append("; Guardian: ")
                 .append(person.getGuardian().map(guardian -> guardian.getName().fullName).orElse(NOT_PROVIDED))
                 .append("; Guardian phone: ")

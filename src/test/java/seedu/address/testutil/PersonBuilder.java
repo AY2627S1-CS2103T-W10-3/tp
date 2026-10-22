@@ -9,6 +9,7 @@ import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Guardian;
 import seedu.address.model.person.LearningFocus;
+import seedu.address.model.person.Lesson;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Person;
@@ -38,6 +39,7 @@ public class PersonBuilder {
     private Optional<EducationLevel> educationLevel;
     private Optional<LearningFocus> learningFocus;
     private Optional<NextAction> nextAction;
+    private Optional<Lesson> lesson;
     private Set<Tag> tags;
 
     /**
@@ -53,6 +55,7 @@ public class PersonBuilder {
         educationLevel = Optional.empty();
         learningFocus = Optional.empty();
         nextAction = Optional.empty();
+        lesson = Optional.empty();
         tags = new HashSet<>();
     }
 
@@ -69,6 +72,7 @@ public class PersonBuilder {
         educationLevel = personToCopy.getEducationLevel();
         learningFocus = personToCopy.getLearningFocus();
         nextAction = personToCopy.getNextAction();
+        lesson = personToCopy.getLesson();
         tags = new HashSet<>(personToCopy.getTags());
     }
 
@@ -197,10 +201,22 @@ public class PersonBuilder {
         return this;
     }
 
+    /** Sets the student's scheduled lesson. */
+    public PersonBuilder withLesson(String lesson) {
+        this.lesson = Optional.of(new Lesson(lesson));
+        return this;
+    }
+
+    /** Omits the student's scheduled lesson. */
+    public PersonBuilder withoutLesson() {
+        lesson = Optional.empty();
+        return this;
+    }
+
     /** Builds a {@code Person} with the configured fields. */
     public Person build() {
         return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, tags);
+                nextAction, lesson, tags);
     }
 
 }
