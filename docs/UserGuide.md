@@ -32,6 +32,8 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 
    * `add n/John Doe p/98765432 gn/Jane Doe gp/91234567` : Adds a student named `John Doe` with optional student and guardian contact details.
 
+   * `add n/John Doe lf/Fractions na/Complete worksheet 2` : Adds a student with optional learning context.
+
    * `archive 1` : Moves the 1st student shown out of active workflows without deleting the record.
 
    * `delete 3` : Deletes the 3rd student shown in the current list.

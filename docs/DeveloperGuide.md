@@ -685,6 +685,38 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
+**Use case: UC07 — Query active students**
+
+**MSS**
+
+1. User requests to find students by one or more partial-name keywords, or to filter by subject or education level.
+2. TutorContacts validates the supplied query.
+3. TutorContacts displays each matching active student once, in stable order, with consecutive indices.
+4. User runs an index-based command on one of the displayed students.
+5. TutorContacts applies the command to the student carrying that index in the current result view.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. No query criterion is supplied, or a criterion is invalid.
+
+  * 2a1. TutorContacts reports the required format or validation rule.
+
+  Use case ends.
+
+* 3a. No active student matches.
+
+  * 3a1. TutorContacts reports that no student matches and displays an empty result view.
+
+  Use case ends.
+
+* 4a. User requests the complete active list.
+
+  * 4a1. TutorContacts restores all active students in saved order with consecutive indices.
+
+  Use case resumes at step 4.
+
 **Use case: UC08 — Schedule a lesson**
 
 **MSS**
@@ -811,38 +843,6 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
   * 2b1. TutorContacts acts on the student shown at that index in the upcoming list (UC03, UC05, UC08, UC09).
 
   Use case ends.
-
-**Use case: UC07 — Query active students**
-
-**MSS**
-
-1. User requests to find students by one or more partial-name keywords, or to filter by subject or education level.
-2. TutorContacts validates the supplied query.
-3. TutorContacts displays each matching active student once, in stable order, with consecutive indices.
-4. User runs an index-based command on one of the displayed students.
-5. TutorContacts applies the command to the student carrying that index in the current result view.
-
-    Use case ends.
-
-**Extensions**
-
-* 2a. No query criterion is supplied, or a criterion is invalid.
-
-  * 2a1. TutorContacts reports the required format or validation rule.
-
-  Use case ends.
-
-* 3a. No active student matches.
-
-  * 3a1. TutorContacts reports that no student matches and displays an empty result view.
-
-  Use case ends.
-
-* 4a. User requests the complete active list.
-
-  * 4a1. TutorContacts restores all active students in saved order with consecutive indices.
-
-  Use case resumes at step 4.
 
 ### Non-Functional Requirements
 
