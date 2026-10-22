@@ -27,7 +27,9 @@ public class HelpCommandTest {
         assertTrue(help.contains("[gn/GUARDIAN_NAME]"));
         assertTrue(help.contains("[lf/LEARNING_FOCUS]"));
         assertTrue(help.contains("[na/NEXT_ACTION]"));
-        assertTrue(help.contains("edit INDEX"));
+        assertTrue(help.contains("edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] "
+                + "[gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] "
+                + "[s/SUBJECT] [l/EDUCATION_LEVEL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]..."));
         assertTrue(help.contains("archive INDEX"));
         assertTrue(help.contains("list\n"));
         assertTrue(help.contains("list archived"));

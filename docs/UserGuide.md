@@ -157,21 +157,22 @@ Example: `list`
 
 Edits an existing student in TutorContacts.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`
+Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [s/SUBJECT] [l/EDUCATION_LEVEL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`
 
 * Edits the student at the specified `INDEX`. The index refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
+* Guardian, subject, education-level, learning-focus, and next-action fields use the same validation rules as `add`.
+  The resulting guardian phone or email still requires a guardian name.
 * `lf/` and `na/` use the same validation and whitespace normalization as `add`. An omitted prefix preserves its
   existing value. In the current version, an explicitly empty `lf/` or `na/` is rejected rather than clearing it.
 * When editing tags, all of the student's existing tags are removed; adding tags is not cumulative.
 * To remove all of a student's tags, enter `t/` without a tag after it.
-* Subject, education-level, and guardian details cannot currently be changed using `edit`. To change one of these
-  details, delete the student record and add it again with the corrected information.
 * Enclose an address in double quotes if it contains separate prefix-like text, for example `a/"Block n/7"`.
 
 Examples:
-* `edit 1 p/91234567 e/johndoe@example.com` edits the phone number and email address of the 1st student.
+* `edit 1 p/91234567 e/johndoe@example.com s/Mathematics l/S3` edits the contact and tutoring details of the 1st student.
+* `edit 1 gn/Jane Doe gp/81234567 ge/jane@example.com` updates the 1st student's guardian details.
 * `edit 1 lf/Linear equations na/Review exercise 2` updates both learning fields.
 * `edit 2 n/Betsy Crower t/` changes the name of the 2nd student to `Betsy Crower` and clears all existing tags.
 
@@ -295,7 +296,7 @@ Action | Format, Examples
 **Archive** | `archive INDEX`<br> e.g., `archive 1`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
-**Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`<br> e.g., `edit 2 lf/Algebra na/Review exercise 2`
+**Edit** | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [s/SUBJECT] [l/EDUCATION_LEVEL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`<br> e.g., `edit 2 lf/Algebra na/Review exercise 2`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List** | `list` or `list archived`
 **Unarchive** | `unarchive INDEX`<br> e.g., `unarchive 1`
