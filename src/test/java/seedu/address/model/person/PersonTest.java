@@ -25,13 +25,15 @@ public class PersonTest {
     @Test
     public void constructor_nameOnly_hasEmptyOptionalDetails() {
         Person person = new Person(new Name("Only Name"), Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty(), Set.of());
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Set.of());
         assertEquals(Optional.empty(), person.getPhone());
         assertEquals(Optional.empty(), person.getEmail());
         assertEquals(Optional.empty(), person.getAddress());
         assertEquals(Optional.empty(), person.getGuardian());
         assertEquals(Optional.empty(), person.getSubject());
         assertEquals(Optional.empty(), person.getEducationLevel());
+        assertEquals(Optional.empty(), person.getLearningFocus());
+        assertEquals(Optional.empty(), person.getNextAction());
         assertTrue(person.getTags().isEmpty());
     }
 
@@ -39,7 +41,7 @@ public class PersonTest {
     public void constructor_nullName_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
                 new Person(null, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Set.of()));
+                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Set.of()));
     }
 
     @Test
@@ -84,6 +86,25 @@ public class PersonTest {
         assertNotEquals(withTutoringDetails, new PersonBuilder(withTutoringDetails).withoutSubject().build());
         assertNotEquals(withTutoringDetails,
                 new PersonBuilder(withTutoringDetails).withoutEducationLevel().build());
+    }
+
+    @Test
+    public void learningContext_preservedByCopyBuilderAndIncludedInEquality() {
+        Person withLearningContext = new PersonBuilder().withLearningFocus("Fractions and ratios")
+                .withNextAction("Complete worksheet 2").build();
+        Person copied = new PersonBuilder(withLearningContext).build();
+
+        assertEquals(withLearningContext, copied);
+        assertEquals("Fractions and ratios",
+                withLearningContext.getLearningFocus().orElseThrow().getValue());
+        assertEquals("Complete worksheet 2",
+                withLearningContext.getNextAction().orElseThrow().getValue());
+        assertNotEquals(withLearningContext,
+                new PersonBuilder(withLearningContext).withoutLearningFocus().build());
+        assertNotEquals(withLearningContext,
+                new PersonBuilder(withLearningContext).withoutNextAction().build());
+        assertTrue(withLearningContext.isSamePerson(
+                new PersonBuilder(withLearningContext).withoutLearningFocus().withoutNextAction().build()));
     }
 
     @Test
@@ -165,7 +186,8 @@ public class PersonTest {
         String expected = Person.class.getCanonicalName() + "{name=" + ALICE.getName() + ", phone=" + ALICE.getPhone()
                 + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", guardian="
                 + ALICE.getGuardian() + ", subject=" + ALICE.getSubject() + ", educationLevel="
-                + ALICE.getEducationLevel() + ", tags=" + ALICE.getTags() + "}";
+                + ALICE.getEducationLevel() + ", learningFocus=" + ALICE.getLearningFocus() + ", nextAction="
+                + ALICE.getNextAction() + ", tags=" + ALICE.getTags() + "}";
         assertEquals(expected, ALICE.toString());
     }
 }

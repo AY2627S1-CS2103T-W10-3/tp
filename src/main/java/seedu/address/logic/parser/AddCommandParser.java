@@ -83,7 +83,8 @@ public class AddCommandParser implements Parser<AddCommand> {
                 ? Optional.of(ParserUtil.parseEducationLevel(educationLevelValue.get())) : Optional.empty();
         Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
 
-        Person person = new Person(name, phone, email, address, guardian, subject, educationLevel, tagList);
+        Person person = new Person(name, phone, email, address, guardian, subject, educationLevel,
+                Optional.empty(), Optional.empty(), tagList);
 
         return new AddCommand(person);
     }

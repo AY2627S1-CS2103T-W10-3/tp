@@ -8,7 +8,9 @@ import seedu.address.model.person.Address;
 import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Guardian;
+import seedu.address.model.person.LearningFocus;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Subject;
@@ -34,6 +36,8 @@ public class PersonBuilder {
     private Optional<Guardian> guardian;
     private Optional<Subject> subject;
     private Optional<EducationLevel> educationLevel;
+    private Optional<LearningFocus> learningFocus;
+    private Optional<NextAction> nextAction;
     private Set<Tag> tags;
 
     /**
@@ -47,6 +51,8 @@ public class PersonBuilder {
         guardian = Optional.empty();
         subject = Optional.empty();
         educationLevel = Optional.empty();
+        learningFocus = Optional.empty();
+        nextAction = Optional.empty();
         tags = new HashSet<>();
     }
 
@@ -61,6 +67,8 @@ public class PersonBuilder {
         guardian = personToCopy.getGuardian();
         subject = personToCopy.getSubject();
         educationLevel = personToCopy.getEducationLevel();
+        learningFocus = personToCopy.getLearningFocus();
+        nextAction = personToCopy.getNextAction();
         tags = new HashSet<>(personToCopy.getTags());
     }
 
@@ -165,8 +173,33 @@ public class PersonBuilder {
         return this;
     }
 
+    /** Sets the student's current learning focus. */
+    public PersonBuilder withLearningFocus(String learningFocus) {
+        this.learningFocus = Optional.of(new LearningFocus(learningFocus));
+        return this;
+    }
+
+    /** Omits the student's current learning focus. */
+    public PersonBuilder withoutLearningFocus() {
+        learningFocus = Optional.empty();
+        return this;
+    }
+
+    /** Sets the student's next tutoring action. */
+    public PersonBuilder withNextAction(String nextAction) {
+        this.nextAction = Optional.of(new NextAction(nextAction));
+        return this;
+    }
+
+    /** Omits the student's next tutoring action. */
+    public PersonBuilder withoutNextAction() {
+        nextAction = Optional.empty();
+        return this;
+    }
+
     public Person build() {
-        return new Person(name, phone, email, address, guardian, subject, educationLevel, tags);
+        return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
+                nextAction, tags);
     }
 
 }

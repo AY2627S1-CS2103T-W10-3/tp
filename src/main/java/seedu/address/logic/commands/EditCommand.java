@@ -102,7 +102,8 @@ public class EditCommand extends Command {
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
 
         return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress,
-                personToEdit.getGuardian(), personToEdit.getSubject(), personToEdit.getEducationLevel(), updatedTags);
+                personToEdit.getGuardian(), personToEdit.getSubject(), personToEdit.getEducationLevel(),
+                personToEdit.getLearningFocus(), personToEdit.getNextAction(), updatedTags);
     }
 
     @Override
