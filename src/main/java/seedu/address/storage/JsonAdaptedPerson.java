@@ -16,6 +16,7 @@ import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Guardian;
 import seedu.address.model.person.LearningFocus;
+import seedu.address.model.person.Lesson;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Person;
@@ -41,6 +42,7 @@ class JsonAdaptedPerson {
     private final String educationLevel;
     private final String learningFocus;
     private final String nextAction;
+    private final String lesson;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
 
     /**
@@ -56,7 +58,8 @@ class JsonAdaptedPerson {
             @JsonProperty("subject") String subject,
             @JsonProperty("educationLevel") String educationLevel,
             @JsonProperty("learningFocus") String learningFocus,
-            @JsonProperty("nextAction") String nextAction) {
+            @JsonProperty("nextAction") String nextAction,
+            @JsonProperty("lesson") String lesson) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -68,6 +71,7 @@ class JsonAdaptedPerson {
         this.educationLevel = educationLevel;
         this.learningFocus = learningFocus;
         this.nextAction = nextAction;
+        this.lesson = lesson;
         if (tags != null) {
             this.tags.addAll(tags);
         }
@@ -79,14 +83,14 @@ class JsonAdaptedPerson {
     public JsonAdaptedPerson(String name, String phone, String email, String address, List<JsonAdaptedTag> tags,
             String guardianName, String guardianPhone, String guardianEmail, String subject, String educationLevel) {
         this(name, phone, email, address, tags, guardianName, guardianPhone, guardianEmail, subject,
-                educationLevel, null, null);
+                educationLevel, null, null, null);
     }
 
     /**
      * Constructs a person without guardian fields, for older saved data and focused tests.
      */
     public JsonAdaptedPerson(String name, String phone, String email, String address, List<JsonAdaptedTag> tags) {
-        this(name, phone, email, address, tags, null, null, null, null, null, null, null);
+        this(name, phone, email, address, tags, null, null, null, null, null, null, null, null);
     }
 
     /**
@@ -104,6 +108,7 @@ class JsonAdaptedPerson {
         educationLevel = source.getEducationLevel().map(EducationLevel::getValue).orElse(null);
         learningFocus = source.getLearningFocus().map(LearningFocus::getValue).orElse(null);
         nextAction = source.getNextAction().map(NextAction::getValue).orElse(null);
+        lesson = source.getLesson().map(Lesson::getValue).orElse(null);
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
@@ -186,9 +191,14 @@ class JsonAdaptedPerson {
         }
         final Optional<NextAction> modelNextAction = Optional.ofNullable(nextAction).map(NextAction::new);
 
+        if (lesson != null && !Lesson.isValidLesson(lesson)) {
+            throw new IllegalValueException(Lesson.MESSAGE_CONSTRAINTS);
+        }
+        final Optional<Lesson> modelLesson = Optional.ofNullable(lesson).map(Lesson::new);
+
         final Set<Tag> modelTags = new HashSet<>(personTags);
         return new Person(modelName, modelPhone, modelEmail, modelAddress, modelGuardian, modelSubject,
-                modelEducationLevel, modelLearningFocus, modelNextAction, modelTags);
+                modelEducationLevel, modelLearningFocus, modelNextAction, modelLesson, modelTags);
     }
 
 }

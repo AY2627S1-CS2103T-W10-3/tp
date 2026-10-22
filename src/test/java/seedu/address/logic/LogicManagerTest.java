@@ -28,6 +28,7 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.person.Lesson;
 import seedu.address.model.person.Person;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
@@ -157,6 +159,40 @@ public class LogicManagerTest {
         assertEquals(2, logic.getFilteredPersonList().size());
         assertEquals(2, new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"))
                 .readAddressBook().orElseThrow().getPersonList().size());
+    }
+
+    @Test
+    public void execute_scheduleAndUnschedule_savesLessonChanges() throws Exception {
+        logic.execute("add n/Alice Tan");
+        logic.execute("schedule 1 at/2099-12-31 16:00");
+
+        JsonAddressBookStorage savedStorage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
+        assertEquals(Optional.of(new Lesson("2099-12-31 16:00")),
+                savedStorage.readAddressBook().orElseThrow().getPersonList().get(0).getLesson());
+
+        logic.execute("unschedule 1");
+        assertEquals(Optional.empty(),
+                savedStorage.readAddressBook().orElseThrow().getPersonList().get(0).getLesson());
+    }
+
+    @Test
+    public void execute_scheduleWhenStorageThrowsIoException_restoresOriginalLesson() {
+        ModelManager originalModel = new ModelManager();
+        originalModel.addPerson(new PersonBuilder(AMY).withLesson("2099-01-01 10:00").build());
+
+        assertCommandFailureForExceptionFromStorage(DUMMY_IO_EXCEPTION, String.format(
+                LogicManager.FILE_OPS_ERROR_FORMAT, DUMMY_IO_EXCEPTION.getMessage()),
+                "schedule 1 at/2099-12-31 16:00", originalModel);
+    }
+
+    @Test
+    public void execute_unscheduleWhenStorageThrowsAdException_restoresOriginalLesson() {
+        ModelManager originalModel = new ModelManager();
+        originalModel.addPerson(new PersonBuilder(AMY).withLesson("2099-01-01 10:00").build());
+
+        assertCommandFailureForExceptionFromStorage(DUMMY_AD_EXCEPTION, String.format(
+                LogicManager.FILE_OPS_PERMISSION_ERROR_FORMAT, DUMMY_AD_EXCEPTION.getMessage()), "unschedule 1",
+                originalModel);
     }
 
     @Test
