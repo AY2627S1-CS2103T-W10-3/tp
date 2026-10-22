@@ -301,7 +301,12 @@ Design considerations:
     next command.
   * Cons: A lesson whose time passes while the list is showing stays in the list, marked overdue, until `upcoming`
     is run again.
-* **Alternative 2:** Re-filter the upcoming list on a timer.
+* **Alternative 2:** Re-filter the upcoming list after every command.
+  * Pros: The list never contains a lesson that has already started.
+  * Cons: A command can remove students it did not act on. For example, `unschedule 2` could also remove the first
+    student because their lesson started meanwhile. Keeping that student in the list with the overdue marker shows
+    the tutor that the lesson was missed, so they can reschedule or clear it.
+* **Alternative 3:** Re-filter the upcoming list on a timer.
   * Pros: Lessons leave the list as soon as they start.
   * Cons: The indices can change while the user is typing, so a command such as `delete 2` could act on a different
     student from the one the user saw.
