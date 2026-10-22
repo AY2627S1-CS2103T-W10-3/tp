@@ -36,6 +36,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.AddCommandParser;
@@ -212,6 +213,17 @@ public class LogicManagerTest {
         assertCommandFailureForExceptionFromStorage(DUMMY_AD_EXCEPTION, String.format(
                 LogicManager.FILE_OPS_PERMISSION_ERROR_FORMAT, DUMMY_AD_EXCEPTION.getMessage()), "delete 1",
                 originalModel);
+    }
+
+    @Test
+    public void execute_editWhenStorageThrowsIoException_restoresOriginalRecords() {
+        ModelManager originalModel = new ModelManager();
+        originalModel.addPerson(AMY);
+        String editCommand = EditCommand.COMMAND_WORD + " 1" + GUARDIAN_NAME_DESC_AMY
+                + GUARDIAN_PHONE_DESC_AMY + SUBJECT_DESC_AMY + EDUCATION_LEVEL_DESC_AMY;
+
+        assertCommandFailureForExceptionFromStorage(DUMMY_IO_EXCEPTION, String.format(
+                LogicManager.FILE_OPS_ERROR_FORMAT, DUMMY_IO_EXCEPTION.getMessage()), editCommand, originalModel);
     }
 
     @Test
