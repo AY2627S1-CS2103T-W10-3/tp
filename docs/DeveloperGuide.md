@@ -187,6 +187,46 @@ The `add` command accepts `s/` for a subject and `l/` for an education level. `P
 
 `JsonAdaptedPerson` stores the two values as separate nullable JSON properties, so valid data files created before these fields were introduced remain loadable. `PersonCard` and command feedback display `Not provided` for an absent value without writing that placeholder to storage. Commands that replace a `Person`, such as `edit`, preserve both values unchanged.
 
+### Lesson scheduling
+
+TutorContacts represents a student's next lesson as an immutable `Lesson` value object wrapping a `LocalDateTime` with
+minute precision. `Person` stores it as `Optional<Lesson>`, so a student has either one scheduled lesson or none.
+Lesson times are parsed with the strict pattern `uuuu-MM-dd HH:mm`, so dates that do not exist, such as `2026-02-30`,
+are rejected instead of being adjusted to a nearby date.
+
+`schedule INDEX at/YYYY-MM-DD HH:mm` is parsed by `ScheduleCommandParser`, which uses the shared
+`CommandArgumentTokenizer` for the `at/` prefix and `ParserUtil#parseLesson` to validate the format. Whether the lesson
+is in the future is checked by `ScheduleCommand` rather than the parser, because it depends on the time at which the
+command runs. `ScheduleCommand` compares the lesson against `LocalDateTime.now(clock)`. The application uses the
+system clock in the computer's default time zone; tests pass a fixed `Clock` so that time-based behaviour, such as a
+lesson in the current minute being rejected, is deterministic.
+
+The sequence diagram below shows how `schedule 1 at/2026-10-30 16:00` is executed.
+
+<img src="images/ScheduleSequenceDiagram.png" width="800" />
+
+`ScheduleCommand` resolves the index against the currently displayed list, so it acts on the student the user can see.
+It replaces the student using `Person#withLesson`, which copies every other field. Rescheduling therefore replaces the
+previous lesson, and the result message includes the previous time. `UnscheduleCommand` replaces the student with a
+copy whose lesson is empty, and reports an error if there is no lesson to clear. Commands that rebuild a `Person`, such
+as `edit`, carry the existing lesson forward unchanged.
+
+`JsonAdaptedPerson` stores the lesson as a nullable `lesson` string in the same format the user types. Older data files
+without the property load as students without a lesson. A stored lesson is not required to be in the future, because a
+lesson that was scheduled earlier remains valid after its time passes. If saving fails after a lesson change,
+`LogicManager` restores the address book snapshot taken before the command ran, so the displayed and saved lessons
+stay unchanged.
+
+Design considerations:
+
+* **Alternative 1 (current choice):** Store one optional lesson per student.
+  * Pros: Matches the target user's need to see the next arrangement for each student, keeps commands short, and
+    keeps the data file easy to edit.
+  * Cons: Lesson history and recurring lessons cannot be represented.
+* **Alternative 2:** Store a list of lessons per student.
+  * Pros: Supports history and multiple future lessons.
+  * Cons: Requires extra commands and indices to identify a particular lesson, which is outside the agreed scope.
+
 ## **Documentation, logging, testing, dev-ops**
 
 * [Documentation guide](Documentation.md)
@@ -232,6 +272,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* *` | private tutor | find a student by name | retrieve a record without scanning the full list |
 | `* *` | private tutor | tag and filter students by subject or education level | retrieve a relevant group of students quickly |
 | `* *` | private tutor | record upcoming lessons | keep track of tutoring arrangements |
+| `* *` | private tutor | reschedule or clear a student's lesson | keep lesson arrangements accurate when plans change |
 | `* *` | private tutor | record learning focuses and follow-up actions | remember what should be covered in future lessons |
 | `*` | private tutor | archive former students | retain old records without showing them in my active list |
 | `*` | private tutor | record group tuition arrangements | manage students who attend lessons together |
@@ -356,6 +397,88 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
+**Use case: UC04 — Schedule a lesson**
+
+**MSS**
+
+1. User requests to list students.
+2. TutorContacts displays the students with their current indices.
+3. User requests to schedule a lesson for the student at a specified index, at a specified date and time.
+4. TutorContacts validates the index, date, and time.
+5. TutorContacts sets the lesson as the student's scheduled lesson.
+6. TutorContacts saves the updated student data.
+7. TutorContacts displays the student's lesson and reports that the operation was successful.
+
+    Use case ends.
+
+**Extensions**
+
+* 3a. The supplied index, date, or time is not in the required format, or the date does not exist.
+
+  * 3a1. TutorContacts reports the required format.
+
+  Use case resumes at step 2.
+
+* 4a. The supplied index does not identify a displayed student.
+
+  * 4a1. TutorContacts reports that no student exists at that index.
+
+  Use case resumes at step 2.
+
+* 4b. The supplied date and time is not in the future.
+
+  * 4b1. TutorContacts reports that the lesson must be in the future.
+
+  Use case resumes at step 2.
+
+* 5a. The student already has a scheduled lesson.
+
+  * 5a1. TutorContacts replaces the existing lesson with the new lesson.
+  * 5a2. TutorContacts reports the previous lesson time with the new lesson.
+
+  Use case resumes at step 6.
+
+* 6a. TutorContacts cannot save the updated data.
+
+  * 6a1. TutorContacts reports the save failure.
+  * 6a2. TutorContacts leaves the displayed and saved lessons unchanged.
+
+  Use case ends.
+
+**Use case: UC05 — Clear a lesson**
+
+**MSS**
+
+1. User requests to list students.
+2. TutorContacts displays the students with their current indices.
+3. User requests to clear the lesson of the student at a specified index.
+4. TutorContacts clears the student's lesson.
+5. TutorContacts saves the updated student data.
+6. TutorContacts reports the cleared lesson time.
+
+    Use case ends.
+
+**Extensions**
+
+* 3a. The supplied index is not a positive integer or does not identify a displayed student.
+
+  * 3a1. TutorContacts reports the error.
+
+  Use case resumes at step 2.
+
+* 3b. The selected student has no scheduled lesson.
+
+  * 3b1. TutorContacts reports that the student has no scheduled lesson.
+
+  Use case ends.
+
+* 5a. TutorContacts cannot save the updated data.
+
+  * 5a1. TutorContacts reports the save failure.
+  * 5a2. TutorContacts leaves the displayed and saved lessons unchanged.
+
+  Use case ends.
+
 ### Non-Functional Requirements
 
 1. TutorContacts should work on Windows, Linux, and macOS systems that have Java `25` installed.
@@ -378,6 +501,7 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * **Education level**: The student's current school level, such as `P6`, `S3`, or `JC1`.
 * **Guardian**: A parent or other responsible adult whose contact details are associated with a student.
 * **Independent private tutor**: A tutor who manages their own students and tutoring arrangements rather than relying on an organization to manage them.
+* **Lesson**: The single upcoming tutoring session recorded for a student, as a local date and time with minute precision.
 * **Student record**: The information stored for one student, including the student's name and any recorded contact, guardian, subject, and education-level details.
 * **Subject**: The academic subject for which the student is receiving tuition.
 
@@ -445,6 +569,44 @@ testers are expected to do more *exploratory* testing.
 
    1. Test case: Focus the student list using the mouse or Tab, then use arrow keys and Page Up/Page Down.<br>
       Expected: Normal list selection and scrolling work; command entry remains available after returning focus to the command box.
+
+### Scheduling and clearing lessons
+
+1. Scheduling a lesson
+
+   1. Prerequisites: List all students using the `list` command. The first student has no lesson.
+
+   1. Test case: `schedule 1 at/2099-10-30 16:00`<br>
+      Expected: The first card shows `Lesson: 2099-10-30 16:00`. The result panel reports the scheduled lesson.
+
+   1. Test case: `schedule 1 at/2099-11-02 09:30`<br>
+      Expected: The lesson is replaced. The result panel shows the new time and the previous time.
+
+   1. Test case: `schedule 1 at/2020-01-01 10:00`<br>
+      Expected: The lesson is unchanged. The result panel reports that the lesson must be in the future.
+
+   1. Other incorrect schedule commands to try: `schedule 1 at/2099-02-30 10:00`, `schedule 1 at/2099-10-30 24:00`,
+      `schedule 1 at/30-10-2099 16:00`, `schedule 1`, `schedule 0 at/2099-10-30 16:00`,
+      `schedule x at/2099-10-30 16:00` (where x is larger than the list size)<br>
+      Expected: No lesson changes. The result panel shows error details.
+
+1. Clearing a lesson
+
+   1. Prerequisites: The first student has a scheduled lesson.
+
+   1. Test case: `unschedule 1`<br>
+      Expected: The first card shows `Lesson: Not scheduled`. The result panel shows the cleared lesson time.
+
+   1. Test case: `unschedule 1` again<br>
+      Expected: The result panel reports that the student has no scheduled lesson.
+
+1. Lessons after editing and restarting
+
+   1. Schedule a lesson for a student, then run `edit` on that student to change the phone number.<br>
+      Expected: The lesson is still shown on the card.
+
+   1. Close TutorContacts and launch it again from the same folder.<br>
+      Expected: The lesson is restored from `data/addressbook.json`.
 
 ### Deleting a student
 
