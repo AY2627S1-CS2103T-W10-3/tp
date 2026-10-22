@@ -16,7 +16,7 @@ public final class Lesson {
 
     public static final String FORMAT = "YYYY-MM-DD HH:mm";
     public static final String MESSAGE_CONSTRAINTS = "Lesson time should be a valid date and 24-hour time in the "
-            + "format " + FORMAT + ", e.g. 2026-10-30 16:00";
+            + "format " + FORMAT + ", e.g. 2099-10-30 16:00";
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm")
             .withResolverStyle(ResolverStyle.STRICT);

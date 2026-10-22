@@ -31,7 +31,7 @@ public class ScheduleCommand extends Command {
             + ": Schedules the next lesson for the student identified by the index number used in the displayed "
             + "student list, replacing any existing lesson. The time uses this computer's local time.\n"
             + "Parameters: INDEX (must be a positive integer) " + PREFIX_LESSON + Lesson.FORMAT + "\n"
-            + "Example: " + COMMAND_WORD + " 1 " + PREFIX_LESSON + "2026-10-30 16:00";
+            + "Example: " + COMMAND_WORD + " 1 " + PREFIX_LESSON + "2099-10-30 16:00";
 
     public static final String MESSAGE_SCHEDULE_SUCCESS = "Scheduled lesson for %1$s: %2$s";
     public static final String MESSAGE_RESCHEDULE_SUCCESS = "Rescheduled lesson for %1$s: %2$s (previously %3$s)";

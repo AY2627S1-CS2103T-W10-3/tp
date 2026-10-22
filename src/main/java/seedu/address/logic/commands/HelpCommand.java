@@ -37,7 +37,7 @@ public class HelpCommand extends Command {
             + "add n/Alex Tan s/H2 Mathematics l/JC1 gn/Mary Tan gp/81234567\n"
             + "list\n"
             + "delete 1\n"
-            + "schedule 1 at/2026-10-30 16:00\n"
+            + "schedule 1 at/2099-10-30 16:00\n"
             + "Invalid: add n/Alex Tan gp/81234567 (guardian name missing)\n";
 
     @Override
