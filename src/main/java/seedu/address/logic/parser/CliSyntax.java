@@ -18,5 +18,6 @@ public class CliSyntax {
     public static final Prefix PREFIX_EDUCATION_LEVEL = new Prefix("l/");
     public static final Prefix PREFIX_LEARNING_FOCUS = new Prefix("lf/");
     public static final Prefix PREFIX_NEXT_ACTION = new Prefix("na/");
+    public static final Prefix PREFIX_LESSON = new Prefix("at/");
 
 }
