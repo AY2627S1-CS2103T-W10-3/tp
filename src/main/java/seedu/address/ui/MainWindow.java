@@ -195,6 +195,9 @@ public class MainWindow extends UiPart<Stage> {
             logger.info("An error occurred while executing command: " + commandText);
             resultDisplay.setFeedbackToUser(e.getMessage());
             throw e;
+        } finally {
+            // Keeps time-dependent card details, such as overdue lessons, current after every command.
+            personListPanel.refreshCards();
         }
     }
 }

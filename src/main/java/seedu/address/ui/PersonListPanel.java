@@ -36,6 +36,14 @@ public class PersonListPanel extends UiPart<Region> {
     }
 
     /**
+     * Redraws the displayed cards after the current change has been processed, so that time-dependent details,
+     * such as whether a lesson is overdue, reflect the current time.
+     */
+    public void refreshCards() {
+        Platform.runLater(personListView::refresh);
+    }
+
+    /**
      * Refreshes the displayed cards when {@code change} is one that {@code ListView} does not redraw by itself.
      * The refresh runs after {@code ListView} has processed the change, so it never redraws with an outdated count.
      */

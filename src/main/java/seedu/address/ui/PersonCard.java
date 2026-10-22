@@ -82,8 +82,9 @@ public class PersonCard extends UiPart<Region> {
                 + person.getLearningFocus().map(value -> value.getValue()).orElse(Messages.NOT_PROVIDED));
         nextAction.setText("Next action: "
                 + person.getNextAction().map(value -> value.getValue()).orElse(Messages.NOT_PROVIDED));
-        lesson.setText(formatLesson(person.getLesson(), LocalDateTime.now()));
-        if (person.getLesson().map(value -> value.isOverdue(LocalDateTime.now())).orElse(false)) {
+        LocalDateTime now = LocalDateTime.now();
+        lesson.setText(formatLesson(person.getLesson(), now));
+        if (person.getLesson().map(value -> value.isOverdue(now)).orElse(false)) {
             lesson.getStyleClass().add(OVERDUE_STYLE_CLASS);
         }
         guardianName.setText("Guardian: " + person.getGuardian()
