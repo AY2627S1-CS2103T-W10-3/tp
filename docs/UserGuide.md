@@ -201,23 +201,23 @@ Format: `schedule INDEX at/YYYY-MM-DD HH:mm`
 
 * Schedules a lesson for the student at the specified `INDEX`, which refers to the index number shown in the displayed
   student list. The index **must be a positive integer** 1, 2, 3, …​
-* The date and time use this computer's local time, with a 24-hour clock. For example, `2026-10-30 16:00` is 4pm on
-  30 October 2026.
+* The date and time use this computer's local time, with a 24-hour clock. For example, `2099-10-30 16:00` is 4pm on
+  30 October 2099.
 * The lesson must be in the future. A time in the current minute or earlier is rejected.
 * If the student already has a lesson, the new lesson replaces it. The result panel shows the previous lesson time.
-* Dates that do not exist, such as `2026-02-30`, and times outside `00:00`–`23:59` are rejected.
+* Dates that do not exist, such as `2099-02-30`, and times outside `00:00`–`23:59` are rejected.
 * Extra spaces around the value and between the date and time are ignored.
-* The student card shows the lesson as `Lesson: 2026-10-30 16:00`, or `Lesson: Not scheduled` when the student has no
+* The student card shows the lesson as `Lesson: 2099-10-30 16:00`, or `Lesson: Not scheduled` when the student has no
   lesson.
 
 Examples:
-* `list` followed by `schedule 2 at/2026-10-30 16:00` schedules a lesson for the 2nd student.
-* `find Betsy` followed by `schedule 1 at/2026-11-02 09:30` schedules a lesson for the 1st student in the results of
+* `list` followed by `schedule 2 at/2099-10-30 16:00` schedules a lesson for the 2nd student.
+* `find Betsy` followed by `schedule 1 at/2099-11-02 09:30` schedules a lesson for the 1st student in the results of
   the `find` command.
 * Invalid, because the time has passed: `schedule 1 at/2020-01-01 10:00`
-* Invalid, because the date does not exist: `schedule 1 at/2026-02-30 10:00`
-* Invalid, because the format is different: `schedule 1 at/30-10-2026 16:00` or `schedule 1 at/2026-10-30 4pm`
-* Invalid, because the time is missing: `schedule 1 at/2026-10-30`
+* Invalid, because the date does not exist: `schedule 1 at/2099-02-30 10:00`
+* Invalid, because the format is different: `schedule 1 at/30-10-2099 16:00` or `schedule 1 at/2099-10-30 4pm`
+* Invalid, because the time is missing: `schedule 1 at/2099-10-30`
 
 <div markdown="span" class="alert alert-info">:information_source: **Note:**
 TutorContacts records only one upcoming lesson per student. Recurring lessons, reminders, lesson history, attendance,
@@ -295,7 +295,7 @@ Action | Format, Examples
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List** | `list`
-**Schedule** | `schedule INDEX at/YYYY-MM-DD HH:mm`<br> e.g., `schedule 1 at/2026-10-30 16:00`
+**Schedule** | `schedule INDEX at/YYYY-MM-DD HH:mm`<br> e.g., `schedule 1 at/2099-10-30 16:00`
 **Unschedule** | `unschedule INDEX`<br> e.g., `unschedule 1`
 **Help** | `help`
 **Exit** | `exit`

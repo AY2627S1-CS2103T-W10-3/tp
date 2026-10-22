@@ -191,7 +191,7 @@ The `add` command accepts `s/` for a subject and `l/` for an education level. `P
 
 TutorContacts represents a student's next lesson as an immutable `Lesson` value object wrapping a `LocalDateTime` with
 minute precision. `Person` stores it as `Optional<Lesson>`, so a student has either one scheduled lesson or none.
-Lesson times are parsed with the strict pattern `uuuu-MM-dd HH:mm`, so dates that do not exist, such as `2026-02-30`,
+Lesson times are parsed with the strict pattern `uuuu-MM-dd HH:mm`, so dates that do not exist, such as `2099-02-30`,
 are rejected instead of being adjusted to a nearby date.
 
 `schedule INDEX at/YYYY-MM-DD HH:mm` is parsed by `ScheduleCommandParser`, which uses the shared
@@ -201,7 +201,7 @@ command runs. `ScheduleCommand` compares the lesson against `LocalDateTime.now(c
 system clock in the computer's default time zone; tests pass a fixed `Clock` so that time-based behaviour, such as a
 lesson in the current minute being rejected, is deterministic.
 
-The sequence diagram below shows how `schedule 1 at/2026-10-30 16:00` is executed.
+The sequence diagram below shows how `schedule 1 at/2099-10-30 16:00` is executed.
 
 <img src="images/ScheduleSequenceDiagram.png" width="800" />
 
