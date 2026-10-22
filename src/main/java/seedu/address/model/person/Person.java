@@ -27,6 +27,7 @@ public class Person {
     private final Optional<EducationLevel> educationLevel;
     private final Optional<LearningFocus> learningFocus;
     private final Optional<NextAction> nextAction;
+    private final boolean archived;
 
     // Data fields
     private final Optional<Address> address;
@@ -38,7 +39,7 @@ public class Person {
      */
     public Person(Name name, Optional<Phone> phone, Optional<Email> email, Optional<Address> address,
             Optional<Guardian> guardian, Optional<Subject> subject, Optional<EducationLevel> educationLevel,
-            Optional<LearningFocus> learningFocus, Optional<NextAction> nextAction, Set<Tag> tags) {
+            Optional<LearningFocus> learningFocus, Optional<NextAction> nextAction, boolean archived, Set<Tag> tags) {
         requireAllNonNull(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
                 nextAction, tags);
         this.name = name;
@@ -50,6 +51,7 @@ public class Person {
         this.educationLevel = educationLevel;
         this.learningFocus = learningFocus;
         this.nextAction = nextAction;
+        this.archived = archived;
         this.tags.addAll(tags);
     }
 
@@ -87,6 +89,17 @@ public class Person {
 
     public Optional<NextAction> getNextAction() {
         return nextAction;
+    }
+
+    /** Returns whether this student is archived. */
+    public boolean isArchived() {
+        return archived;
+    }
+
+    /** Returns a copy of this student with the requested archive state. */
+    public Person withArchived(boolean archived) {
+        return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
+                nextAction, archived, tags);
     }
 
     /**
@@ -135,6 +148,7 @@ public class Person {
                 && educationLevel.equals(otherPerson.educationLevel)
                 && learningFocus.equals(otherPerson.learningFocus)
                 && nextAction.equals(otherPerson.nextAction)
+                && archived == otherPerson.archived
                 && tags.equals(otherPerson.tags);
     }
 
@@ -142,7 +156,7 @@ public class Person {
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, tags);
+                nextAction, archived, tags);
     }
 
     @Override
@@ -157,6 +171,7 @@ public class Person {
                 .add("educationLevel", educationLevel)
                 .add("learningFocus", learningFocus)
                 .add("nextAction", nextAction)
+                .add("archived", archived)
                 .add("tags", tags)
                 .toString();
     }
