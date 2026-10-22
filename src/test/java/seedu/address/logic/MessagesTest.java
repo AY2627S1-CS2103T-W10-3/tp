@@ -11,6 +11,12 @@ import seedu.address.testutil.PersonBuilder;
 public class MessagesTest {
 
     @Test
+    public void userFacingMessages_useStudentTerminology() {
+        assertEquals("The student index provided is invalid.", Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+        assertEquals("%1$d student(s) listed!", Messages.MESSAGE_PERSONS_LISTED_OVERVIEW);
+    }
+
+    @Test
     public void format_nameOnly_showsMissingDetailsForDisplay() {
         Person person = new PersonBuilder().withName("Only Name").withoutPhone().withoutEmail()
                 .withoutAddress().withTags().build();
