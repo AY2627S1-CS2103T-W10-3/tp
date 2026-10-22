@@ -25,6 +25,7 @@ public class HelpCommand extends Command {
             + "Only n/NAME is required. All other add fields are optional and may appear in any order.\n"
             + "Use each add prefix once. Surrounding whitespace is ignored; repeated spaces in names, "
             + "subjects, and addresses are collapsed.\n"
+            + "Wrap a value containing a prefix-like token in double quotes, e.g. a/\"Block n/7\".\n"
             + "Student names are unique after case and whitespace normalization. "
             + "Different students may share contact and guardian details.\n"
             + "Guardian phone or email requires gn/. Education levels: P1-P6, S1-S5, JC1-JC2.\n\n"

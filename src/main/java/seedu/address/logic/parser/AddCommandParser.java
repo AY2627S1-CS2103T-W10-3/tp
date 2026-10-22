@@ -43,11 +43,11 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     public AddCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap =
-                AddCommandTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG,
-                        PREFIX_GUARDIAN_NAME, PREFIX_GUARDIAN_PHONE, PREFIX_GUARDIAN_EMAIL, PREFIX_SUBJECT,
-                        PREFIX_EDUCATION_LEVEL);
+                CommandArgumentTokenizer.tokenize(args, AddCommand.COMMAND_WORD, PREFIX_NAME, PREFIX_PHONE,
+                        PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG, PREFIX_GUARDIAN_NAME, PREFIX_GUARDIAN_PHONE,
+                        PREFIX_GUARDIAN_EMAIL, PREFIX_SUBJECT, PREFIX_EDUCATION_LEVEL);
 
-        if (!arePrefixesPresent(argMultimap, PREFIX_NAME)) {
+        if (!argMultimap.getPreamble().isBlank() || !arePrefixesPresent(argMultimap, PREFIX_NAME)) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
         }
 

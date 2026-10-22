@@ -117,6 +117,26 @@ public class AddCommandParserTest {
     }
 
     @Test
+    public void parse_prefixLikeTextInsideFreeText_success() {
+        Person withLongPrefixLikeText = new PersonBuilder().withName("Alice").withoutPhone().withoutEmail()
+                .withoutAddress().withoutGuardian().withSubject("A Level/Mathematics")
+                .withoutEducationLevel().withTags().build();
+        assertParseSuccess(parser, " n/Alice s/A Level/Mathematics", new AddCommand(withLongPrefixLikeText));
+
+        Person withQuotedPrefixLikeText = new PersonBuilder().withName("Alice").withoutPhone().withoutEmail()
+                .withAddress("Block n/7 x/West").withoutGuardian().withSubject("A l/Mathematics")
+                .withoutEducationLevel().withTags().build();
+        assertParseSuccess(parser, " n/Alice a/\"Block n/7 x/West\" s/\"A l/Mathematics\"",
+                new AddCommand(withQuotedPrefixLikeText));
+    }
+
+    @Test
+    public void parse_unclosedQuotedValue_failure() {
+        assertParseFailure(parser, " n/Alice a/\"Block n/7",
+                "Unclosed quoted value in add command.");
+    }
+
+    @Test
     public void parse_multipleErrors_reportsStructuralErrorBeforeValueError() {
         assertParseFailure(parser, "surprise n/Bob Choo p/abc p/123", String.format(
                 MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));

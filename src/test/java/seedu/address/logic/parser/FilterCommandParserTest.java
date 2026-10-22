@@ -32,6 +32,13 @@ public class FilterCommandParserTest {
     }
 
     @Test
+    public void parse_prefixLikeTextInsideSubject_success() {
+        assertParseSuccess(parser, " s/A Level/Mathematics", command("A Level/Mathematics", null));
+        assertParseSuccess(parser, " s/\"A l/Mathematics x/Extension\"",
+                command("A l/Mathematics x/Extension", null));
+    }
+
+    @Test
     public void parse_educationLevelOnly_success() {
         assertParseSuccess(parser, " l/jc1", command(null, "JC1"));
     }

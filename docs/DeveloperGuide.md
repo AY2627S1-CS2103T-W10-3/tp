@@ -159,7 +159,11 @@ This section describes some noteworthy details on how certain features are imple
 
 ### Add command validation and offline help
 
-`AddCommandTokenizer` scans for supported prefix tokens at the start of an argument or after whitespace. It rejects text before the first prefix and unknown prefix-like tokens, then stores field values in an `ArgumentMultimap`. This lets `AddCommandParser` accept the ten MVP prefixes in any order without treating an unknown token as part of the preceding value.
+`CommandArgumentTokenizer` scans for one- or two-character lower-case prefix tokens at the start of an argument or
+after whitespace. It is shared by `add`, `edit`, and `filter`, rejects unsupported tokens, and stores the preamble and
+field values in an `ArgumentMultimap`. Text inside a pair of double quotes is treated as one field value, so a subject
+or address can contain text such as `l/` or `n/` without being split into another field. The enclosing quotes are not
+stored. Longer slash-terminated words such as `Level/` are ordinary text rather than CLI prefixes.
 
 Validation follows a fixed order: token structure, required `n/`, repeated prefixes, guardian-name dependency, then individual field values. Duplicate-prefix errors list the repeated tokens in a stable order. Names, subjects, and addresses have surrounding whitespace removed and internal whitespace collapsed before validation. `Person#isSamePerson` compares names after the same whitespace normalization and case folding; phone, email, and guardian details do not determine whether two students are duplicates. An invalid command fails before `AddCommand` can update the model or save data.
 

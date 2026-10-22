@@ -77,8 +77,8 @@ public class EditCommandParserTest {
         // invalid arguments being parsed as preamble
         assertParseFailure(parser, "1 some random string", MESSAGE_INVALID_FORMAT);
 
-        // invalid prefix being parsed as preamble
-        assertParseFailure(parser, "1 i/ string", MESSAGE_INVALID_FORMAT);
+        // unsupported prefix
+        assertParseFailure(parser, "1 i/string", "Unsupported prefix in edit command: i/");
     }
 
     @Test
@@ -161,6 +161,19 @@ public class EditCommandParserTest {
         descriptor = new EditPersonDescriptorBuilder().withTags(VALID_TAG_FRIEND).build();
         expectedCommand = new EditCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
+    }
+
+    @Test
+    public void parse_prefixLikeTextInsideAddress_success() {
+        EditPersonDescriptor longPrefixDescriptor = new EditPersonDescriptorBuilder()
+                .withAddress("A Level/Mathematics Centre").build();
+        assertParseSuccess(parser, "1 a/A Level/Mathematics Centre",
+                new EditCommand(INDEX_FIRST_PERSON, longPrefixDescriptor));
+
+        EditPersonDescriptor quotedPrefixDescriptor = new EditPersonDescriptorBuilder()
+                .withAddress("Block n/7 x/West").build();
+        assertParseSuccess(parser, "1 a/\"Block n/7 x/West\"",
+                new EditCommand(INDEX_FIRST_PERSON, quotedPrefixDescriptor));
     }
 
     @Test
