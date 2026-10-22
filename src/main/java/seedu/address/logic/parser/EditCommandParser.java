@@ -63,42 +63,84 @@ public class EditCommandParser implements Parser<EditCommand> {
                     normalizeFreeText(argMultimap.getValue(PREFIX_NAME).get())));
         }
         if (argMultimap.getValue(PREFIX_PHONE).isPresent()) {
-            editPersonDescriptor.setPhone(ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get()));
+            String value = argMultimap.getValue(PREFIX_PHONE).get();
+            if (value.isEmpty()) {
+                editPersonDescriptor.clearPhone();
+            } else {
+                editPersonDescriptor.setPhone(ParserUtil.parsePhone(value));
+            }
         }
         if (argMultimap.getValue(PREFIX_EMAIL).isPresent()) {
-            editPersonDescriptor.setEmail(ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get()));
+            String value = argMultimap.getValue(PREFIX_EMAIL).get();
+            if (value.isEmpty()) {
+                editPersonDescriptor.clearEmail();
+            } else {
+                editPersonDescriptor.setEmail(ParserUtil.parseEmail(value));
+            }
         }
         if (argMultimap.getValue(PREFIX_ADDRESS).isPresent()) {
-            editPersonDescriptor.setAddress(ParserUtil.parseAddress(
-                    normalizeFreeText(argMultimap.getValue(PREFIX_ADDRESS).get())));
+            String value = argMultimap.getValue(PREFIX_ADDRESS).get();
+            if (value.isEmpty()) {
+                editPersonDescriptor.clearAddress();
+            } else {
+                editPersonDescriptor.setAddress(ParserUtil.parseAddress(normalizeFreeText(value)));
+            }
         }
         if (argMultimap.getValue(PREFIX_GUARDIAN_NAME).isPresent()) {
-            editPersonDescriptor.setGuardianName(ParserUtil.parseName(
-                    normalizeFreeText(argMultimap.getValue(PREFIX_GUARDIAN_NAME).get())));
+            String value = argMultimap.getValue(PREFIX_GUARDIAN_NAME).get();
+            if (value.isEmpty()) {
+                editPersonDescriptor.clearGuardianName();
+            } else {
+                editPersonDescriptor.setGuardianName(ParserUtil.parseName(normalizeFreeText(value)));
+            }
         }
         if (argMultimap.getValue(PREFIX_GUARDIAN_PHONE).isPresent()) {
-            editPersonDescriptor.setGuardianPhone(ParserUtil.parsePhone(
-                    argMultimap.getValue(PREFIX_GUARDIAN_PHONE).get()));
+            String value = argMultimap.getValue(PREFIX_GUARDIAN_PHONE).get();
+            if (value.isEmpty()) {
+                editPersonDescriptor.clearGuardianPhone();
+            } else {
+                editPersonDescriptor.setGuardianPhone(ParserUtil.parsePhone(value));
+            }
         }
         if (argMultimap.getValue(PREFIX_GUARDIAN_EMAIL).isPresent()) {
-            editPersonDescriptor.setGuardianEmail(ParserUtil.parseEmail(
-                    argMultimap.getValue(PREFIX_GUARDIAN_EMAIL).get()));
+            String value = argMultimap.getValue(PREFIX_GUARDIAN_EMAIL).get();
+            if (value.isEmpty()) {
+                editPersonDescriptor.clearGuardianEmail();
+            } else {
+                editPersonDescriptor.setGuardianEmail(ParserUtil.parseEmail(value));
+            }
         }
         if (argMultimap.getValue(PREFIX_SUBJECT).isPresent()) {
-            editPersonDescriptor.setSubject(ParserUtil.parseSubject(
-                    normalizeFreeText(argMultimap.getValue(PREFIX_SUBJECT).get())));
+            String value = argMultimap.getValue(PREFIX_SUBJECT).get();
+            if (value.isEmpty()) {
+                editPersonDescriptor.clearSubject();
+            } else {
+                editPersonDescriptor.setSubject(ParserUtil.parseSubject(normalizeFreeText(value)));
+            }
         }
         if (argMultimap.getValue(PREFIX_EDUCATION_LEVEL).isPresent()) {
-            editPersonDescriptor.setEducationLevel(ParserUtil.parseEducationLevel(
-                    argMultimap.getValue(PREFIX_EDUCATION_LEVEL).get()));
+            String value = argMultimap.getValue(PREFIX_EDUCATION_LEVEL).get();
+            if (value.isEmpty()) {
+                editPersonDescriptor.clearEducationLevel();
+            } else {
+                editPersonDescriptor.setEducationLevel(ParserUtil.parseEducationLevel(value));
+            }
         }
         if (argMultimap.getValue(PREFIX_LEARNING_FOCUS).isPresent()) {
-            editPersonDescriptor.setLearningFocus(
-                    ParserUtil.parseLearningFocus(argMultimap.getValue(PREFIX_LEARNING_FOCUS).get()));
+            String value = argMultimap.getValue(PREFIX_LEARNING_FOCUS).get();
+            if (value.isEmpty()) {
+                editPersonDescriptor.clearLearningFocus();
+            } else {
+                editPersonDescriptor.setLearningFocus(ParserUtil.parseLearningFocus(value));
+            }
         }
         if (argMultimap.getValue(PREFIX_NEXT_ACTION).isPresent()) {
-            editPersonDescriptor.setNextAction(
-                    ParserUtil.parseNextAction(argMultimap.getValue(PREFIX_NEXT_ACTION).get()));
+            String value = argMultimap.getValue(PREFIX_NEXT_ACTION).get();
+            if (value.isEmpty()) {
+                editPersonDescriptor.clearNextAction();
+            } else {
+                editPersonDescriptor.setNextAction(ParserUtil.parseNextAction(value));
+            }
         }
         parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editPersonDescriptor::setTags);
 
