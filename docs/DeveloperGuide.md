@@ -245,12 +245,12 @@ keywords use OR. Because each `Person` is evaluated once by one predicate, repea
 duplicate a result. Subject and education-level filters use exact normalized matching and combine two supplied fields
 with AND; an absent field cannot satisfy a supplied criterion.
 
-Index-based commands obtain their target from `Model#getFilteredPersonList`, so edit, delete, and archive after a query
-act on the record carrying the displayed index. `list` restores the complete active view. Active-only mutations check
-the scope before resolving an index: `edit` and `archive` reject the archived view, while `unarchive` requires it.
-Permanent `delete` remains available in either scope. Cross-feature tests verify that archive targets a filtered index,
-removes the student from the active result, and that archived-view indices select the displayed record for deletion.
-The upcoming view will extend this contract when its owning feature is integrated.
+Index-based commands obtain their target from `Model#getFilteredPersonList`, so edit, delete, archive, schedule, and
+unschedule after a query act on the record carrying the displayed index. `list` restores the complete active view.
+Active-only mutations check the scope before resolving an index: `edit`, `archive`, `schedule`, and `unschedule` reject
+the archived view, while `unarchive` requires it. Permanent `delete` remains available in either scope. Cross-feature
+tests verify targets selected from find, filter, and archived views, including archive removal and lesson changes. The
+upcoming view will extend this contract when its owning feature is integrated.
 
 The sequence diagram below focuses on the model interactions when a filter creates a result view and an edit targets
 its first displayed student. Parsing and the resulting UI refresh are omitted to keep the diagram within this scope.
@@ -550,13 +550,6 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * 4a. User requests the complete active list.
 
   * 4a1. TutorContacts restores all active students in saved order with consecutive indices.
-
-  Use case resumes at step 4.
-
-* 4b. User requests the archived list.
-
-  * 4b1. TutorContacts displays archived students in saved order with consecutive indices.
-  * 4b2. User may restore a displayed record, or permanently delete it, using its archived-view index.
 
   Use case resumes at step 4.
 

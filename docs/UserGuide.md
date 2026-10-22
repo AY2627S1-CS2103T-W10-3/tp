@@ -224,41 +224,11 @@ Format: `delete INDEX`
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, …​
 * Missing, malformed, zero, negative, extra, or out-of-range indices are rejected.
-* `delete` permanently removes the displayed record. From `list archived`, use `unarchive` instead if you want to
-  restore the student to active views.
 
 Examples:
 * `list` followed by `delete 2` deletes the 2nd student in TutorContacts.
 * `find Bernice` followed by `delete 1` deletes the 1st student in the results of the `find` command.
 * `delete 0` and `delete 1 2` are rejected.
-
-### Archiving a student: `archive`
-
-Removes a former student from active workflows without deleting their record.
-
-Format: `archive INDEX`
-
-* Archives the student at the specified index in the current active result view, including a view produced by `find`
-  or `filter`.
-* The archived student no longer appears in `list`, `find`, or `filter`, but all stored details are retained.
-* This command works only in an active result view. Run `list` first if the archived view is showing.
-
-Example: `find alex` followed by `archive 1` archives the first displayed matching student.
-
-### Viewing and restoring archived students: `list archived`, `unarchive`
-
-Displays archived students or restores one to active workflows.
-
-Formats:
-* `list archived`
-* `unarchive INDEX`
-
-* `list archived` displays archived students in saved order with consecutive indices.
-* `unarchive` restores the student at the specified index in that archived result view, preserving all stored details.
-* `unarchive` works only after `list archived`. Run `list archived` again to refresh the archived view when needed.
-* `delete INDEX` in this view permanently deletes the displayed archived record instead of restoring it.
-
-Example: `list archived` followed by `unarchive 1` restores the first displayed archived student.
 
 ### Scheduling a lesson: `schedule`
 
@@ -281,7 +251,7 @@ Format: `schedule INDEX at/YYYY-MM-DD HH:mm`
 
 Examples:
 * `list` followed by `schedule 2 at/2099-10-30 16:00` schedules a lesson for the 2nd student.
-* `find Betsy` followed by `schedule 1 at/2099-11-02 09:30` schedules a lesson for the 1st student in the results of
+* `find Bernice` followed by `schedule 1 at/2099-11-02 09:30` schedules a lesson for the 1st student in the results of
   the `find` command.
 * Invalid, because the time has passed: `schedule 1 at/2020-01-01 10:00`
 * Invalid, because the date does not exist: `schedule 1 at/2099-02-30 10:00`
@@ -361,15 +331,13 @@ Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a v
 Action | Format, Examples
 --------|------------------
 **Add** | `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]` <br> e.g., `add n/James Ho p/22224444 s/Mathematics l/S3 gn/Mary Ho gp/81234567`
-**Archive** | `archive INDEX`<br> e.g., `archive 1`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **Filter** | `filter [s/SUBJECT] [l/EDUCATION_LEVEL]`<br> e.g., `filter s/Mathematics l/S3`
-**List** | `list [archived]`<br> e.g., `list archived`
+**List** | `list`
 **Schedule** | `schedule INDEX at/YYYY-MM-DD HH:mm`<br> e.g., `schedule 1 at/2099-10-30 16:00`
 **Unschedule** | `unschedule INDEX`<br> e.g., `unschedule 1`
-**Unarchive** | `unarchive INDEX`<br> e.g., `unarchive 1`
 **Help** | `help`
 **Exit** | `exit`
