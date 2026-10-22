@@ -187,6 +187,39 @@ The `add` command accepts `s/` for a subject and `l/` for an education level. `P
 
 `JsonAdaptedPerson` stores the two values as separate nullable JSON properties, so valid data files created before these fields were introduced remain loadable. `PersonCard` and command feedback display `Not provided` for an absent value without writing that placeholder to storage. Commands that replace a `Person`, such as `edit`, preserve both values unchanged.
 
+### Learning focus and next action
+
+TutorContacts represents a student's current learning context using the immutable `LearningFocus` and `NextAction`
+value objects. `Person` stores both values as independent `Optional` fields, so either field may be recorded or omitted.
+Each present value contains 1–200 characters and rejects ISO control characters while allowing ordinary spaces and
+punctuation.
+
+`add` and `edit` accept `lf/` and `na/`. `ParserUtil` removes surrounding whitespace and collapses repeated ordinary
+spaces before constructing the value object. An omitted edit prefix preserves the existing value, while an explicitly
+empty prefix records a clear request. `EditPersonDescriptor` keeps a separate edited-state flag for each optional
+field so `EditCommand` can distinguish those two cases.
+
+`JsonAdaptedPerson` stores both values as nullable JSON properties. Missing properties load as empty optionals, which
+keeps valid older data files compatible. `PersonCard` and command feedback display `Not provided` for absent values.
+
+### Archive lifecycle
+
+`Person` stores archive state as an immutable boolean. New students are active, and a missing `archived` property in
+an older JSON record also loads as active. `Person#withArchived` creates a replacement record that changes only this
+state, so contact, guardian, tutoring, learning-context, lesson, and tag data remain unchanged.
+
+`ModelManager` stores a `ResultViewScope` independently from its `FilteredList<Person>`. `list`, `find`, and `filter`
+establish an `ACTIVE` scope and automatically combine their query predicate with `!Person#isArchived`.
+`list archived` establishes an `ARCHIVED` scope and uses `Person#isArchived`. The explicit scope is required because
+an empty result list cannot indicate whether the user selected an active or archived view.
+
+`archive INDEX` resolves the index against the current active result view, replaces the selected record with an
+archived copy, and leaves its saved-list position unchanged. `unarchive INDEX` performs the inverse transition from
+the archived view. `delete INDEX` continues to remove the displayed record permanently from either scope. Wrong-view
+checks run before index checks so a command that violates both rules reports a deterministic error.
+
+![Archive lifecycle diagram](images/ArchiveLifecycleDiagram.png)
+
 ### Lesson scheduling
 
 TutorContacts represents a student's next lesson as an immutable `Lesson` value object wrapping a `LocalDateTime` with
@@ -427,7 +460,81 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
-**Use case: UC04 — Schedule a lesson**
+**Use case: UC04 — Record learning context**
+
+**MSS**
+
+1. User requests to add or edit a student with a learning focus, a next action, or both.
+2. TutorContacts validates and normalizes each supplied value.
+3. TutorContacts stores the updated student record.
+4. TutorContacts saves the updated student data.
+5. TutorContacts displays the learning context and reports success.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. User supplies an empty `lf/` or `na/` prefix while editing.
+
+  * 1a1. TutorContacts records a request to clear that value.
+
+  Use case resumes at step 3.
+
+* 2a. A supplied non-empty value is longer than 200 characters or contains a control character.
+
+  * 2a1. TutorContacts reports the relevant validation rule.
+  * 2a2. TutorContacts leaves the displayed and saved records unchanged.
+
+  Use case ends.
+
+**Use case: UC05 — Archive and restore a student**
+
+**MSS**
+
+1. User displays an active result view.
+2. User requests to archive a student at a displayed index.
+3. TutorContacts validates the active view and index.
+4. TutorContacts marks the complete student record as archived and saves it.
+5. User requests to list archived students.
+6. TutorContacts displays archived students with consecutive indices.
+7. User requests to unarchive a displayed student.
+8. TutorContacts restores the complete record to active workflows and saves it.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. User runs `archive` from the archived view.
+
+  * 2a1. TutorContacts explains that an active view is required.
+
+  Use case ends.
+
+* 5a. No archived students exist.
+
+  * 5a1. TutorContacts displays an actionable empty-view message.
+
+  Use case ends.
+
+* 7a. User runs `unarchive` from an active view.
+
+  * 7a1. TutorContacts explains that `list archived` must be run first.
+
+  Use case ends.
+
+* 3a or 7b. The supplied index is invalid or outside the displayed result.
+
+  * 3a1. TutorContacts reports the required index rule without changing any record.
+
+  Use case ends.
+
+* 4a or 8a. TutorContacts cannot save the transition.
+
+  * 4a1. TutorContacts restores the previous archive state and reports the save failure.
+
+  Use case ends.
+
+**Use case: UC08 — Schedule a lesson**
 
 **MSS**
 
@@ -481,7 +588,7 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
-**Use case: UC05 — Clear a lesson**
+**Use case: UC09 — Clear a lesson**
 
 **MSS**
 
@@ -576,7 +683,8 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * **Guardian**: A parent or other responsible adult whose contact details are associated with a student.
 * **Independent private tutor**: A tutor who manages their own students and tutoring arrangements rather than relying on an organization to manage them.
 * **Lesson**: The single upcoming tutoring session recorded for a student, as a local date and time with minute precision.
-* **Student record**: The information stored for one student, including the student's name and any recorded contact, guardian, subject, and education-level details.
+* **Student record**: The information stored for one student, including contact, guardian, tutoring, learning-context,
+  lesson, and archive-state details.
 * **Subject**: The academic subject for which the student is receiving tuition.
 
 --------------------------------------------------------------------------------------------------------------------
@@ -725,3 +833,33 @@ testers are expected to do more *exploratory* testing.
 
    1. Enter `help`, close TutorContacts, and inspect the corrupted file.<br>
       Expected: Help remains available, and the corrupted file has not been overwritten.
+
+### Learning context and archive lifecycle
+
+1. Recording and updating learning context
+
+   1. Test case: `add n/Alex Tan lf/Linear equations na/Complete worksheet 4`<br>
+      Expected: Alex is added and both values appear in the student card and result panel.
+
+   1. Test case: `edit 1 lf/Quadratic graphs na/Review exercise 2`<br>
+      Expected: Both values are replaced; all omitted fields remain unchanged.
+
+   1. Test case: `edit 1 lf/`<br>
+      Expected: The learning focus is cleared and displayed as `Not provided`; all omitted fields remain unchanged.
+
+1. Archiving and restoring a complete record
+
+   1. Test case: Run `list`, `archive 1`, and then `list`.<br>
+      Expected: The first displayed student is archived and no longer appears in the active list.
+
+   1. Test case: Run `list archived`.<br>
+      Expected: The archived student appears at a consecutive displayed index with every recorded field unchanged.
+
+   1. Test case: Run `unarchive 1`, then `list`.<br>
+      Expected: The student returns to the active list in saved order with every field unchanged.
+
+   1. Test case: Archive a student, close TutorContacts, reopen the same JAR, and run `list archived`.<br>
+      Expected: The archived state and all record fields persist across restart.
+
+   1. Test case: Run `delete 1` while viewing archived students.<br>
+      Expected: The displayed archived student is permanently deleted.

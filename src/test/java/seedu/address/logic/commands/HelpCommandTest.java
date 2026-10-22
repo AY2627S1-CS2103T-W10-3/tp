@@ -25,8 +25,15 @@ public class HelpCommandTest {
         assertTrue(help.contains("[s/SUBJECT]"));
         assertTrue(help.contains("[l/EDUCATION_LEVEL]"));
         assertTrue(help.contains("[gn/GUARDIAN_NAME]"));
-        assertTrue(help.contains("edit INDEX"));
+        assertTrue(help.contains("[lf/LEARNING_FOCUS]"));
+        assertTrue(help.contains("[na/NEXT_ACTION]"));
+        assertTrue(help.contains("edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] "
+                + "[gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] "
+                + "[s/SUBJECT] [l/EDUCATION_LEVEL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]..."));
+        assertTrue(help.contains("archive INDEX"));
         assertTrue(help.contains("list\n"));
+        assertTrue(help.contains("list archived"));
+        assertTrue(help.contains("unarchive INDEX"));
         assertTrue(help.contains("find KEYWORD"));
         assertTrue(help.contains("filter [s/SUBJECT] [l/EDUCATION_LEVEL]"));
         assertTrue(help.contains("delete INDEX"));
@@ -38,5 +45,8 @@ public class HelpCommandTest {
         assertTrue(help.contains("Guardian phone or email requires gn/"));
         assertTrue(help.contains("partial-name matching with OR"));
         assertTrue(help.contains("Displayed indices belong to the current result list"));
+        assertTrue(help.contains("An empty optional edit prefix clears that field"));
+        assertTrue(help.contains("Clearing gn/ also clears gp/ and ge/"));
+        assertTrue(help.contains("Archived students remain saved until permanently deleted"));
     }
 }
