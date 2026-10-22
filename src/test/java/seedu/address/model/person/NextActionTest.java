@@ -19,8 +19,8 @@ public class NextActionTest {
         assertThrows(IllegalArgumentException.class, () -> new NextAction(""));
         assertThrows(IllegalArgumentException.class, () -> new NextAction("   "));
         assertThrows(IllegalArgumentException.class, () -> new NextAction("call\tguardian"));
-        assertThrows(IllegalArgumentException.class,
-                () -> new NextAction("a".repeat(NextAction.MAX_LENGTH + 1)));
+        assertThrows(IllegalArgumentException.class, () ->
+                new NextAction("a".repeat(NextAction.MAX_LENGTH + 1)));
     }
 
     @Test

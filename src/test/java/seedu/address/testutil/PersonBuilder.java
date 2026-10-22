@@ -197,6 +197,7 @@ public class PersonBuilder {
         return this;
     }
 
+    /** Builds a {@code Person} with the configured fields. */
     public Person build() {
         return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
                 nextAction, tags);

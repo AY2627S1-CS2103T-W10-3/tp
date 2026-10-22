@@ -19,8 +19,8 @@ public class LearningFocusTest {
         assertThrows(IllegalArgumentException.class, () -> new LearningFocus(""));
         assertThrows(IllegalArgumentException.class, () -> new LearningFocus("   "));
         assertThrows(IllegalArgumentException.class, () -> new LearningFocus("review\nfractions"));
-        assertThrows(IllegalArgumentException.class,
-                () -> new LearningFocus("a".repeat(LearningFocus.MAX_LENGTH + 1)));
+        assertThrows(IllegalArgumentException.class, () ->
+                new LearningFocus("a".repeat(LearningFocus.MAX_LENGTH + 1)));
     }
 
     @Test

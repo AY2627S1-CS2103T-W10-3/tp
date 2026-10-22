@@ -184,8 +184,8 @@ public class ParserUtilTest {
 
     @Test
     public void parseLearningFocus_controlCharacter_throwsParseException() {
-        assertThrows(ParseException.class, LearningFocus.MESSAGE_CONSTRAINTS,
-                () -> ParserUtil.parseLearningFocus("Fractions\nand ratios"));
+        assertThrows(ParseException.class, LearningFocus.MESSAGE_CONSTRAINTS, () ->
+                ParserUtil.parseLearningFocus("Fractions\nand ratios"));
     }
 
     @Test
@@ -196,8 +196,8 @@ public class ParserUtilTest {
 
     @Test
     public void parseNextAction_controlCharacter_throwsParseException() {
-        assertThrows(ParseException.class, NextAction.MESSAGE_CONSTRAINTS,
-                () -> ParserUtil.parseNextAction("Call\tguardian"));
+        assertThrows(ParseException.class, NextAction.MESSAGE_CONSTRAINTS, () ->
+                ParserUtil.parseNextAction("Call\tguardian"));
     }
 
     @Test
