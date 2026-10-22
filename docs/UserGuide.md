@@ -55,6 +55,10 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 * The prefixes in `add` can be in any order, with whitespace between fields.<br>
   For example, `add p/81234567 n/Alex Tan` is accepted. Each `add` prefix can appear only once.
 
+* Prefixes contain one or two lower-case characters followed by `/`. If a field value contains separate text that
+  looks like a prefix, wrap the complete value in double quotes.<br>
+  For example, use `a/"Block n/7"`. The quotes are not stored. Longer words such as `Level/` do not need quotes.
+
 * Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
 
@@ -99,6 +103,9 @@ displayed in uppercase. If either field is omitted, the student card displays `N
 Leading and trailing whitespace around field values is ignored. Repeated whitespace inside names, guardian names,
 subjects, and addresses is stored as one space. Whitespace within phone numbers, email addresses, education levels, and
 tags is not accepted. Text before the first prefix and unknown prefix-like tokens such as `x/value` are rejected.
+If a subject or address contains a separate one- or two-character token followed by `/`, enclose the complete value in
+double quotes. For example, `add n/Alex s/"A l/Mathematics" a/"Block n/7"` stores the values without the quotes.
+Words such as `Level/` are ordinary value text and do not need quotes. An unquoted unsupported token is still rejected.
 When an input breaks several rules, TutorContacts reports one error predictably: unexpected preamble, unsupported
 prefix, missing `n/`, repeated prefix, missing guardian name, then invalid field value. Repeated prefixes are listed in
 alphabetical order in the error.
@@ -109,6 +116,7 @@ A guardian name may be supplied without guardian contact information.
 
 Examples:
 * Name only: `add n/Alex Tan`
+* Prefix-like text in values: `add n/Alice s/A Level/Mathematics a/"Block n/7"`
 * All tutoring and guardian details, in a different prefix order: `add l/jc1 gn/Mary Tan s/H2 Mathematics p/98765432 ge/mary@example.com gp/81234567 e/alex@example.com n/Alex Tan`
 * Two students may share contacts: `add n/Ben Tan p/81234567 gn/Mary Tan gp/91234567` followed by `add n/Chloe Tan p/81234567 gn/Mary Tan gp/91234567`
 * Invalid, because `gn/` is missing: `add n/Sam Lee gp/81234567`
@@ -146,6 +154,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`
 * To remove all of a student's tags, enter `t/` without a tag after it.
 * Subject, education-level, and guardian details cannot currently be changed using `edit`. To change one of these
   details, delete the student record and add it again with the corrected information.
+* Enclose an address in double quotes if it contains separate prefix-like text, for example `a/"Block n/7"`.
 
 Examples:
 * `edit 1 p/91234567 e/johndoe@example.com` edits the phone number and email address of the 1st student.
