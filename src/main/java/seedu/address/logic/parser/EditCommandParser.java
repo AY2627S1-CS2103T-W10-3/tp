@@ -3,11 +3,16 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_EDUCATION_LEVEL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_NAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_LEARNING_FOCUS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NEXT_ACTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_SUBJECT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Collection;
@@ -36,7 +41,8 @@ public class EditCommandParser implements Parser<EditCommand> {
         ArgumentMultimap argMultimap =
                 CommandArgumentTokenizer.tokenize(args, EditCommand.COMMAND_WORD,
                         PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS,
-                        PREFIX_LEARNING_FOCUS, PREFIX_NEXT_ACTION, PREFIX_TAG);
+                        PREFIX_GUARDIAN_NAME, PREFIX_GUARDIAN_PHONE, PREFIX_GUARDIAN_EMAIL, PREFIX_SUBJECT,
+                        PREFIX_EDUCATION_LEVEL, PREFIX_LEARNING_FOCUS, PREFIX_NEXT_ACTION, PREFIX_TAG);
 
         Index index;
 
@@ -47,7 +53,8 @@ public class EditCommandParser implements Parser<EditCommand> {
         }
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS,
-                PREFIX_LEARNING_FOCUS, PREFIX_NEXT_ACTION);
+                PREFIX_GUARDIAN_NAME, PREFIX_GUARDIAN_PHONE, PREFIX_GUARDIAN_EMAIL, PREFIX_SUBJECT,
+                PREFIX_EDUCATION_LEVEL, PREFIX_LEARNING_FOCUS, PREFIX_NEXT_ACTION);
 
         EditPersonDescriptor editPersonDescriptor = new EditPersonDescriptor();
 
@@ -61,7 +68,28 @@ public class EditCommandParser implements Parser<EditCommand> {
             editPersonDescriptor.setEmail(ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get()));
         }
         if (argMultimap.getValue(PREFIX_ADDRESS).isPresent()) {
-            editPersonDescriptor.setAddress(ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get()));
+            editPersonDescriptor.setAddress(ParserUtil.parseAddress(
+                    normalizeFreeText(argMultimap.getValue(PREFIX_ADDRESS).get())));
+        }
+        if (argMultimap.getValue(PREFIX_GUARDIAN_NAME).isPresent()) {
+            editPersonDescriptor.setGuardianName(ParserUtil.parseName(
+                    normalizeFreeText(argMultimap.getValue(PREFIX_GUARDIAN_NAME).get())));
+        }
+        if (argMultimap.getValue(PREFIX_GUARDIAN_PHONE).isPresent()) {
+            editPersonDescriptor.setGuardianPhone(ParserUtil.parsePhone(
+                    argMultimap.getValue(PREFIX_GUARDIAN_PHONE).get()));
+        }
+        if (argMultimap.getValue(PREFIX_GUARDIAN_EMAIL).isPresent()) {
+            editPersonDescriptor.setGuardianEmail(ParserUtil.parseEmail(
+                    argMultimap.getValue(PREFIX_GUARDIAN_EMAIL).get()));
+        }
+        if (argMultimap.getValue(PREFIX_SUBJECT).isPresent()) {
+            editPersonDescriptor.setSubject(ParserUtil.parseSubject(
+                    normalizeFreeText(argMultimap.getValue(PREFIX_SUBJECT).get())));
+        }
+        if (argMultimap.getValue(PREFIX_EDUCATION_LEVEL).isPresent()) {
+            editPersonDescriptor.setEducationLevel(ParserUtil.parseEducationLevel(
+                    argMultimap.getValue(PREFIX_EDUCATION_LEVEL).get()));
         }
         if (argMultimap.getValue(PREFIX_LEARNING_FOCUS).isPresent()) {
             editPersonDescriptor.setLearningFocus(
@@ -78,6 +106,10 @@ public class EditCommandParser implements Parser<EditCommand> {
         }
 
         return new EditCommand(index, editPersonDescriptor);
+    }
+
+    private static String normalizeFreeText(String value) {
+        return value.strip().replaceAll("\\s+", " ");
     }
 
     /**
