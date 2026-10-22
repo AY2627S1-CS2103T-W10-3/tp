@@ -175,6 +175,8 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUC
   `a/"Block n/7"` or `s/"English l/Literature"`.
 * After a successful edit the full student list is shown again, so a `find` or `filter` view is cleared. For example,
   `find Bernice` followed by `edit 1 p/91234567` ends with every student displayed rather than only the search results.
+* `edit` works only on the active student list. If `list archived` is showing, run `list` first to return to an active
+  view.
 
 Examples:
 * `edit 1 p/91234567 s/H2 Mathematics l/JC2` updates three fields of the first displayed student while preserving
@@ -187,6 +189,7 @@ Examples:
 * Invalid, because the name is required: `edit 1 n/`
 * Invalid, because a guardian phone requires a guardian name: `edit 1 gn/ gp/91234567`
 * Invalid if `Alex Tan` already belongs to another student: `edit 1 n/Alex Tan`
+* Invalid, because the archived list is showing: `list archived` followed by `edit 1 p/91234567`
 
 ### Locating students by name: `find`
 

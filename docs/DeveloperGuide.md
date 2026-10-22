@@ -542,6 +542,73 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
+**Use case: UC06 — Edit a student**
+
+**MSS**
+
+1. User requests to display a set of students.
+2. TutorContacts displays the students with their current indices.
+3. User requests to edit one or more details of the student at a specified index.
+4. TutorContacts validates the index and supplied changes.
+5. TutorContacts combines the changes with the student's preserved details.
+6. TutorContacts replaces the student record and saves the updated data.
+7. TutorContacts displays the updated student and reports that the operation was successful.
+
+    Use case ends.
+
+**Extensions**
+
+* 3a. The user supplies an optional prefix without a value.
+
+  * 3a1. TutorContacts treats it as a request to clear that field.
+
+  Use case resumes at step 4.
+
+* 3b. The user supplies no field prefix, an unsupported prefix, or a repeated single-valued prefix.
+
+  * 3b1. TutorContacts reports the corresponding error.
+
+  Use case ends.
+
+* 3c. The archived student list is displayed.
+
+  * 3c1. TutorContacts reports that the command can only be used from the active student list.
+
+  Use case resumes at step 1.
+
+* 4a. The supplied index does not identify a student in the displayed result view.
+
+  * 4a1. TutorContacts reports that no student exists at that index.
+
+  Use case resumes at step 2.
+
+* 4b. A supplied value is invalid, including an empty student name.
+
+  * 4b1. TutorContacts reports the relevant validation rule.
+
+  Use case ends.
+
+* 4c. A guardian phone or email is supplied but no guardian name remains.
+
+  * 4c1. TutorContacts reports that the guardian name is required.
+
+  Use case ends.
+
+* 5a. The resulting name duplicates another student's normalized name.
+
+  * 5a1. TutorContacts reports the duplicate student.
+  * 5a2. TutorContacts leaves the existing records unchanged.
+
+  Use case ends.
+
+* 6a. TutorContacts cannot save the updated data.
+
+  * 6a1. TutorContacts reports the save failure.
+  * 6a2. TutorContacts restores the previous in-memory records. The data file may remain partially written, so the
+    previously saved data is not guaranteed to be preserved.
+
+  Use case ends.
+
 **Use case: UC08 — Schedule a lesson**
 
 **MSS**
@@ -633,67 +700,6 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   * 5a1. TutorContacts reports the save failure.
   * 5a2. TutorContacts leaves the displayed and saved lessons unchanged.
-
-  Use case ends.
-
-**Use case: UC06 — Edit a student**
-
-**MSS**
-
-1. User requests to display a set of students.
-2. TutorContacts displays the students with their current indices.
-3. User requests to edit one or more details of the student at a specified index.
-4. TutorContacts validates the index and supplied changes.
-5. TutorContacts combines the changes with the student's preserved details.
-6. TutorContacts replaces the student record and saves the updated data.
-7. TutorContacts displays the updated student and reports that the operation was successful.
-
-    Use case ends.
-
-**Extensions**
-
-* 3a. The user supplies an optional prefix without a value.
-
-  * 3a1. TutorContacts treats it as a request to clear that field.
-
-  Use case resumes at step 4.
-
-* 3b. The user supplies no field prefix, an unsupported prefix, or a repeated single-valued prefix.
-
-  * 3b1. TutorContacts reports the corresponding error.
-
-  Use case ends.
-
-* 4a. The supplied index does not identify a student in the displayed result view.
-
-  * 4a1. TutorContacts reports that no student exists at that index.
-
-  Use case resumes at step 2.
-
-* 4b. A supplied value is invalid, including an empty student name.
-
-  * 4b1. TutorContacts reports the relevant validation rule.
-
-  Use case ends.
-
-* 4c. A guardian phone or email is supplied but no guardian name remains.
-
-  * 4c1. TutorContacts reports that the guardian name is required.
-
-  Use case ends.
-
-* 5a. The resulting name duplicates another student's normalized name.
-
-  * 5a1. TutorContacts reports the duplicate student.
-  * 5a2. TutorContacts leaves the existing records unchanged.
-
-  Use case ends.
-
-* 6a. TutorContacts cannot save the updated data.
-
-  * 6a1. TutorContacts reports the save failure.
-  * 6a2. TutorContacts restores the previous in-memory records. The data file may remain partially written, so the
-    previously saved data is not guaranteed to be preserved.
 
   Use case ends.
 
