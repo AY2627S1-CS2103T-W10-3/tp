@@ -66,6 +66,7 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 * Extraneous parameters for commands that take no parameters, such as `help`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
   `list` accepts only no argument or the exact argument `archived`; for example, `list 1` is rejected.
+  `upcoming` accepts no arguments; for example, `upcoming 3` is rejected.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </div>
@@ -321,6 +322,9 @@ Format: `schedule INDEX at/YYYY-MM-DD HH:mm`
 * Extra spaces around the value and between the date and time are ignored.
 * The student card shows the lesson as `Lesson: 2099-10-30 16:00`, or `Lesson: Not scheduled` when the student has no
   lesson.
+* Once the lesson time is reached, the card marks the lesson in red as `Lesson: 2099-10-30 16:00 (overdue)`. The
+  lesson is kept, so you can reschedule it with `schedule` or clear it with `unschedule`. The marker is updated each
+  time you enter a command.
 * Archiving a student keeps their lesson. The lesson is shown again when the student is restored with `unarchive`.
 
 Examples:
@@ -334,7 +338,7 @@ Examples:
 * Invalid, because the archived list is showing: `list archived` followed by `schedule 1 at/2099-10-30 16:00`
 
 <div markdown="span" class="alert alert-info">:information_source: **Note:**
-TutorContacts records only one upcoming lesson per student. Recurring lessons, reminders, lesson history, attendance,
+TutorContacts records at most one lesson per student, which may be upcoming or overdue. Recurring lessons, reminders, lesson history, attendance,
 calendar integration, and time-zone conversion are not supported.
 </div>
 
@@ -353,6 +357,29 @@ Format: `unschedule INDEX`
 Examples:
 * `list` followed by `unschedule 2` clears the lesson of the 2nd student.
 * `unschedule 0` and `unschedule 1 2` are rejected.
+
+### Listing upcoming lessons: `upcoming`
+
+Shows the active students whose lessons are still to come, with the soonest lesson first.
+
+Format: `upcoming`
+
+* Only lessons later than the current time are shown. A lesson that has started, including one in the current
+  minute, is overdue and is not shown.
+* Students without a lesson and archived students are not shown.
+* Lessons at the same time are ordered by student name, ignoring case.
+* The indices follow this order, so `schedule`, `unschedule`, `archive`, and `delete` act on the student shown at that
+  index in the upcoming list.
+* `upcoming` takes no parameters. Extra text, such as `upcoming 3`, is rejected.
+* The list shows the lessons that were upcoming when you ran `upcoming`. If a lesson's time passes while the list is
+  showing, that student stays in the list and is marked overdue. Run `upcoming` again to update the list.
+* If no lessons are upcoming, the result panel suggests `schedule` instead.
+
+Examples:
+* With the sample data, `schedule 1 at/2099-11-02 09:30`, then `schedule 2 at/2099-10-30 16:00`, then `upcoming`
+  lists `Bernice Yu` first and `Alex Yeoh` second, because Bernice's lesson is sooner.
+* `upcoming` followed by `unschedule 1` clears the soonest upcoming lesson.
+* Invalid, because `upcoming` takes no parameters: `upcoming 3`
 
 ### Clearing all entries: `clear`
 
@@ -415,5 +442,6 @@ Action | Format, Examples
 **Unarchive** | `unarchive INDEX`<br> e.g., `unarchive 1`
 **Schedule** | `schedule INDEX at/YYYY-MM-DD HH:mm`<br> e.g., `schedule 1 at/2099-10-30 16:00`
 **Unschedule** | `unschedule INDEX`<br> e.g., `unschedule 1`
+**Upcoming** | `upcoming`
 **Help** | `help`
 **Exit** | `exit`
