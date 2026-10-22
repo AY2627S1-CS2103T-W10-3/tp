@@ -125,7 +125,7 @@ How the parsing works:
 The `Model` component,
 
 * stores the address book data i.e., all `Person` objects (which are contained in a `UniquePersonList` object).
-* stores the `Person` objects selected by the current filter, such as search results, in a separate _filtered_ list. It exposes this list as an unmodifiable `ObservableList<Person>` that the UI can observe and bind to, so the UI updates when the list changes.
+* stores the `Person` objects selected by the current filter, such as search results, in a separate _filtered_ list, which can also be ordered, as `upcoming` does. It exposes this list as an unmodifiable `ObservableList<Person>` that the UI can observe and bind to, so the UI updates when the list changes.
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
@@ -285,8 +285,9 @@ view is shown.
 `JsonAdaptedPerson` stores the lesson as a nullable `lesson` string in the same format the user types. Older data files
 without the property load as students without a lesson. A stored lesson is not required to be in the future, because a
 lesson that was scheduled earlier remains valid after its time passes. If saving fails after a lesson change,
-`LogicManager` restores the address book snapshot taken before the command ran, so the displayed and saved lessons
-stay unchanged.
+`LogicManager` restores the in-memory address book snapshot taken before the command ran, so the displayed lessons
+stay unchanged. The data file may already be partially written, so the previously saved lessons are not guaranteed to
+be preserved.
 
 Design considerations:
 
@@ -297,6 +298,51 @@ Design considerations:
 * **Alternative 2:** Store a list of lessons per student.
   * Pros: Supports history and multiple future lessons.
   * Cons: Requires extra commands and indices to identify a particular lesson, which is outside the agreed scope.
+
+### Upcoming lessons and overdue markers
+
+`upcoming` shows active students with future lessons, soonest first. `ModelManager` exposes the displayed list as a
+`SortedList` wrapped around its `FilteredList`, so a view can be both filtered and ordered. `Model#updateSortedPersonList`
+sets the order, and every call to `Model#updateFilteredPersonList` first clears it. A comparator written for one view,
+such as the lesson order, therefore never applies to the students of the next view, and `list`, `find`, and `filter`
+keep the saved order.
+
+`UpcomingCommandParser` rejects any arguments. `UpcomingCommand` reads `LocalDateTime.now(clock)` once, keeps the
+students whose lesson is after that time in the `ACTIVE` scope, and then applies `UpcomingCommand.LESSON_ORDER`, which
+orders by lesson time, then by name ignoring case, then by exact name so that the order is always the same. As with
+`schedule`, tests pass a fixed `Clock`.
+
+The sequence diagram below shows how `upcoming` is executed.
+
+<img src="images/UpcomingSequenceDiagram.png" width="800" />
+
+Index-based commands such as `schedule`, `unschedule`, `archive`, and `delete` read `Model#getFilteredPersonList`, which
+returns the sorted list, so an index always refers to the student shown at that position.
+
+`Lesson#isOverdue(now)` is the opposite of `Lesson#isAfter(now)`, so every lesson is either upcoming or overdue. A
+lesson becomes overdue as soon as it starts. `PersonCard` adds ` (overdue)` and the `lesson_overdue` style class to the
+lesson label of an overdue lesson. Because the card is drawn from the current time, `MainWindow#executeCommand` calls
+`PersonListPanel#refreshCards` after every command, including rejected ones, so overdue markers stay current.
+`PersonListPanel` also refreshes its cards when the displayed list is reordered, because `ListView` does not redraw
+cells after a permutation.
+
+Design considerations:
+
+* **Alternative 1 (current choice):** Compute the upcoming list when `upcoming` runs, and update it only when the user
+  enters another query.
+  * Pros: The list changes only in response to the user, so an index the user reads is still valid when they type the
+    next command.
+  * Cons: A lesson whose time passes while the list is showing stays in the list, marked overdue, until `upcoming`
+    is run again.
+* **Alternative 2:** Re-filter the upcoming list after every command.
+  * Pros: The list never contains a lesson that has already started.
+  * Cons: A command can remove students it did not act on. For example, `unschedule 2` could also remove the first
+    student because their lesson started meanwhile. Keeping that student in the list with the overdue marker shows
+    the tutor that the lesson was missed, so they can reschedule or clear it.
+* **Alternative 3:** Re-filter the upcoming list on a timer.
+  * Pros: Lessons leave the list as soon as they start.
+  * Cons: The indices can change while the user is typing, so a command such as `delete 2` could act on a different
+    student from the one the user saw.
 
 ## **Documentation, logging, testing, dev-ops**
 
@@ -344,6 +390,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* *` | private tutor | tag and filter students by subject or education level | retrieve a relevant group of students quickly |
 | `* *` | private tutor | record upcoming lessons | keep track of tutoring arrangements |
 | `* *` | private tutor | reschedule or clear a student's lesson | keep lesson arrangements accurate when plans change |
+| `* *` | private tutor | see my upcoming lessons in time order | prepare for my next lessons |
+| `* *` | private tutor | see which lessons have already passed | reschedule or clear them |
 | `* *` | private tutor | record learning focuses and follow-up actions | remember what should be covered in future lessons |
 | `*` | private tutor | archive former students | retain old records without showing them in my active list |
 | `*` | private tutor | record group tuition arrangements | manage students who attend lessons together |
@@ -659,7 +707,8 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * 6a. TutorContacts cannot save the updated data.
 
   * 6a1. TutorContacts reports the save failure.
-  * 6a2. TutorContacts leaves the displayed and saved lessons unchanged.
+  * 6a2. TutorContacts restores the previously displayed lessons. The data file may remain partially written, so the
+    previously saved data is not guaranteed to be preserved.
 
   Use case ends.
 
@@ -699,7 +748,39 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * 5a. TutorContacts cannot save the updated data.
 
   * 5a1. TutorContacts reports the save failure.
-  * 5a2. TutorContacts leaves the displayed and saved lessons unchanged.
+  * 5a2. TutorContacts restores the previously displayed lessons. The data file may remain partially written, so the
+    previously saved data is not guaranteed to be preserved.
+
+  Use case ends.
+
+**Use case: UC10 — View upcoming lessons**
+
+**MSS**
+
+1. User requests to list upcoming lessons.
+2. TutorContacts displays the active students whose lessons are in the future, soonest first, with their current
+   indices.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. User supplies extra parameters.
+
+  * 1a1. TutorContacts reports the required format.
+
+  Use case ends.
+
+* 2a. No active student has a future lesson.
+
+  * 2a1. TutorContacts reports that there are no upcoming lessons and suggests scheduling one.
+
+  Use case ends.
+
+* 2b. User requests to reschedule or clear the displayed student's lesson, or archive or delete the displayed student, at
+  a displayed index.
+
+  * 2b1. TutorContacts acts on the student shown at that index in the upcoming list (UC03, UC05, UC08, UC09).
 
   Use case ends.
 
@@ -725,7 +806,9 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * **Education level**: The student's current school level, such as `P6`, `S3`, or `JC1`.
 * **Guardian**: A parent or other responsible adult whose contact details are associated with a student.
 * **Independent private tutor**: A tutor who manages their own students and tutoring arrangements rather than relying on an organization to manage them.
-* **Lesson**: The single upcoming tutoring session recorded for a student, as a local date and time with minute precision.
+* **Lesson**: The single tutoring session recorded for a student, as a local date and time with minute precision. It is
+  upcoming until its time is reached, and overdue afterwards.
+* **Overdue lesson**: A lesson whose time has been reached. It stays recorded until it is rescheduled or cleared.
 * **Student record**: The information stored for one student, including contact, guardian, tutoring, learning-context,
   lesson, and archive-state details.
 * **Subject**: The academic subject for which the student is receiving tuition.
@@ -873,6 +956,34 @@ testers are expected to do more *exploratory* testing.
 
    1. Close TutorContacts and launch it again from the same folder.<br>
       Expected: The lesson is restored from `data/addressbook.json`.
+
+1. Listing upcoming lessons
+
+   1. Prerequisites: Start from the sample data. Run `schedule 1 at/2099-11-02 09:30`, then
+      `schedule 2 at/2099-10-30 16:00`.
+
+   1. Test case: `upcoming`<br>
+      Expected: Only Bernice Yu and Alex Yeoh are listed, in that order. The result panel reports 2 students.
+
+   1. Test case: `unschedule 1` while the upcoming list is showing<br>
+      Expected: Bernice Yu's lesson is cleared, because she is shown first.
+
+   1. Test case: `archive 1` while the upcoming list is showing, then `upcoming`<br>
+      Expected: Alex Yeoh is archived and is no longer listed. The result panel reports that there are no upcoming
+      lessons.
+
+   1. Test case: `upcoming 3`<br>
+      Expected: The result panel shows the `upcoming` format. The list does not change.
+
+1. Marking overdue lessons
+
+   1. Close TutorContacts. In `data/addressbook.json`, change one student's `"lesson" : null` to
+      `"lesson" : "2020-01-01 09:00"`, then launch TutorContacts.<br>
+      Expected: The student's card shows `Lesson: 2020-01-01 09:00 (overdue)` in red, and `upcoming` does not list
+      the student.
+
+   1. Run `list`, then `schedule INDEX at/2099-10-30 16:00`, where `INDEX` is that student's index.<br>
+      Expected: The card shows the new lesson without the overdue marker.
 
 ### Deleting a student
 
