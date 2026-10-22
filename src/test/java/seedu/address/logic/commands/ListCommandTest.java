@@ -9,6 +9,7 @@ import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ResultViewScope;
@@ -26,7 +27,7 @@ public class ListCommandTest {
 
     @Test
     public void listSuccessMessage_identifiesStudents() {
-        assertEquals("Listed all students.", ListCommand.MESSAGE_SUCCESS);
+        assertEquals("Listed all active students.", ListCommand.MESSAGE_SUCCESS);
     }
 
     @BeforeEach
@@ -63,6 +64,26 @@ public class ListCommandTest {
 
         assertCommandSuccess(ListCommand.archived(), model,
                 ListCommand.MESSAGE_NO_ARCHIVED_STUDENTS, expectedModel);
+    }
+
+    @Test
+    public void execute_noActiveStudentsButArchivedStudentsExist_showsArchiveGuidance() {
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(new PersonBuilder().withArchived(true).build());
+        model = new ModelManager(addressBook, new UserPrefs());
+        expectedModel = new ModelManager(addressBook, new UserPrefs());
+
+        assertCommandSuccess(new ListCommand(), model,
+                "No active students. Use `list archived` to see archived students.", expectedModel);
+    }
+
+    @Test
+    public void execute_noStudentsRecorded_showsAddGuidance() {
+        model = new ModelManager(new AddressBook(), new UserPrefs());
+        expectedModel = new ModelManager(new AddressBook(), new UserPrefs());
+
+        assertCommandSuccess(new ListCommand(), model,
+                "No students recorded. Use `add` to create your first student.", expectedModel);
     }
 
     @Test

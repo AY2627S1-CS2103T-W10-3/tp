@@ -328,6 +328,22 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_duplicateArchivedPerson_showsArchiveGuidance() {
+        Person activePerson = new PersonBuilder(ALICE).withName("Active Student").build();
+        Person archivedPerson = new PersonBuilder().withName("Archived Student").withArchived(true).build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(activePerson);
+        addressBook.addPerson(archivedPerson);
+        Model modelWithArchivedDuplicate = new ModelManager(addressBook, new UserPrefs());
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withName("Archived Student").build());
+
+        assertCommandFailure(editCommand, modelWithArchivedDuplicate,
+                "An archived student with this name already exists. "
+                        + "Use `list archived`, then `unarchive INDEX` to restore them.");
+    }
+
+    @Test
     public void execute_invalidPersonIndexUnfilteredList_failure() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
         EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build();

@@ -16,7 +16,8 @@ import seedu.address.model.person.Person;
  */
 public class PersonListPanel extends UiPart<Region> {
     private static final String FXML = "PersonListPanel.fxml";
-    private static final String EMPTY_LIST_MESSAGE = "No students recorded. Use add to create your first student.";
+    private static final String EMPTY_LIST_MESSAGE =
+            "No students in this view. Check the result message for next steps.";
     private final Logger logger = LogsCenter.getLogger(PersonListPanel.class);
 
     @FXML

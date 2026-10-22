@@ -77,6 +77,9 @@ public class AddCommand extends Command {
         requireNonNull(model);
 
         if (model.hasPerson(toAdd)) {
+            if (hasArchivedDuplicate(model, toAdd)) {
+                throw new CommandException(Messages.MESSAGE_DUPLICATE_ARCHIVED_PERSON);
+            }
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
         }
 
