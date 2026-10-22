@@ -158,8 +158,7 @@ Example: `list`
 
 Updates or clears details of an existing student without recreating the record.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL]`
-`[gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`
+Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`
 
 * `INDEX` refers to the index shown in the current result view, including a view produced by `find` or `filter`.
   It **must be a positive integer** 1, 2, 3, …​
@@ -175,12 +174,12 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUC
 * Enclose a free-text value in double quotes if it contains separate prefix-like text, for example
   `a/"Block n/7"` or `s/"English l/Literature"`.
 * After a successful edit the full student list is shown again, so a `find` or `filter` view is cleared. For example,
-  `find Betsy` followed by `edit 1 p/91234567` ends with every student displayed rather than only the search results.
+  `find Bernice` followed by `edit 1 p/91234567` ends with every student displayed rather than only the search results.
 
 Examples:
 * `edit 1 p/91234567 s/H2 Mathematics l/JC2` updates three fields of the first displayed student while preserving
   every omitted field.
-* `find Betsy` followed by `edit 1 lf/Quadratic equations na/Complete worksheet 4` updates the first student in the
+* `find Bernice` followed by `edit 1 lf/Quadratic equations na/Complete worksheet 4` updates the first student in the
   search results.
 * `edit 2 e/ a/ lf/ na/ t/` clears the email, address, learning focus, next action, and tags of the second displayed
   student.
@@ -259,7 +258,7 @@ Format: `delete INDEX`
 
 Examples:
 * `list` followed by `delete 2` deletes the 2nd student in TutorContacts.
-* `find Betsy` followed by `delete 1` deletes the 1st student in the results of the `find` command.
+* `find Bernice` followed by `delete 1` deletes the 1st student in the results of the `find` command.
 * `list archived` followed by `delete 1` permanently deletes the 1st archived student instead of restoring it.
 * `delete 0` and `delete 1 2` are rejected.
 
@@ -284,7 +283,7 @@ Format: `schedule INDEX at/YYYY-MM-DD HH:mm`
 
 Examples:
 * `list` followed by `schedule 2 at/2099-10-30 16:00` schedules a lesson for the 2nd student.
-* `find Betsy` followed by `schedule 1 at/2099-11-02 09:30` schedules a lesson for the 1st student in the results of
+* `find Bernice` followed by `schedule 1 at/2099-11-02 09:30` schedules a lesson for the 1st student in the results of
   the `find` command.
 * Invalid, because the time has passed: `schedule 1 at/2020-01-01 10:00`
 * Invalid, because the date does not exist: `schedule 1 at/2099-02-30 10:00`

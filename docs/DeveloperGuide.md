@@ -188,6 +188,8 @@ the email while preserving all omitted fields.
 shown in the current result view. `createEditedPerson` combines supplied values and clear requests with the selected
 student's existing values, then constructs one complete replacement `Person`. Normal model validation and
 `Person#isSamePerson` duplicate detection are therefore applied to the final record rather than to isolated fields.
+After replacing the record, `EditCommand` calls `Model#updateFilteredPersonList` with `PREDICATE_SHOW_ALL_PERSONS`, so
+the view returns to the full student list and any active `find` or `filter` result is cleared.
 
 Guardian fields require additional dependency handling. Clearing the guardian name clears the entire `Guardian`,
 including its phone and email. Supplying a guardian phone or email is rejected when no guardian name remains. Clearing
