@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.logic.commands.CommandTestUtil.showPersonAtIndex;
+import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
@@ -22,6 +23,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
+import seedu.address.model.ResultViewScope;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Lesson;
 import seedu.address.model.person.Person;
@@ -142,6 +144,32 @@ public class ScheduleCommandTest {
 
         assertCommandFailure(new ScheduleCommand(INDEX_SECOND_PERSON, FUTURE_LESSON, CLOCK), model,
                 Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+    }
+
+    @Test
+    public void execute_archivedView_throwsCommandException() {
+        Person student = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        model.setPerson(student, student.withArchived(true));
+        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS, ResultViewScope.ARCHIVED);
+
+        assertCommandFailure(new ScheduleCommand(INDEX_FIRST_PERSON, FUTURE_LESSON, CLOCK), model,
+                ScheduleCommand.MESSAGE_REQUIRES_ACTIVE_VIEW);
+    }
+
+    @Test
+    public void execute_archiveThenRestoreScheduledStudent_keepsLesson() throws Exception {
+        new ScheduleCommand(INDEX_FIRST_PERSON, FUTURE_LESSON, CLOCK).execute(model);
+        Person scheduledStudent = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+
+        new ArchiveCommand(INDEX_FIRST_PERSON).execute(model);
+        ListCommand.archived().execute(model);
+        Person archivedStudent = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        assertEquals(scheduledStudent.withArchived(true), archivedStudent);
+        assertEquals(Optional.of(FUTURE_LESSON), archivedStudent.getLesson());
+
+        new UnarchiveCommand(INDEX_FIRST_PERSON).execute(model);
+        new ListCommand().execute(model);
+        assertTrue(model.getFilteredPersonList().contains(scheduledStudent));
     }
 
     @Test

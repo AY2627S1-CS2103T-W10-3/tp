@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.logic.commands.CommandTestUtil.showPersonAtIndex;
+import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
@@ -18,6 +19,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
+import seedu.address.model.ResultViewScope;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Lesson;
 import seedu.address.model.person.Person;
@@ -83,6 +85,16 @@ public class UnscheduleCommandTest {
 
         assertCommandFailure(new UnscheduleCommand(INDEX_SECOND_PERSON), model,
                 Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+    }
+
+    @Test
+    public void execute_archivedView_throwsCommandException() {
+        Person student = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        model.setPerson(student, student.withLesson(Optional.of(LESSON)).withArchived(true));
+        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS, ResultViewScope.ARCHIVED);
+
+        assertCommandFailure(new UnscheduleCommand(INDEX_FIRST_PERSON), model,
+                UnscheduleCommand.MESSAGE_REQUIRES_ACTIVE_VIEW);
     }
 
     @Test
