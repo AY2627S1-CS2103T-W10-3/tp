@@ -504,7 +504,7 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
-**Use case: UC06 — Schedule a lesson**
+**Use case: UC08 — Schedule a lesson**
 
 **MSS**
 
@@ -552,7 +552,7 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
-**Use case: UC07 — Clear a lesson**
+**Use case: UC09 — Clear a lesson**
 
 **MSS**
 
