@@ -28,6 +28,10 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 
    * `list` : Lists all students.
 
+   * `filter s/Mathematics l/JC1` : Shows JC1 Mathematics students.
+
+   * `add n/John Doe p/98765432 gn/Jane Doe gp/91234567` : Adds a student named `John Doe` with optional student and guardian contact details.
+
    * `add n/John Doe lf/Fractions na/Complete worksheet 2` : Adds a student with optional learning context.
 
    * `archive 1` : Moves the 1st student shown out of active workflows without deleting the record.
@@ -155,6 +159,20 @@ Format: `list`
 
 Example: `list`
 
+`list` also resets any `find` or `filter` result and restores the complete active-student list.
+
+### Understanding result views and indices
+
+`list`, `find`, `filter`, and `upcoming` display an active-student result view, while `list archived` displays the
+archived-student result view. Every result view is numbered consecutively from 1 in the order shown. An index-based
+command acts on the student currently displayed with that index, rather than the student at the same position in the
+complete saved data. `upcoming` orders its results by lesson time; the other views use saved order.
+
+`edit`, `archive`, `schedule`, and `unschedule` are active-only commands. If the archived view is showing, run `list`
+before using one of them. `unarchive` works only in the archived view. `delete` works in either view and permanently
+removes the displayed record. A new `list`, `find`, `filter`, or `upcoming` command replaces the previous result view.
+Run `list` whenever you want to restore the complete active-student view in saved order.
+
 ### Editing a student: `edit`
 
 Updates or clears details of an existing student without recreating the record.
@@ -198,16 +216,39 @@ Finds students whose names contain any of the given keywords.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
-* The search is case-insensitive; for example, `hans` matches `Hans`.
-* Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
+* Matching is case-insensitive and partial; for example, `han` matches `Hans` and `Johanna`.
+* Keyword order does not matter; each supplied keyword is matched independently.
 * The search considers only names.
-* Partial names match; for example, `Han` matches `Hans`.
 * Students matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
+* Each matching student appears once in the same order as the complete active list, even if several or repeated
+  keywords match that student.
+* If no student matches, TutorContacts displays `No students found.` and shows an empty result view.
 
 Examples:
-* `find John` returns `john` and `John Doe`
+* `find jo` returns `John Doe` and `Marjorie Tan`
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
+
+### Filtering students by tutoring details: `filter`
+
+Filters active students by subject, education level, or both.
+
+Format: `filter [s/SUBJECT] [l/EDUCATION_LEVEL]`
+
+* At least one of `s/` or `l/` must be supplied, and each can appear only once.
+* Subject and education-level matching is case-insensitive and uses the complete normalized value. For example,
+  `s/math` does not match `Mathematics`, while `s/mathematics` does.
+* When both fields are supplied, a student must match both (`AND`).
+* A student without a supplied filter field does not match that filter.
+* Results remain in the same order as the complete active list and receive consecutive displayed indices.
+* If no student matches, TutorContacts displays `No students match the filters.`
+* Run `list` to restore the complete active-student list.
+
+Examples:
+* `filter s/H2 Mathematics` shows students whose subject is H2 Mathematics.
+* `filter l/jc1` shows JC1 students; education-level input is case-insensitive.
+* `filter s/H2 Mathematics l/JC1` shows only students matching both criteria.
+* `filter`, `filter s/`, and `filter l/University` are rejected.
 
 ### Archiving a student: `archive`
 
@@ -398,6 +439,7 @@ Action | Format, Examples
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`<br> e.g., `edit 2 p/91234567 s/Mathematics l/S3`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
+**Filter** | `filter [s/SUBJECT] [l/EDUCATION_LEVEL]`<br> e.g., `filter s/Mathematics l/S3`
 **List** | `list` or `list archived`
 **Unarchive** | `unarchive INDEX`<br> e.g., `unarchive 1`
 **Schedule** | `schedule INDEX at/YYYY-MM-DD HH:mm`<br> e.g., `schedule 1 at/2099-10-30 16:00`

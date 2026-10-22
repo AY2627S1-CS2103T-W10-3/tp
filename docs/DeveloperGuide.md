@@ -299,6 +299,34 @@ Design considerations:
   * Pros: Supports history and multiple future lessons.
   * Cons: Requires extra commands and indices to identify a particular lesson, which is outside the agreed scope.
 
+### Query result views
+
+`ModelManager` maintains a `FilteredList<Person>` wrapped by a `SortedList<Person>` and exposes the sorted list as the
+current result view. It records whether the view's `ResultViewScope` is `ACTIVE` or `ARCHIVED`. `list`, `find`, `filter`,
+and `upcoming` use the active scope; `list archived` uses the archived scope. The scope predicate is combined with the
+command's query predicate, so archived students cannot appear in active queries. Updating a filter first clears any
+existing comparator, which returns `list`, `find`, `filter`, and `list archived` to saved order. `upcoming` then applies
+its lesson-time comparator. `PersonListPanel` derives each visible one-based index from the displayed list position.
+
+Partial-name matching converts both names and keywords using `Locale.ROOT` and applies substring matching. Multiple
+keywords use OR. Because each `Person` is evaluated once by one predicate, repeated or overlapping keywords cannot
+duplicate a result. Subject and education-level filters use exact normalized matching and combine two supplied fields
+with AND; an absent field cannot satisfy a supplied criterion.
+
+Index-based commands obtain their target from `Model#getFilteredPersonList`, so edit, delete, archive, schedule, and
+unschedule after a query act on the record carrying the displayed index, including when `upcoming` has reordered the
+students. A new query replaces the previous predicate and order; `list` restores the complete active view in saved
+order.
+Active-only mutations check the scope before resolving an index: `edit`, `archive`, `schedule`, and `unschedule` reject
+the archived view, while `unarchive` requires it. Permanent `delete` remains available in either scope. Cross-feature
+tests verify targets selected from find, filter, upcoming, and archived views, including archive removal, lesson
+changes, sorted indices, and the reset from one query to another.
+
+The sequence diagram below focuses on the model interactions when a filter creates a result view and an edit targets
+its first displayed student. Parsing and the resulting UI refresh are omitted to keep the diagram within this scope.
+
+![Query result-view sequence diagram](images/QueryResultViewSequenceDiagram.png)
+
 ### Upcoming lessons and overdue markers
 
 `upcoming` shows active students with future lessons, soonest first. `ModelManager` exposes the displayed list as a
@@ -387,7 +415,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* *` | new user | view command instructions | learn or recall how to use the application |
 | `* *` | private tutor | edit or clear details in an existing student record | keep information accurate without deleting and recreating the record |
 | `* *` | private tutor | find a student by name | retrieve a record without scanning the full list |
-| `* *` | private tutor | tag and filter students by subject or education level | retrieve a relevant group of students quickly |
+| `* *` | private tutor | filter students by subject or education level | retrieve a relevant group of students quickly |
 | `* *` | private tutor | record upcoming lessons | keep track of tutoring arrangements |
 | `* *` | private tutor | reschedule or clear a student's lesson | keep lesson arrangements accurate when plans change |
 | `* *` | private tutor | see my upcoming lessons in time order | prepare for my next lessons |
@@ -656,6 +684,38 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
     previously saved data is not guaranteed to be preserved.
 
   Use case ends.
+
+**Use case: UC07 — Query active students**
+
+**MSS**
+
+1. User requests to find students by one or more partial-name keywords, or to filter by subject or education level.
+2. TutorContacts validates the supplied query.
+3. TutorContacts displays each matching active student once, in stable order, with consecutive indices.
+4. User runs an index-based command on one of the displayed students.
+5. TutorContacts applies the command to the student carrying that index in the current result view.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. No query criterion is supplied, or a criterion is invalid.
+
+  * 2a1. TutorContacts reports the required format or validation rule.
+
+  Use case ends.
+
+* 3a. No active student matches.
+
+  * 3a1. TutorContacts reports that no student matches and displays an empty result view.
+
+  Use case ends.
+
+* 4a. User requests the complete active list.
+
+  * 4a1. TutorContacts restores all active students in saved order with consecutive indices.
+
+  Use case resumes at step 4.
 
 **Use case: UC08 — Schedule a lesson**
 

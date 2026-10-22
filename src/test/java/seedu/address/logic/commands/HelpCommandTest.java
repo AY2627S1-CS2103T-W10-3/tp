@@ -35,6 +35,7 @@ public class HelpCommandTest {
         assertTrue(help.contains("list archived"));
         assertTrue(help.contains("unarchive INDEX"));
         assertTrue(help.contains("find KEYWORD"));
+        assertTrue(help.contains("filter [s/SUBJECT] [l/EDUCATION_LEVEL]"));
         assertTrue(help.contains("delete INDEX"));
         assertTrue(help.contains("schedule INDEX at/YYYY-MM-DD HH:mm"));
         assertTrue(help.contains("unschedule INDEX"));
@@ -43,6 +44,8 @@ public class HelpCommandTest {
         assertTrue(help.contains("help\n"));
         assertTrue(help.contains("exit\n"));
         assertTrue(help.contains("Guardian phone or email requires gn/"));
+        assertTrue(help.contains("partial-name matching with OR"));
+        assertTrue(help.contains("Displayed indices belong to the current result list"));
         assertTrue(help.contains("An empty optional edit prefix clears that field"));
         assertTrue(help.contains("Clearing gn/ also clears gp/ and ge/"));
         assertTrue(help.contains("Archived students remain saved until permanently deleted"));

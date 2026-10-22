@@ -1,0 +1,80 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+box Logic LOGIC_COLOR_T1
+participant "f:FilterCommand" as FilterCommand LOGIC_COLOR
+participant "e:EditCommand" as EditCommand LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "m:ModelManager" as ModelManager MODEL_COLOR
+participant "displayed:SortedList<Person>" as DisplayedView MODEL_COLOR
+participant "filtered:FilteredList<Person>" as FilteredView MODEL_COLOR
+participant "p:PersonMatchesFiltersPredicate" as Predicate MODEL_COLOR
+end box
+
+[-> FilterCommand : execute(m)
+activate FilterCommand
+
+FilterCommand -> ModelManager : updateFilteredPersonList(p)
+activate ModelManager
+ModelManager -> DisplayedView : setComparator(null)
+activate DisplayedView
+DisplayedView --> ModelManager
+deactivate DisplayedView
+ModelManager -> FilteredView : setPredicate(active and p)
+activate FilteredView
+
+loop for each student
+    FilteredView -> Predicate : test(student)
+    activate Predicate
+    Predicate --> FilteredView : matches
+    deactivate Predicate
+end
+
+FilteredView --> ModelManager
+deactivate FilteredView
+ModelManager --> FilterCommand
+deactivate ModelManager
+FilterCommand -->] : CommandResult
+deactivate FilterCommand
+
+note across
+The UI observes displayed and shows consecutive one-based indices.
+upcoming uses the same filter pipeline, then sets a lesson-time comparator.
+end note
+
+[-> EditCommand : execute(m)
+activate EditCommand
+EditCommand -> ModelManager : getFilteredPersonList()
+activate ModelManager
+ModelManager --> EditCommand : displayed
+deactivate ModelManager
+
+EditCommand -> DisplayedView : get(0)
+activate DisplayedView
+DisplayedView --> EditCommand : displayed student 1
+deactivate DisplayedView
+
+EditCommand -> ModelManager : setPerson(displayed student 1, edited)
+activate ModelManager
+ModelManager --> EditCommand
+deactivate ModelManager
+
+EditCommand -> ModelManager : updateFilteredPersonList(show all)
+activate ModelManager
+ModelManager -> DisplayedView : setComparator(null)
+activate DisplayedView
+DisplayedView --> ModelManager
+deactivate DisplayedView
+ModelManager -> FilteredView : setPredicate(active and show all)
+activate FilteredView
+FilteredView --> ModelManager
+deactivate FilteredView
+ModelManager --> EditCommand
+deactivate ModelManager
+
+EditCommand -->] : CommandResult
+deactivate EditCommand
+@enduml
