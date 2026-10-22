@@ -28,7 +28,9 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 
    * `list` : Lists all students.
 
-   * `add n/John Doe p/98765432 gn/Jane Doe gp/91234567` : Adds a student named `John Doe` with optional student and guardian contact details.
+   * `add n/John Doe lf/Fractions na/Complete worksheet 2` : Adds a student with optional learning context.
+
+   * `archive 1` : Moves the 1st student shown out of active workflows without deleting the record.
 
    * `delete 3` : Deletes the 3rd student shown in the current list.
 
@@ -59,8 +61,9 @@ TutorContacts is an **offline desktop application for private tutors to manage s
   looks like a prefix, wrap the complete value in double quotes.<br>
   For example, use `a/"Block n/7"`. The quotes are not stored. Longer words such as `Level/` do not need quotes.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
+* Extraneous parameters for commands that take no parameters, such as `help`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
+  `list` accepts only no argument or the exact argument `archived`; for example, `list 1` is rejected.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </div>
@@ -78,7 +81,7 @@ Format: `help`
 
 Adds a student to TutorContacts. Only the student name is required; the remaining fields are optional.
 
-Format: `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]`
+Format: `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]`
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
 Only `n/` is required. Every other prefix is optional; each supported prefix can be supplied once, in any order.
@@ -95,10 +98,17 @@ Only `n/` is required. Every other prefix is optional; each supported prefix can
 | `gn/` | Guardian name. Optional; uses the student-name rules. |
 | `gp/` | Guardian phone. Optional; uses the student-phone rules and requires `gn/`. |
 | `ge/` | Guardian email. Optional; uses the student-email rules and requires `gn/`. |
+| `lf/` | Current learning focus. Optional; 1–200 characters without control characters. |
+| `na/` | Next action. Optional; 1–200 characters without control characters. |
 | `t/` | One optional tag; letters and digits only. |
 
 Subject and education level may be supplied independently. Education levels are case-insensitive when entered and are
 displayed in uppercase. If either field is omitted, the student card displays `Not provided` for that field.
+
+Learning focus and next action may also be supplied independently. Ordinary spaces and punctuation are accepted.
+Leading and trailing whitespace is removed, and repeated ordinary spaces are stored as one space. Tabs, line breaks,
+other control characters, blank values, and values longer than 200 characters are rejected. An omitted learning field
+is displayed as `Not provided`.
 
 Leading and trailing whitespace around field values is ignored. Repeated whitespace inside names, guardian names,
 subjects, and addresses is stored as one space. Whitespace within phone numbers, email addresses, education levels, and
@@ -118,11 +128,13 @@ Examples:
 * Name only: `add n/Alex Tan`
 * Prefix-like text in values: `add n/Alice s/A Level/Mathematics a/"Block n/7"`
 * All tutoring and guardian details, in a different prefix order: `add l/jc1 gn/Mary Tan s/H2 Mathematics p/98765432 ge/mary@example.com gp/81234567 e/alex@example.com n/Alex Tan`
+* Learning context: `add n/Alex Tan lf/Quadratic graphs na/Complete worksheet 4`
 * Two students may share contacts: `add n/Ben Tan p/81234567 gn/Mary Tan gp/91234567` followed by `add n/Chloe Tan p/81234567 gn/Mary Tan gp/91234567`
 * Invalid, because `gn/` is missing: `add n/Sam Lee gp/81234567`
 * Invalid, because a prefix repeats: `add n/Sam Lee p/81234567 p/92345678`
 * Invalid, because the education level is unsupported: `add n/Sam Lee l/University`
 * Invalid, because the subject is empty: `add n/Eva Lim s/ l/P6`
+* Invalid, because a learning focus supplied to `add` cannot be empty: `add n/Eva Lim lf/`
 * Invalid guardian email: `add n/Sam Lee gn/Pat Lee ge/pat.example.com`
 * Invalid, because of unexpected text: `add surprise n/Sam Lee` or `add n/Sam Lee x/value`
 
@@ -130,9 +142,10 @@ Rejected `add` commands leave the displayed records and saved data unchanged.
 
 ### Listing all students: `list`
 
-Shows all student records in their saved order. If there are no records, TutorContacts shows guidance for adding one.
-Student cards show the student's recorded contact, tutoring, guardian, and lesson details. Omitted details are shown as
-`Not provided`, and a student without a lesson is shown as `Not scheduled`.
+Shows all active student records in their saved order. Archived students are excluded. If there are no records,
+TutorContacts shows guidance for adding one. If records exist only in the archive, it suggests `list archived` instead.
+Student cards show the student's recorded contact, tutoring, guardian, learning-context, and lesson details. Omitted
+details are shown as `Not provided`, and a student without a lesson is shown as `Not scheduled`.
 
 After a command is submitted, the command box retains keyboard focus so you can type the next command immediately.
 Use the mouse or Tab to focus the list when you want to scroll it or use its normal list navigation keys.
@@ -145,19 +158,28 @@ Example: `list`
 
 Edits an existing student in TutorContacts.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`
+Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [s/SUBJECT] [l/EDUCATION_LEVEL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`
 
 * Edits the student at the specified `INDEX`. The index refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided.
-* Existing values will be updated to the input values.
+* Existing values will be updated to the input values. An omitted prefix preserves its existing value.
+* To clear an optional value, supply its prefix with no value, for example `lf/` or `p/`. The required `n/` field
+  cannot be cleared.
+* Guardian, subject, education-level, learning-focus, and next-action fields use the same validation rules as `add`.
+  Clearing `gn/` also clears `gp/` and `ge/`. A guardian phone or email cannot be set when no guardian name remains.
+* `lf/` and `na/` use the same validation and whitespace normalization as `add`.
 * When editing tags, all of the student's existing tags are removed; adding tags is not cumulative.
 * To remove all of a student's tags, enter `t/` without a tag after it.
-* Subject, education-level, and guardian details cannot currently be changed using `edit`. To change one of these
-  details, delete the student record and add it again with the corrected information.
 * Enclose an address in double quotes if it contains separate prefix-like text, for example `a/"Block n/7"`.
 
 Examples:
-* `edit 1 p/91234567 e/johndoe@example.com` edits the phone number and email address of the 1st student.
+* `edit 1 p/91234567 e/johndoe@example.com s/Mathematics l/S3` edits the contact and tutoring details of the 1st student.
+* `edit 1 gn/Jane Doe gp/81234567 ge/jane@example.com` updates the 1st student's guardian details.
+* `edit 1 lf/Linear equations na/Review exercise 2` updates both learning fields.
+* `edit 1 lf/ na/` clears both learning fields while preserving every omitted field.
+* `edit 1 gn/` clears the guardian name, phone, and email together.
+* `edit 1 gn/ gp/81234567` is rejected because a guardian phone cannot remain without a guardian name.
+* `edit 1 n/` is rejected because the student name is required.
 * `edit 2 n/Betsy Crower t/` changes the name of the 2nd student to `Betsy Crower` and clears all existing tags.
 
 ### Locating students by name: `find`
@@ -169,7 +191,7 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 * The search is case-insensitive; for example, `hans` matches `Hans`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
 * The search considers only names.
-* Only full words match; for example, `Han` does not match `Hans`.
+* Partial names match; for example, `Han` matches `Hans`.
 * Students matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
 
 Examples:
@@ -177,20 +199,61 @@ Examples:
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
 
+### Archiving a student: `archive`
+
+Moves a former student out of active workflows while preserving the complete record and its saved position.
+
+Format: `archive INDEX`
+
+* `INDEX` refers to the student shown in the current active result view, including `list`, `find`, or `filter` results.
+* Archived students do not appear in active `list`, `find`, or `filter` results.
+* The command is rejected from the archived view. Run `list` first to return to an active view.
+* Archiving is reversible and is different from permanent `delete`.
+
+Example: `find Alex` followed by `archive 1` archives the first student in those results.
+
+### Listing archived students: `list archived`
+
+Shows every archived student in saved order with consecutive displayed indices. If none exist, TutorContacts explains
+that `archive INDEX` can be used from an active view.
+
+Format: `list archived`
+
+### Restoring an archived student: `unarchive`
+
+Restores a student from the archived view to active workflows without changing the student's recorded fields.
+
+Format: `unarchive INDEX`
+
+* Run `list archived` first; `INDEX` refers to that displayed archived list.
+* The command is rejected from an active view.
+* The restored student returns to the original saved-order position in active results.
+
+Example: `list archived` followed by `unarchive 1` restores the first archived student.
+
+Complete lifecycle example:
+
+1. Run `list` and note the student shown at index 1.
+1. Run `archive 1`; that student disappears from active results.
+1. Run `list archived`; the archived student appears with a consecutive archived-view index.
+1. Run `unarchive 1`, then `list`; the complete record returns to its original saved-order position.
+
 ### Deleting a student: `delete`
 
-Deletes the specified student from TutorContacts. The result panel confirms the deleted student's details.
+Permanently deletes the specified student from TutorContacts. The result panel confirms the deleted student's details.
 
 Format: `delete INDEX`
 
 * Deletes the student at the specified `INDEX`.
 * The index refers to the index number shown in the displayed student list.
+* Deletion works in both active and archived views. Unlike archive, it cannot be reversed.
 * The index **must be a positive integer** 1, 2, 3, …​
 * Missing, malformed, zero, negative, extra, or out-of-range indices are rejected.
 
 Examples:
 * `list` followed by `delete 2` deletes the 2nd student in TutorContacts.
 * `find Betsy` followed by `delete 1` deletes the 1st student in the results of the `find` command.
+* `list archived` followed by `delete 1` permanently deletes the 1st archived student instead of restoring it.
 * `delete 0` and `delete 1 2` are rejected.
 
 ### Scheduling a lesson: `schedule`
@@ -293,12 +356,14 @@ Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a v
 
 Action | Format, Examples
 --------|------------------
-**Add** | `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [t/TAG]` <br> e.g., `add n/James Ho p/22224444 s/Mathematics l/S3 gn/Mary Ho gp/81234567`
+**Add** | `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]` <br> e.g., `add n/James Ho lf/Fractions na/Complete worksheet 2`
+**Archive** | `archive INDEX`<br> e.g., `archive 1`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
-**Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
+**Edit** | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [s/SUBJECT] [l/EDUCATION_LEVEL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`<br> e.g., `edit 2 lf/Algebra na/Review exercise 2`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
-**List** | `list`
+**List** | `list` or `list archived`
+**Unarchive** | `unarchive INDEX`<br> e.g., `unarchive 1`
 **Schedule** | `schedule INDEX at/YYYY-MM-DD HH:mm`<br> e.g., `schedule 1 at/2099-10-30 16:00`
 **Unschedule** | `unschedule INDEX`<br> e.g., `unschedule 1`
 **Help** | `help`
