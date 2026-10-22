@@ -71,7 +71,7 @@ public class AddressBookParser {
             case HelpCommand.COMMAND_WORD -> new HelpCommand();
             case ScheduleCommand.COMMAND_WORD -> new ScheduleCommandParser().parse(arguments);
             case UnscheduleCommand.COMMAND_WORD -> new UnscheduleCommandParser().parse(arguments);
-            case UpcomingCommand.COMMAND_WORD -> new UpcomingCommand();
+            case UpcomingCommand.COMMAND_WORD -> new UpcomingCommandParser().parse(arguments);
             default -> {
                 logger.finer("This user input caused a ParseException: " + userInput);
                 throw new ParseException(MESSAGE_UNKNOWN_COMMAND);
