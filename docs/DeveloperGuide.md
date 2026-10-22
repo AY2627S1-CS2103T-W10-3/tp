@@ -208,10 +208,10 @@ keeps valid older data files compatible. `PersonCard` and command feedback displ
 an older JSON record also loads as active. `Person#withArchived` creates a replacement record that changes only this
 state, so contact, guardian, tutoring, learning-context, and tag data remain unchanged.
 
-`ModelManager` stores a `ResultViewScope` independently from its `FilteredList<Person>`. Active commands establish an
-`ACTIVE` scope and automatically combine their query predicate with `!Person#isArchived`. `list archived` establishes
-an `ARCHIVED` scope and uses `Person#isArchived`. The explicit scope is required because an empty result list cannot
-indicate whether the user selected an active or archived view.
+`ModelManager` stores a `ResultViewScope` independently from its `FilteredList<Person>`. `list`, `find`, and `filter`
+establish an `ACTIVE` scope and automatically combine their query predicate with `!Person#isArchived`.
+`list archived` establishes an `ARCHIVED` scope and uses `Person#isArchived`. The explicit scope is required because
+an empty result list cannot indicate whether the user selected an active or archived view.
 
 `archive INDEX` resolves the index against the current active result view, replaces the selected record with an
 archived copy, and leaves its saved-list position unchanged. `unarchive INDEX` performs the inverse transition from
@@ -610,7 +610,7 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * **Independent private tutor**: A tutor who manages their own students and tutoring arrangements rather than relying on an organization to manage them.
 * **Lesson**: The single upcoming tutoring session recorded for a student, as a local date and time with minute precision.
 * **Student record**: The information stored for one student, including contact, guardian, tutoring, learning-context,
-  lesson, and archive-state details.
+  and archive-state details.
 * **Subject**: The academic subject for which the student is receiving tuition.
 
 --------------------------------------------------------------------------------------------------------------------
