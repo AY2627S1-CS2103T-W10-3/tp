@@ -17,7 +17,6 @@ import static seedu.address.logic.commands.CommandTestUtil.INVALID_GUARDIAN_NAME
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_GUARDIAN_PHONE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_NAME_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PHONE_DESC;
-import static seedu.address.logic.commands.CommandTestUtil.INVALID_SUBJECT_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
@@ -55,14 +54,11 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
-import seedu.address.model.person.Address;
 import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
-import seedu.address.model.person.LearningFocus;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Phone;
-import seedu.address.model.person.Subject;
 import seedu.address.model.tag.Tag;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
 
@@ -104,14 +100,13 @@ public class EditCommandParserTest {
 
     @Test
     public void parse_invalidValue_failure() {
+        assertParseFailure(parser, "1 n/", Name.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, "1" + INVALID_NAME_DESC, Name.MESSAGE_CONSTRAINTS); // invalid name
         assertParseFailure(parser, "1" + INVALID_PHONE_DESC, Phone.MESSAGE_CONSTRAINTS); // invalid phone
         assertParseFailure(parser, "1" + INVALID_EMAIL_DESC, Email.MESSAGE_CONSTRAINTS); // invalid email
-        assertParseFailure(parser, "1" + INVALID_ADDRESS_DESC, Address.MESSAGE_CONSTRAINTS); // invalid address
         assertParseFailure(parser, "1" + INVALID_GUARDIAN_NAME_DESC, Name.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, "1" + INVALID_GUARDIAN_PHONE_DESC, Phone.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, "1" + INVALID_GUARDIAN_EMAIL_DESC, Email.MESSAGE_CONSTRAINTS);
-        assertParseFailure(parser, "1" + INVALID_SUBJECT_DESC, Subject.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, "1" + INVALID_EDUCATION_LEVEL_DESC, EducationLevel.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, "1" + INVALID_TAG_DESC, Tag.MESSAGE_CONSTRAINTS); // invalid tag
 
@@ -237,12 +232,23 @@ public class EditCommandParserTest {
     }
 
     @Test
+    public void parse_emptyOptionalPrefixes_createsClearRequests() {
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withoutPhone().withoutEmail().withoutAddress()
+                .withoutGuardianName().withoutGuardianPhone().withoutGuardianEmail()
+                .withoutSubject().withoutEducationLevel()
+                .withoutLearningFocus().withoutNextAction().withTags().build();
+
+        assertParseSuccess(parser, "1 p/ e/ a/ gn/ gp/ ge/ s/ l/ lf/ na/ t/",
+                new EditCommand(INDEX_FIRST_PERSON, descriptor));
+    }
+
+    @Test
     public void parse_invalidOrRepeatedLearningContext_failure() {
         assertParseFailure(parser, "1 lf/Fractions lf/Algebra",
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_LEARNING_FOCUS));
         assertParseFailure(parser, "1 na/Worksheet 1 na/Worksheet 2",
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NEXT_ACTION));
-        assertParseFailure(parser, "1 lf/", LearningFocus.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, "1 na/Call\tguardian", NextAction.MESSAGE_CONSTRAINTS);
     }
 
@@ -256,6 +262,9 @@ public class EditCommandParserTest {
         String userInput = targetIndex.getOneBased() + INVALID_PHONE_DESC + PHONE_DESC_BOB;
 
         assertParseFailure(parser, userInput, Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE));
+
+        assertParseFailure(parser, "1 p/ p/91234567",
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE));
 
         // invalid followed by valid
         userInput = targetIndex.getOneBased() + PHONE_DESC_BOB + INVALID_PHONE_DESC;
