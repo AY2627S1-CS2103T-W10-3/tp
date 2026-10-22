@@ -105,7 +105,7 @@ How the `Logic` component works:
 1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteCommand`) which is executed by the `LogicManager`.
 1. Before executing the command, `LogicManager` takes a snapshot of the address book. The command can then communicate with the `Model` when it is executed (e.g. to delete a person).<br>
    Note that although this is shown as a single step in the diagram above for simplicity, the code can require several interactions between the command object and the `Model` to complete the operation.
-1. `LogicManager` saves the updated address book after the command succeeds. If saving fails, it restores the snapshot before reporting the existing save-failure message. This keeps the records displayed by the UI consistent with the records that were last saved successfully.
+1. `LogicManager` saves the updated address book after the command succeeds. If saving fails, it restores the in-memory snapshot before reporting the save failure, so the UI returns to the state before the command. The data file may already have been partially written, so the previously saved data is not guaranteed to be preserved.
 1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
@@ -477,7 +477,8 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * 4a. TutorContacts cannot save the updated data.
 
   * 4a1. TutorContacts reports the save failure.
-  * 4a2. TutorContacts leaves the displayed and saved records unchanged.
+  * 4a2. TutorContacts restores the previous in-memory records. The data file may remain partially written, so the
+    previously saved data is not guaranteed to be preserved.
 
   Use case ends.
 
@@ -540,7 +541,8 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * 6a. TutorContacts cannot save the updated data.
 
   * 6a1. TutorContacts reports the save failure.
-  * 6a2. TutorContacts leaves the displayed and saved records unchanged.
+  * 6a2. TutorContacts restores the previous in-memory records. The data file may remain partially written, so the
+    previously saved data is not guaranteed to be preserved.
 
   Use case ends.
 
