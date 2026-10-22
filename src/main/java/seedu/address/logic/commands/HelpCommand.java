@@ -24,6 +24,8 @@ public class HelpCommand extends Command {
             + ArchiveCommand.COMMAND_WORD + " INDEX\n"
             + UnarchiveCommand.COMMAND_WORD + " INDEX\n"
             + DeleteCommand.COMMAND_WORD + " INDEX\n"
+            + ScheduleCommand.FORMAT + "\n"
+            + UnscheduleCommand.FORMAT + "\n"
             + ClearCommand.COMMAND_WORD + "\n"
             + COMMAND_WORD + "\n"
             + ExitCommand.COMMAND_WORD + "\n\n"
@@ -35,9 +37,11 @@ public class HelpCommand extends Command {
             + "Different students may share contact and guardian details.\n"
             + "Guardian phone or email requires gn/. Education levels: P1-P6, S1-S5, JC1-JC2.\n"
             + "In edit, an omitted prefix preserves its value. An empty optional edit prefix clears that field; "
-            + "n/ cannot be cleared. Clearing gn/ also clears gp/ and ge/.\n\n"
+            + "n/ cannot be cleared. Clearing gn/ also clears gp/ and ge/.\n"
             + "Learning focus and next action are optional, contain 1 to 200 characters when present, "
             + "and cannot contain control characters.\n"
+            + "Each student has at most one lesson. Lesson times use this computer's local time, must be in the "
+            + "future, and replace any existing lesson.\n"
             + "archive INDEX uses the current active result view. list archived opens the archived view, "
             + "where unarchive INDEX restores a student.\n"
             + "Archived students remain saved until permanently deleted with delete INDEX.\n\n"
@@ -51,6 +55,7 @@ public class HelpCommand extends Command {
             + "list archived\n"
             + "unarchive 1\n"
             + "delete 1\n"
+            + "schedule 1 at/2099-10-30 16:00\n"
             + "Invalid: add n/Alex Tan gp/81234567 (guardian name missing)\n";
 
     @Override

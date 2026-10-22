@@ -9,6 +9,7 @@ import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Guardian;
 import seedu.address.model.person.LearningFocus;
+import seedu.address.model.person.Lesson;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Person;
@@ -38,6 +39,7 @@ public class PersonBuilder {
     private Optional<EducationLevel> educationLevel;
     private Optional<LearningFocus> learningFocus;
     private Optional<NextAction> nextAction;
+    private Optional<Lesson> lesson;
     private boolean archived;
     private Set<Tag> tags;
 
@@ -54,6 +56,7 @@ public class PersonBuilder {
         educationLevel = Optional.empty();
         learningFocus = Optional.empty();
         nextAction = Optional.empty();
+        lesson = Optional.empty();
         archived = false;
         tags = new HashSet<>();
     }
@@ -71,6 +74,7 @@ public class PersonBuilder {
         educationLevel = personToCopy.getEducationLevel();
         learningFocus = personToCopy.getLearningFocus();
         nextAction = personToCopy.getNextAction();
+        lesson = personToCopy.getLesson();
         archived = personToCopy.isArchived();
         tags = new HashSet<>(personToCopy.getTags());
     }
@@ -200,6 +204,18 @@ public class PersonBuilder {
         return this;
     }
 
+    /** Sets the student's scheduled lesson. */
+    public PersonBuilder withLesson(String lesson) {
+        this.lesson = Optional.of(new Lesson(lesson));
+        return this;
+    }
+
+    /** Omits the student's scheduled lesson. */
+    public PersonBuilder withoutLesson() {
+        lesson = Optional.empty();
+        return this;
+    }
+
     /** Sets whether the student is archived. */
     public PersonBuilder withArchived(boolean archived) {
         this.archived = archived;
@@ -209,7 +225,7 @@ public class PersonBuilder {
     /** Builds a {@code Person} with the configured fields. */
     public Person build() {
         return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, archived, tags);
+                nextAction, lesson, archived, tags);
     }
 
 }

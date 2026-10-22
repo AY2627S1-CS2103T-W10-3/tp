@@ -22,6 +22,14 @@ public class PersonCardTest {
         assertEquals(1, countOccurrences(fxml, "fx:id=\"nextAction\""));
     }
 
+    @Test
+    public void personListCardFxml_containsLessonLabel() throws IOException, URISyntaxException {
+        Path fxmlPath = Path.of(MainApp.class.getResource("/view/PersonListCard.fxml").toURI());
+        String fxml = Files.readString(fxmlPath);
+
+        assertEquals(1, countOccurrences(fxml, "fx:id=\"lesson\""));
+    }
+
     private static int countOccurrences(String text, String value) {
         return text.split(value, -1).length - 1;
     }

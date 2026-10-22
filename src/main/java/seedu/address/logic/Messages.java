@@ -22,6 +22,7 @@ public class Messages {
             "An archived student with this name already exists. "
                     + "Use `list archived`, then `unarchive INDEX` to restore them.";
     public static final String NOT_PROVIDED = "Not provided";
+    public static final String NOT_SCHEDULED = "Not scheduled";
 
     /**
      * Returns an error message indicating the duplicate prefixes.
@@ -55,6 +56,8 @@ public class Messages {
                 .append(person.getLearningFocus().map(focus -> focus.getValue()).orElse(NOT_PROVIDED))
                 .append("; Next action: ")
                 .append(person.getNextAction().map(action -> action.getValue()).orElse(NOT_PROVIDED))
+                .append("; Lesson: ")
+                .append(person.getLesson().map(lesson -> lesson.getValue()).orElse(NOT_SCHEDULED))
                 .append("; Guardian: ")
                 .append(person.getGuardian().map(guardian -> guardian.getName().fullName).orElse(NOT_PROVIDED))
                 .append("; Guardian phone: ")

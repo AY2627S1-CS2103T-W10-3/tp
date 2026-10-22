@@ -48,6 +48,8 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private Label nextAction;
     @FXML
+    private Label lesson;
+    @FXML
     private Label guardianName;
     @FXML
     private Label guardianPhone;
@@ -75,6 +77,8 @@ public class PersonCard extends UiPart<Region> {
                 + person.getLearningFocus().map(value -> value.getValue()).orElse(Messages.NOT_PROVIDED));
         nextAction.setText("Next action: "
                 + person.getNextAction().map(value -> value.getValue()).orElse(Messages.NOT_PROVIDED));
+        lesson.setText("Lesson: "
+                + person.getLesson().map(value -> value.getValue()).orElse(Messages.NOT_SCHEDULED));
         guardianName.setText("Guardian: " + person.getGuardian()
                 .map(value -> value.getName().fullName).orElse(Messages.NOT_PROVIDED));
         guardianPhone.setText("Guardian phone: " + person.getGuardian()
