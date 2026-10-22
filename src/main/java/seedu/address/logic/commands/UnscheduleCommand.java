@@ -61,7 +61,9 @@ public class UnscheduleCommand extends Command {
             throw new CommandException(String.format(MESSAGE_NO_LESSON, studentName));
         }
 
-        model.setPerson(student, student.withLesson(Optional.empty()));
+        Person unscheduledStudent = student.withLesson(Optional.empty());
+        model.setPerson(student, unscheduledStudent);
+        assert unscheduledStudent.getLesson().isEmpty();
         logger.fine("Cleared lesson " + previousLesson.get() + " for " + student.getName());
         return new CommandResult(String.format(MESSAGE_UNSCHEDULE_SUCCESS, studentName, previousLesson.get()));
     }
