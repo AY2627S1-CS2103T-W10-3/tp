@@ -24,6 +24,8 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_LEARNING_FOCUS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NEXT_ACTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
@@ -40,7 +42,9 @@ import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.LearningFocus;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Phone;
 import seedu.address.model.tag.Tag;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
@@ -174,6 +178,27 @@ public class EditCommandParserTest {
                 .withAddress("Block n/7 x/West").build();
         assertParseSuccess(parser, "1 a/\"Block n/7 x/West\"",
                 new EditCommand(INDEX_FIRST_PERSON, quotedPrefixDescriptor));
+    }
+
+    @Test
+    public void parse_learningContextSpecified_success() {
+        Index targetIndex = INDEX_FIRST_PERSON;
+        String userInput = targetIndex.getOneBased() + " na/ Complete   worksheet 2"
+                + " lf/ Fractions   and ratios";
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withLearningFocus("Fractions and ratios").withNextAction("Complete worksheet 2").build();
+
+        assertParseSuccess(parser, userInput, new EditCommand(targetIndex, descriptor));
+    }
+
+    @Test
+    public void parse_invalidOrRepeatedLearningContext_failure() {
+        assertParseFailure(parser, "1 lf/Fractions lf/Algebra",
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_LEARNING_FOCUS));
+        assertParseFailure(parser, "1 na/Worksheet 1 na/Worksheet 2",
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NEXT_ACTION));
+        assertParseFailure(parser, "1 lf/", LearningFocus.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, "1 na/Call\tguardian", NextAction.MESSAGE_CONSTRAINTS);
     }
 
     @Test

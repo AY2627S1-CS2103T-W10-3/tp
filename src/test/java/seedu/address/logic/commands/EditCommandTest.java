@@ -134,6 +134,26 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_editLearningContext_replacesBothValues() {
+        Person original = new PersonBuilder().withName("Learning Student")
+                .withLearningFocus("Fractions").withNextAction("Worksheet 1").build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(original);
+        Model actualModel = new ModelManager(addressBook, new UserPrefs());
+        Person editedPerson = new PersonBuilder(original).withLearningFocus("Algebra")
+                .withNextAction("Worksheet 2").build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withLearningFocus("Algebra")
+                        .withNextAction("Worksheet 2").build());
+
+        Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
+        expectedModel.setPerson(original, editedPerson);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS,
+                Messages.format(editedPerson));
+        assertCommandSuccess(editCommand, actualModel, expectedMessage, expectedModel);
+    }
+
+    @Test
     public void execute_filteredList_success() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
 
