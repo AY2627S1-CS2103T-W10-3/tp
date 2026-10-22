@@ -234,20 +234,23 @@ Design considerations:
 
 ### Query result views
 
-`ModelManager` exposes an unmodifiable `FilteredList<Person>` as the current active result view. `list` applies the
-show-all predicate, `find` applies `NameContainsKeywordsPredicate`, and `filter` applies
-`PersonMatchesFiltersPredicate`. JavaFX keeps the original source-list order when applying these predicates, while
-`PersonListPanel` derives each visible one-based index from the filtered list position.
+`ModelManager` exposes an unmodifiable `FilteredList<Person>` as the current result view and records whether its
+`ResultViewScope` is `ACTIVE` or `ARCHIVED`. `list`, `find`, and `filter` use the active scope; `list archived` uses the
+archived scope. The scope predicate is combined with the command's query predicate, so archived students cannot appear
+in active queries. JavaFX keeps the original source-list order when applying these predicates, while `PersonListPanel`
+derives each visible one-based index from the filtered list position.
 
 Partial-name matching converts both names and keywords using `Locale.ROOT` and applies substring matching. Multiple
 keywords use OR. Because each `Person` is evaluated once by one predicate, repeated or overlapping keywords cannot
 duplicate a result. Subject and education-level filters use exact normalized matching and combine two supplied fields
 with AND; an absent field cannot satisfy a supplied criterion.
 
-Index-based active commands obtain their target from `Model#getFilteredPersonList`, so an edit or delete after a query
-acts on the record currently carrying that displayed index. `list` restores the complete active view. Archive and
-upcoming views will extend this contract when their owning features are integrated; their state protection and
-cross-feature tests cannot be completed before those commands exist.
+Index-based commands obtain their target from `Model#getFilteredPersonList`, so edit, delete, and archive after a query
+act on the record carrying the displayed index. `list` restores the complete active view. Active-only mutations check
+the scope before resolving an index: `edit` and `archive` reject the archived view, while `unarchive` requires it.
+Permanent `delete` remains available in either scope. Cross-feature tests verify that archive targets a filtered index,
+removes the student from the active result, and that archived-view indices select the displayed record for deletion.
+The upcoming view will extend this contract when its owning feature is integrated.
 
 The sequence diagram below focuses on the model interactions when a filter creates a result view and an edit targets
 its first displayed student. Parsing and the resulting UI refresh are omitted to keep the diagram within this scope.
@@ -547,6 +550,13 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * 4a. User requests the complete active list.
 
   * 4a1. TutorContacts restores all active students in saved order with consecutive indices.
+
+  Use case resumes at step 4.
+
+* 4b. User requests the archived list.
+
+  * 4b1. TutorContacts displays archived students in saved order with consecutive indices.
+  * 4b2. User may restore a displayed record, or permanently delete it, using its archived-view index.
 
   Use case resumes at step 4.
 

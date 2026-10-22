@@ -66,6 +66,35 @@ public class QueryResultViewTest {
     }
 
     @Test
+    public void execute_archiveAfterFilter_targetsDisplayedIndex() throws Exception {
+        PersonMatchesFiltersPredicate mathematics = new PersonMatchesFiltersPredicate(
+                Optional.of(new Subject("mathematics")), Optional.empty());
+        new FilterCommand(mathematics).execute(model);
+        assertEquals(List.of(ALICE, CARLA), model.getFilteredPersonList());
+
+        new ArchiveCommand(INDEX_SECOND_PERSON).execute(model);
+
+        Person archivedCarla = CARLA.withArchived(true);
+        assertEquals(List.of(BOB, ALICE, archivedCarla), model.getAddressBook().getPersonList());
+        assertEquals(List.of(ALICE), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_deleteFromArchivedView_targetsDisplayedIndex() throws Exception {
+        Person archivedBob = BOB.withArchived(true);
+        Person archivedCarla = CARLA.withArchived(true);
+        model.setPerson(BOB, archivedBob);
+        model.setPerson(CARLA, archivedCarla);
+        ListCommand.archived().execute(model);
+        assertEquals(List.of(archivedBob, archivedCarla), model.getFilteredPersonList());
+
+        new DeleteCommand(INDEX_SECOND_PERSON).execute(model);
+
+        assertEquals(List.of(archivedBob, ALICE), model.getAddressBook().getPersonList());
+        assertEquals(List.of(archivedBob), model.getFilteredPersonList());
+    }
+
+    @Test
     public void execute_listAfterQuery_restoresCompleteActiveView() throws Exception {
         new FindCommand(new NameContainsKeywordsPredicate(List.of("ali")))
                 .execute(model);
