@@ -15,6 +15,7 @@ import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Guardian;
 import seedu.address.model.person.LearningFocus;
+import seedu.address.model.person.Lesson;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Phone;
@@ -159,6 +160,21 @@ public class ParserUtil {
             throw new ParseException(NextAction.MESSAGE_CONSTRAINTS);
         }
         return new NextAction(normalizedNextAction);
+    }
+
+    /**
+     * Parses a {@code String lesson} into a {@code Lesson}.
+     * Leading and trailing whitespace is trimmed, and repeated spaces between the date and time are collapsed.
+     *
+     * @throws ParseException if the given {@code lesson} is not a valid date and time.
+     */
+    public static Lesson parseLesson(String lesson) throws ParseException {
+        requireNonNull(lesson);
+        String normalizedLesson = normalizeOrdinarySpaces(lesson);
+        if (!Lesson.isValidLesson(normalizedLesson)) {
+            throw new ParseException(Lesson.MESSAGE_CONSTRAINTS);
+        }
+        return new Lesson(normalizedLesson);
     }
 
     /** Trims field boundaries and collapses repeated ordinary spaces. */

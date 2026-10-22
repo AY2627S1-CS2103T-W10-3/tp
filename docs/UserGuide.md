@@ -201,6 +201,7 @@ Format: `schedule INDEX at/YYYY-MM-DD HH:mm`
 
 * Schedules a lesson for the student at the specified `INDEX`, which refers to the index number shown in the displayed
   student list. The index **must be a positive integer** 1, 2, 3, …​
+* Works only on the active student list. If `list archived` is showing, run `list` first.
 * The date and time use this computer's local time, with a 24-hour clock. For example, `2099-10-30 16:00` is 4pm on
   30 October 2099.
 * The lesson must be in the future. A time in the current minute or earlier is rejected.
@@ -209,6 +210,7 @@ Format: `schedule INDEX at/YYYY-MM-DD HH:mm`
 * Extra spaces around the value and between the date and time are ignored.
 * The student card shows the lesson as `Lesson: 2099-10-30 16:00`, or `Lesson: Not scheduled` when the student has no
   lesson.
+* Archiving a student keeps their lesson. The lesson is shown again when the student is restored with `unarchive`.
 
 Examples:
 * `list` followed by `schedule 2 at/2099-10-30 16:00` schedules a lesson for the 2nd student.
@@ -218,6 +220,7 @@ Examples:
 * Invalid, because the date does not exist: `schedule 1 at/2099-02-30 10:00`
 * Invalid, because the format is different: `schedule 1 at/30-10-2099 16:00` or `schedule 1 at/2099-10-30 4pm`
 * Invalid, because the time is missing: `schedule 1 at/2099-10-30`
+* Invalid, because the archived list is showing: `list archived` followed by `schedule 1 at/2099-10-30 16:00`
 
 <div markdown="span" class="alert alert-info">:information_source: **Note:**
 TutorContacts records only one upcoming lesson per student. Recurring lessons, reminders, lesson history, attendance,
@@ -231,6 +234,7 @@ Clears the scheduled lesson of the specified student.
 Format: `unschedule INDEX`
 
 * Clears the lesson of the student at the specified `INDEX` in the displayed student list.
+* Works only on the active student list. If `list archived` is showing, run `list` first.
 * The index **must be a positive integer** 1, 2, 3, …​
 * The result panel shows the lesson time that was cleared. If the student has no scheduled lesson, TutorContacts
   reports this and nothing changes.

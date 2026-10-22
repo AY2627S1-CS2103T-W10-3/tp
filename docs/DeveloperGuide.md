@@ -211,6 +211,11 @@ previous lesson, and the result message includes the previous time. `UnscheduleC
 copy whose lesson is empty, and reports an error if there is no lesson to clear. Commands that rebuild a `Person`, such
 as `edit`, carry the existing lesson forward unchanged.
 
+Archiving and lessons are independent. `Person#withArchived` keeps the lesson and `Person#withLesson` keeps the archive
+state, so archiving and restoring a student does not lose their lesson. Like `edit` and `archive`, both lesson commands
+check that the model's `ResultViewScope` is `ACTIVE` before resolving the index, and report an error while the archived
+view is shown.
+
 `JsonAdaptedPerson` stores the lesson as a nullable `lesson` string in the same format the user types. Older data files
 without the property load as students without a lesson. A stored lesson is not required to be in the future, because a
 lesson that was scheduled earlier remains valid after its time passes. If saving fails after a lesson change,
@@ -419,6 +424,12 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case resumes at step 2.
 
+* 3b. The archived student list is displayed.
+
+  * 3b1. TutorContacts reports that the command can only be used from the active student list.
+
+  Use case resumes at step 1.
+
 * 4a. The supplied index does not identify a displayed student.
 
   * 4a1. TutorContacts reports that no student exists at that index.
@@ -471,6 +482,12 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
   * 3b1. TutorContacts reports that the student has no scheduled lesson.
 
   Use case ends.
+
+* 3c. The archived student list is displayed.
+
+  * 3c1. TutorContacts reports that the command can only be used from the active student list.
+
+  Use case resumes at step 1.
 
 * 5a. TutorContacts cannot save the updated data.
 
@@ -600,10 +617,19 @@ testers are expected to do more *exploratory* testing.
    1. Test case: `unschedule 1` again<br>
       Expected: The result panel reports that the student has no scheduled lesson.
 
-1. Lessons after editing and restarting
+1. Lessons after editing, archiving, and restarting
 
    1. Schedule a lesson for a student, then run `edit` on that student to change the phone number.<br>
       Expected: The lesson is still shown on the card.
+
+   1. Archive the scheduled student, then run `list archived`.<br>
+      Expected: The archived card still shows the lesson.
+
+   1. Test case: `schedule 1 at/2099-11-02 09:30` and `unschedule 1` while the archived list is showing<br>
+      Expected: The lesson is unchanged. The result panel asks you to run `list` first.
+
+   1. Run `unarchive 1`, then `list`.<br>
+      Expected: The restored student's card shows the same lesson.
 
    1. Close TutorContacts and launch it again from the same folder.<br>
       Expected: The lesson is restored from `data/addressbook.json`.

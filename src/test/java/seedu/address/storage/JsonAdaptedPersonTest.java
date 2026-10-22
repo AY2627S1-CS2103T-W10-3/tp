@@ -19,6 +19,7 @@ import seedu.address.model.person.Address;
 import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.LearningFocus;
+import seedu.address.model.person.Lesson;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Person;
@@ -143,6 +144,43 @@ public class JsonAdaptedPersonTest {
                 .withoutAddress().withTags().build(), person.toModelType());
         assertEquals(Optional.empty(), person.toModelType().getLearningFocus());
         assertEquals(Optional.empty(), person.toModelType().getNextAction());
+        assertEquals(Optional.empty(), person.toModelType().getLesson());
+    }
+
+    @Test
+    public void toModelType_validLesson_returnsPersonWithLesson() throws Exception {
+        Person expected = new PersonBuilder(BENSON).withLesson("2026-10-30 16:00").build();
+
+        assertEquals(expected, new JsonAdaptedPerson(expected).toModelType());
+        assertEquals(expected, JsonUtil.fromJsonString(JsonUtil.toJsonString(new JsonAdaptedPerson(expected)),
+                JsonAdaptedPerson.class).toModelType());
+    }
+
+    @Test
+    public void toModelType_archivedStudentWithLesson_keepsBoth() throws Exception {
+        Person expected = new PersonBuilder(BENSON).withLesson("2026-10-30 16:00").withArchived(true).build();
+
+        assertEquals(expected, JsonUtil.fromJsonString(JsonUtil.toJsonString(new JsonAdaptedPerson(expected)),
+                JsonAdaptedPerson.class).toModelType());
+    }
+
+    @Test
+    public void toModelType_pastLesson_returnsPersonWithLesson() throws Exception {
+        JsonAdaptedPerson person = JsonUtil.fromJsonString(
+                "{\"name\":\"Student\",\"lesson\":\"2020-01-01 09:00\"}", JsonAdaptedPerson.class);
+
+        assertEquals(Optional.of(new Lesson("2020-01-01 09:00")), person.toModelType().getLesson());
+    }
+
+    @Test
+    public void toModelType_invalidLesson_throwsIllegalValueException() throws Exception {
+        JsonAdaptedPerson invalidFormat = JsonUtil.fromJsonString(
+                "{\"name\":\"Student\",\"lesson\":\"30-10-2026 16:00\"}", JsonAdaptedPerson.class);
+        JsonAdaptedPerson invalidDate = JsonUtil.fromJsonString(
+                "{\"name\":\"Student\",\"lesson\":\"2026-02-30 16:00\"}", JsonAdaptedPerson.class);
+
+        assertThrows(IllegalValueException.class, Lesson.MESSAGE_CONSTRAINTS, invalidFormat::toModelType);
+        assertThrows(IllegalValueException.class, Lesson.MESSAGE_CONSTRAINTS, invalidDate::toModelType);
     }
 
     @Test

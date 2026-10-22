@@ -44,6 +44,7 @@
       <Label fx:id="educationLevel" styleClass="cell_small_label" text="\$educationLevel" />
       <Label fx:id="learningFocus" styleClass="cell_small_label" text="\$learningFocus" />
       <Label fx:id="nextAction" styleClass="cell_small_label" text="\$nextAction" />
+      <Label fx:id="lesson" styleClass="cell_small_label" text="\$lesson" />
       <Label fx:id="guardianName" styleClass="cell_small_label" text="\$guardianName" />
       <Label fx:id="guardianPhone" styleClass="cell_small_label" text="\$guardianPhone" />
       <Label fx:id="guardianEmail" styleClass="cell_small_label" text="\$guardianEmail" />

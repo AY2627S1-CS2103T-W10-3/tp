@@ -150,6 +150,23 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_editStudentField_preservesLesson() {
+        Person scheduledStudent = new PersonBuilder().withName("Scheduled Student")
+                .withLesson("2026-10-30 16:00").build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(scheduledStudent);
+        Model modelWithLesson = new ModelManager(addressBook, new UserPrefs());
+        Person editedPerson = new PersonBuilder(scheduledStudent).withPhone(VALID_PHONE_BOB).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withPhone(VALID_PHONE_BOB).build());
+
+        Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
+        expectedModel.setPerson(scheduledStudent, editedPerson);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        assertCommandSuccess(editCommand, modelWithLesson, expectedMessage, expectedModel);
+    }
+
+    @Test
     public void execute_editLearningContext_replacesBothValues() {
         Person original = new PersonBuilder().withName("Learning Student")
                 .withLearningFocus("Fractions").withNextAction("Worksheet 1").build();
