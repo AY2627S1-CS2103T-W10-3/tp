@@ -1,0 +1,80 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
+participant ":UpcomingCommandParser" as UpcomingCommandParser LOGIC_COLOR
+participant "u:UpcomingCommand" as UpcomingCommand LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "m:Model" as Model MODEL_COLOR
+end box
+
+[-> LogicManager : execute("upcoming")
+activate LogicManager
+
+LogicManager -> AddressBookParser : parseCommand("upcoming")
+activate AddressBookParser
+
+create UpcomingCommandParser
+AddressBookParser -> UpcomingCommandParser
+activate UpcomingCommandParser
+UpcomingCommandParser --> AddressBookParser
+deactivate UpcomingCommandParser
+
+AddressBookParser -> UpcomingCommandParser : parse("")
+activate UpcomingCommandParser
+
+note right of UpcomingCommandParser
+Rejects any arguments
+end note
+
+create UpcomingCommand
+UpcomingCommandParser -> UpcomingCommand : UpcomingCommand()
+activate UpcomingCommand
+UpcomingCommand --> UpcomingCommandParser
+deactivate UpcomingCommand
+
+UpcomingCommandParser --> AddressBookParser : u
+deactivate UpcomingCommandParser
+UpcomingCommandParser -[hidden]-> AddressBookParser
+destroy UpcomingCommandParser
+
+AddressBookParser --> LogicManager : u
+deactivate AddressBookParser
+
+LogicManager -> UpcomingCommand : execute(m)
+activate UpcomingCommand
+
+UpcomingCommand -> UpcomingCommand : now = LocalDateTime.now(clock)
+
+UpcomingCommand -> Model : updateFilteredPersonList(lesson after now, ACTIVE)
+activate Model
+note right of Model
+Clears the previous order,
+then keeps active students
+with a lesson after now
+end note
+Model --> UpcomingCommand
+deactivate Model
+
+UpcomingCommand -> Model : updateSortedPersonList(LESSON_ORDER)
+activate Model
+note right of Model
+Orders by lesson time,
+then by name
+end note
+Model --> UpcomingCommand
+deactivate Model
+
+UpcomingCommand --> LogicManager : CommandResult
+deactivate UpcomingCommand
+
+LogicManager -> LogicManager : save address book
+
+[<--LogicManager
+deactivate LogicManager
+@enduml
