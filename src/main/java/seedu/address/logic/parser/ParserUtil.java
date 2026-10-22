@@ -14,7 +14,9 @@ import seedu.address.model.person.Address;
 import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Guardian;
+import seedu.address.model.person.LearningFocus;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Subject;
 import seedu.address.model.tag.Tag;
@@ -137,6 +139,31 @@ public class ParserUtil {
             throw new ParseException(EducationLevel.MESSAGE_CONSTRAINTS);
         }
         return new EducationLevel(trimmedEducationLevel);
+    }
+
+    /** Parses and normalizes a learning-focus value. */
+    public static LearningFocus parseLearningFocus(String learningFocus) throws ParseException {
+        requireNonNull(learningFocus);
+        String normalizedLearningFocus = normalizeOrdinarySpaces(learningFocus);
+        if (!LearningFocus.isValidLearningFocus(normalizedLearningFocus)) {
+            throw new ParseException(LearningFocus.MESSAGE_CONSTRAINTS);
+        }
+        return new LearningFocus(normalizedLearningFocus);
+    }
+
+    /** Parses and normalizes a next-action value. */
+    public static NextAction parseNextAction(String nextAction) throws ParseException {
+        requireNonNull(nextAction);
+        String normalizedNextAction = normalizeOrdinarySpaces(nextAction);
+        if (!NextAction.isValidNextAction(normalizedNextAction)) {
+            throw new ParseException(NextAction.MESSAGE_CONSTRAINTS);
+        }
+        return new NextAction(normalizedNextAction);
+    }
+
+    /** Trims field boundaries and collapses repeated ordinary spaces. */
+    private static String normalizeOrdinarySpaces(String value) {
+        return value.strip().replaceAll(" +", " ");
     }
 
     /**

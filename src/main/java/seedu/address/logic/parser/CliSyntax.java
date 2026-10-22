@@ -16,5 +16,7 @@ public class CliSyntax {
     public static final Prefix PREFIX_GUARDIAN_EMAIL = new Prefix("ge/");
     public static final Prefix PREFIX_SUBJECT = new Prefix("s/");
     public static final Prefix PREFIX_EDUCATION_LEVEL = new Prefix("l/");
+    public static final Prefix PREFIX_LEARNING_FOCUS = new Prefix("lf/");
+    public static final Prefix PREFIX_NEXT_ACTION = new Prefix("na/");
 
 }

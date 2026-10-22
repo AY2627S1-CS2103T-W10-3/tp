@@ -15,7 +15,9 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.LearningFocus;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Subject;
 import seedu.address.model.tag.Tag;
@@ -172,6 +174,30 @@ public class ParserUtilTest {
     public void parseEducationLevel_validValue_returnsNormalizedEducationLevel() throws Exception {
         EducationLevel expectedEducationLevel = new EducationLevel("JC2");
         assertEquals(expectedEducationLevel, ParserUtil.parseEducationLevel(VALID_EDUCATION_LEVEL));
+    }
+
+    @Test
+    public void parseLearningFocus_normalizesOrdinarySpaces() throws Exception {
+        assertEquals(new LearningFocus("Fractions and ratios"),
+                ParserUtil.parseLearningFocus("  Fractions   and ratios  "));
+    }
+
+    @Test
+    public void parseLearningFocus_controlCharacter_throwsParseException() {
+        assertThrows(ParseException.class, LearningFocus.MESSAGE_CONSTRAINTS,
+                () -> ParserUtil.parseLearningFocus("Fractions\nand ratios"));
+    }
+
+    @Test
+    public void parseNextAction_normalizesOrdinarySpaces() throws Exception {
+        assertEquals(new NextAction("Complete worksheet 2"),
+                ParserUtil.parseNextAction("  Complete   worksheet 2  "));
+    }
+
+    @Test
+    public void parseNextAction_controlCharacter_throwsParseException() {
+        assertThrows(ParseException.class, NextAction.MESSAGE_CONSTRAINTS,
+                () -> ParserUtil.parseNextAction("Call\tguardian"));
     }
 
     @Test
