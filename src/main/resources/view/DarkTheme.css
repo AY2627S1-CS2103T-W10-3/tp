@@ -133,7 +133,7 @@
 }
 
 .list-cell .label.lesson_overdue {
-    -fx-text-fill: #b00020;
+    -fx-text-fill: #ffbab2;
     -fx-font-weight: bold;
 }
 
