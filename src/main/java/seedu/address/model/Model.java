@@ -79,7 +79,5 @@ public interface Model {
     void updateFilteredPersonList(Predicate<Person> predicate);
 
     /** Updates the current result view predicate and scope together. */
-    default void updateFilteredPersonList(Predicate<Person> predicate, ResultViewScope scope) {
-        updateFilteredPersonList(predicate);
-    }
+    void updateFilteredPersonList(Predicate<Person> predicate, ResultViewScope scope);
 }

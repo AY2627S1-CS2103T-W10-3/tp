@@ -16,7 +16,11 @@ public class ListCommand extends Command {
             + ": Lists active students, or archived students when followed by `archived`.\n"
             + "Parameters: [archived]\n"
             + "Example: " + COMMAND_WORD + " archived";
-    public static final String MESSAGE_SUCCESS = "Listed all students.";
+    public static final String MESSAGE_SUCCESS = "Listed all active students.";
+    public static final String MESSAGE_NO_STUDENTS =
+            "No students recorded. Use `add` to create your first student.";
+    public static final String MESSAGE_NO_ACTIVE_STUDENTS =
+            "No active students. Use `list archived` to see archived students.";
     public static final String MESSAGE_ARCHIVED_SUCCESS = "Listed archived students.";
     public static final String MESSAGE_NO_ARCHIVED_STUDENTS =
             "No archived students. Use `archive INDEX` from an active view to archive a student.";
@@ -44,6 +48,10 @@ public class ListCommand extends Command {
         if (scope == ResultViewScope.ARCHIVED) {
             return new CommandResult(model.getFilteredPersonList().isEmpty()
                     ? MESSAGE_NO_ARCHIVED_STUDENTS : MESSAGE_ARCHIVED_SUCCESS);
+        }
+        if (model.getFilteredPersonList().isEmpty()) {
+            return new CommandResult(model.getAddressBook().getPersonList().isEmpty()
+                    ? MESSAGE_NO_STUDENTS : MESSAGE_NO_ACTIVE_STUDENTS);
         }
         return new CommandResult(MESSAGE_SUCCESS);
     }
