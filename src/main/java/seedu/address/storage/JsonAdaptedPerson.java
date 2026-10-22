@@ -43,6 +43,7 @@ class JsonAdaptedPerson {
     private final String learningFocus;
     private final String nextAction;
     private final String lesson;
+    private final Boolean archived;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
 
     /**
@@ -59,7 +60,8 @@ class JsonAdaptedPerson {
             @JsonProperty("educationLevel") String educationLevel,
             @JsonProperty("learningFocus") String learningFocus,
             @JsonProperty("nextAction") String nextAction,
-            @JsonProperty("lesson") String lesson) {
+            @JsonProperty("lesson") String lesson,
+            @JsonProperty("archived") Boolean archived) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -72,6 +74,7 @@ class JsonAdaptedPerson {
         this.learningFocus = learningFocus;
         this.nextAction = nextAction;
         this.lesson = lesson;
+        this.archived = archived;
         if (tags != null) {
             this.tags.addAll(tags);
         }
@@ -83,14 +86,14 @@ class JsonAdaptedPerson {
     public JsonAdaptedPerson(String name, String phone, String email, String address, List<JsonAdaptedTag> tags,
             String guardianName, String guardianPhone, String guardianEmail, String subject, String educationLevel) {
         this(name, phone, email, address, tags, guardianName, guardianPhone, guardianEmail, subject,
-                educationLevel, null, null, null);
+                educationLevel, null, null, null, null);
     }
 
     /**
      * Constructs a person without guardian fields, for older saved data and focused tests.
      */
     public JsonAdaptedPerson(String name, String phone, String email, String address, List<JsonAdaptedTag> tags) {
-        this(name, phone, email, address, tags, null, null, null, null, null, null, null, null);
+        this(name, phone, email, address, tags, null, null, null, null, null, null, null, null, null);
     }
 
     /**
@@ -109,6 +112,7 @@ class JsonAdaptedPerson {
         learningFocus = source.getLearningFocus().map(LearningFocus::getValue).orElse(null);
         nextAction = source.getNextAction().map(NextAction::getValue).orElse(null);
         lesson = source.getLesson().map(Lesson::getValue).orElse(null);
+        archived = source.isArchived();
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
@@ -198,7 +202,8 @@ class JsonAdaptedPerson {
 
         final Set<Tag> modelTags = new HashSet<>(personTags);
         return new Person(modelName, modelPhone, modelEmail, modelAddress, modelGuardian, modelSubject,
-                modelEducationLevel, modelLearningFocus, modelNextAction, modelLesson, modelTags);
+                modelEducationLevel, modelLearningFocus, modelNextAction, modelLesson, Boolean.TRUE.equals(archived),
+                modelTags);
     }
 
 }

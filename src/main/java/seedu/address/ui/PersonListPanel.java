@@ -3,6 +3,7 @@ package seedu.address.ui;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,19 +19,25 @@ import seedu.address.model.person.Person;
  */
 public class PersonListPanel extends UiPart<Region> {
     private static final String FXML = "PersonListPanel.fxml";
-    private static final String EMPTY_LIST_MESSAGE = "No students recorded. Use add to create your first student.";
+    private static final String NO_STUDENTS_MESSAGE =
+            "No students recorded. Use add to create your first student.";
+    private static final String EMPTY_VIEW_MESSAGE =
+            "No students in this view. Use list or list archived.";
     private final Logger logger = LogsCenter.getLogger(PersonListPanel.class);
 
     @FXML
     private ListView<Person> personListView;
 
     /**
-     * Creates a {@code PersonListPanel} with the given {@code ObservableList}.
+     * Creates a {@code PersonListPanel} with the displayed and complete student lists.
      */
-    public PersonListPanel(ObservableList<Person> personList) {
+    public PersonListPanel(ObservableList<Person> personList, ObservableList<Person> allPersons) {
         super(FXML);
         personListView.setItems(personList);
-        personListView.setPlaceholder(new Label(EMPTY_LIST_MESSAGE));
+        Label emptyListPlaceholder = new Label();
+        emptyListPlaceholder.textProperty().bind(Bindings.createStringBinding(() ->
+                getEmptyListMessage(allPersons.size()), allPersons));
+        personListView.setPlaceholder(emptyListPlaceholder);
         personListView.setCellFactory(listView -> new PersonListViewCell());
         personList.addListener(this::refreshIfReordered);
     }
@@ -75,6 +82,10 @@ public class PersonListPanel extends UiPart<Region> {
             }
         }
         return replacedRanges > 1 || hasAddition && hasRemoval;
+    }
+
+    private static String getEmptyListMessage(int totalStudentCount) {
+        return totalStudentCount == 0 ? NO_STUDENTS_MESSAGE : EMPTY_VIEW_MESSAGE;
     }
 
     /**

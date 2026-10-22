@@ -32,6 +32,7 @@ public final class Lesson {
         requireNonNull(lesson);
         checkArgument(isValidLesson(lesson), MESSAGE_CONSTRAINTS);
         dateTime = LocalDateTime.parse(lesson, FORMATTER);
+        assert dateTime.getSecond() == 0 && dateTime.getNano() == 0 : "Lessons are stored with minute precision";
     }
 
     /** Returns true if the given string is a valid lesson date and time. */

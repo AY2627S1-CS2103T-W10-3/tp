@@ -1,6 +1,7 @@
 package seedu.address.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static seedu.address.storage.JsonAdaptedPerson.MISSING_FIELD_MESSAGE_FORMAT;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.BENSON;
@@ -55,6 +56,21 @@ public class JsonAdaptedPersonTest {
     public void toModelType_validPersonDetails_returnsPerson() throws Exception {
         JsonAdaptedPerson person = new JsonAdaptedPerson(BENSON);
         assertEquals(BENSON, person.toModelType());
+    }
+
+    @Test
+    public void toModelType_archivedPerson_preservesArchiveState() throws Exception {
+        Person archived = new PersonBuilder(BENSON).withArchived(true).build();
+
+        assertEquals(archived, new JsonAdaptedPerson(archived).toModelType());
+    }
+
+    @Test
+    public void toModelType_missingArchivedProperty_defaultsToActive() throws Exception {
+        JsonAdaptedPerson person = JsonUtil.fromJsonString(
+                "{\"name\":\"Old Record\"}", JsonAdaptedPerson.class);
+
+        assertFalse(person.toModelType().isArchived());
     }
 
     @Test
@@ -136,6 +152,14 @@ public class JsonAdaptedPersonTest {
         Person expected = new PersonBuilder(BENSON).withLesson("2026-10-30 16:00").build();
 
         assertEquals(expected, new JsonAdaptedPerson(expected).toModelType());
+        assertEquals(expected, JsonUtil.fromJsonString(JsonUtil.toJsonString(new JsonAdaptedPerson(expected)),
+                JsonAdaptedPerson.class).toModelType());
+    }
+
+    @Test
+    public void toModelType_archivedStudentWithLesson_keepsBoth() throws Exception {
+        Person expected = new PersonBuilder(BENSON).withLesson("2026-10-30 16:00").withArchived(true).build();
+
         assertEquals(expected, JsonUtil.fromJsonString(JsonUtil.toJsonString(new JsonAdaptedPerson(expected)),
                 JsonAdaptedPerson.class).toModelType());
     }

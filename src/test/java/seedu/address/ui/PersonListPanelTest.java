@@ -4,9 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +20,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 
-/** Tests which list changes make {@code PersonListPanel} refresh its cards. */
+/** Tests the empty-list message and which list changes make {@code PersonListPanel} refresh its cards. */
 public class PersonListPanelTest {
 
     private ObservableList<String> source;
@@ -32,6 +35,19 @@ public class PersonListPanelTest {
         displayed = new SortedList<>(filtered);
         displayed.addListener((ListChangeListener<String>) change ->
                 refreshDecisions.add(PersonListPanel.needsRefresh(change)));
+    }
+
+    @Test
+    public void getEmptyListMessage_usesRecordedStudentCount() throws Exception {
+        Optional<Method> messageMethod = Arrays.stream(PersonListPanel.class.getDeclaredMethods())
+                .filter(method -> method.getName().equals("getEmptyListMessage"))
+                .findFirst();
+        assertTrue(messageMethod.isPresent(), "PersonListPanel should select its message from the total record count");
+
+        Method method = messageMethod.get();
+        method.setAccessible(true);
+        assertEquals("No students recorded. Use add to create your first student.", method.invoke(null, 0));
+        assertEquals("No students in this view. Use list or list archived.", method.invoke(null, 1));
     }
 
     @Test

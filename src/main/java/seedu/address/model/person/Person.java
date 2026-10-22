@@ -28,6 +28,7 @@ public class Person {
     private final Optional<EducationLevel> educationLevel;
     private final Optional<LearningFocus> learningFocus;
     private final Optional<NextAction> nextAction;
+    private final boolean archived;
 
     // Data fields
     private final Optional<Lesson> lesson;
@@ -40,9 +41,9 @@ public class Person {
      */
     public Person(Name name, Optional<Phone> phone, Optional<Email> email, Optional<Address> address,
             Optional<Guardian> guardian, Optional<Subject> subject, Optional<EducationLevel> educationLevel,
-            Optional<LearningFocus> learningFocus, Optional<NextAction> nextAction, Set<Tag> tags) {
+            Optional<LearningFocus> learningFocus, Optional<NextAction> nextAction, boolean archived, Set<Tag> tags) {
         this(name, phone, email, address, guardian, subject, educationLevel, learningFocus, nextAction,
-                Optional.empty(), tags);
+                Optional.empty(), archived, tags);
     }
 
     /**
@@ -52,7 +53,7 @@ public class Person {
     public Person(Name name, Optional<Phone> phone, Optional<Email> email, Optional<Address> address,
             Optional<Guardian> guardian, Optional<Subject> subject, Optional<EducationLevel> educationLevel,
             Optional<LearningFocus> learningFocus, Optional<NextAction> nextAction, Optional<Lesson> lesson,
-            Set<Tag> tags) {
+            boolean archived, Set<Tag> tags) {
         requireAllNonNull(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
                 nextAction, lesson, tags);
         this.name = name;
@@ -65,6 +66,7 @@ public class Person {
         this.learningFocus = learningFocus;
         this.nextAction = nextAction;
         this.lesson = lesson;
+        this.archived = archived;
         this.tags.addAll(tags);
     }
 
@@ -112,7 +114,18 @@ public class Person {
     public Person withLesson(Optional<Lesson> lesson) {
         requireNonNull(lesson);
         return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, lesson, tags);
+                nextAction, lesson, archived, tags);
+    }
+
+    /** Returns whether this student is archived. */
+    public boolean isArchived() {
+        return archived;
+    }
+
+    /** Returns a copy of this student with the requested archive state. */
+    public Person withArchived(boolean archived) {
+        return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
+                nextAction, lesson, archived, tags);
     }
 
     /**
@@ -162,6 +175,7 @@ public class Person {
                 && learningFocus.equals(otherPerson.learningFocus)
                 && nextAction.equals(otherPerson.nextAction)
                 && lesson.equals(otherPerson.lesson)
+                && archived == otherPerson.archived
                 && tags.equals(otherPerson.tags);
     }
 
@@ -169,7 +183,7 @@ public class Person {
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, lesson, tags);
+                nextAction, lesson, archived, tags);
     }
 
     @Override
@@ -185,6 +199,7 @@ public class Person {
                 .add("learningFocus", learningFocus)
                 .add("nextAction", nextAction)
                 .add("lesson", lesson)
+                .add("archived", archived)
                 .add("tags", tags)
                 .toString();
     }

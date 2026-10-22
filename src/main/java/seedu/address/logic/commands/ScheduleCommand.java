@@ -15,6 +15,7 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
+import seedu.address.model.ResultViewScope;
 import seedu.address.model.person.Lesson;
 import seedu.address.model.person.Person;
 
@@ -36,6 +37,9 @@ public class ScheduleCommand extends Command {
     public static final String MESSAGE_SCHEDULE_SUCCESS = "Scheduled lesson for %1$s: %2$s";
     public static final String MESSAGE_RESCHEDULE_SUCCESS = "Rescheduled lesson for %1$s: %2$s (previously %3$s)";
     public static final String MESSAGE_LESSON_NOT_IN_FUTURE = "Lesson time must be in the future.";
+
+    public static final String MESSAGE_REQUIRES_ACTIVE_VIEW =
+            "Schedule can only be used from an active student view. Run `list` first.";
 
     private static final Logger logger = LogsCenter.getLogger(ScheduleCommand.class);
 
@@ -65,6 +69,9 @@ public class ScheduleCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
+        if (model.getResultViewScope() != ResultViewScope.ACTIVE) {
+            throw new CommandException(MESSAGE_REQUIRES_ACTIVE_VIEW);
+        }
         List<Person> lastShownList = model.getFilteredPersonList();
 
         if (targetIndex.getZeroBased() >= lastShownList.size()) {

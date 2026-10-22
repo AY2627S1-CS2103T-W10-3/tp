@@ -24,6 +24,7 @@ public class ModelManager implements Model {
     private final UserPrefs userPrefs;
     private final FilteredList<Person> filteredPersons;
     private final SortedList<Person> displayedPersons;
+    private ResultViewScope resultViewScope;
 
     /**
      * Initializes a ModelManager with the given addressBook and userPrefs.
@@ -37,6 +38,7 @@ public class ModelManager implements Model {
         this.userPrefs = new UserPrefs(userPrefs);
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
         displayedPersons = new SortedList<>(filteredPersons);
+        updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
     }
 
     public ModelManager() {
@@ -109,11 +111,26 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public ResultViewScope getResultViewScope() {
+        return resultViewScope;
+    }
+
+    @Override
     public void updateFilteredPersonList(Predicate<Person> predicate) {
+        updateFilteredPersonList(predicate, ResultViewScope.ACTIVE);
+    }
+
+    @Override
+    public void updateFilteredPersonList(Predicate<Person> predicate, ResultViewScope scope) {
         requireNonNull(predicate);
+        requireNonNull(scope);
         // Clear the order first so that a comparator written for the previous view never sees the new students.
         displayedPersons.setComparator(null);
-        filteredPersons.setPredicate(predicate);
+        Predicate<Person> scopePredicate = scope == ResultViewScope.ACTIVE
+                ? PREDICATE_SHOW_ACTIVE_PERSONS
+                : PREDICATE_SHOW_ARCHIVED_PERSONS;
+        filteredPersons.setPredicate(scopePredicate.and(predicate));
+        resultViewScope = scope;
     }
 
     @Override
@@ -135,7 +152,8 @@ public class ModelManager implements Model {
 
         return addressBook.equals(otherModelManager.addressBook)
                 && userPrefs.equals(otherModelManager.userPrefs)
-                && displayedPersons.equals(otherModelManager.displayedPersons);
+                && displayedPersons.equals(otherModelManager.displayedPersons)
+                && resultViewScope == otherModelManager.resultViewScope;
     }
 
 }
