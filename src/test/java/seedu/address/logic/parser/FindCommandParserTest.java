@@ -29,6 +29,10 @@ public class FindCommandParserTest {
 
         // multiple whitespaces between keywords
         assertParseSuccess(parser, " \n Alice \n \t Bob  \t", expectedFindCommand);
+
+        // repeated keywords are accepted and remain harmless during matching
+        expectedFindCommand = new FindCommand(new NameContainsKeywordsPredicate(List.of("Ali", "Ali")));
+        assertParseSuccess(parser, "Ali Ali", expectedFindCommand);
     }
 
 }
