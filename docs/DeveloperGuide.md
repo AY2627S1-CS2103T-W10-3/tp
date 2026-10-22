@@ -252,8 +252,9 @@ view is shown.
 `JsonAdaptedPerson` stores the lesson as a nullable `lesson` string in the same format the user types. Older data files
 without the property load as students without a lesson. A stored lesson is not required to be in the future, because a
 lesson that was scheduled earlier remains valid after its time passes. If saving fails after a lesson change,
-`LogicManager` restores the address book snapshot taken before the command ran, so the displayed and saved lessons
-stay unchanged.
+`LogicManager` restores the in-memory address book snapshot taken before the command ran, so the displayed lessons
+stay unchanged. The data file may already be partially written, so the previously saved lessons are not guaranteed to
+be preserved.
 
 Design considerations:
 
@@ -601,7 +602,8 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * 6a. TutorContacts cannot save the updated data.
 
   * 6a1. TutorContacts reports the save failure.
-  * 6a2. TutorContacts leaves the displayed and saved lessons unchanged.
+  * 6a2. TutorContacts restores the previously displayed lessons. The data file may remain partially written, so the
+    previously saved data is not guaranteed to be preserved.
 
   Use case ends.
 
@@ -641,11 +643,12 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * 5a. TutorContacts cannot save the updated data.
 
   * 5a1. TutorContacts reports the save failure.
-  * 5a2. TutorContacts leaves the displayed and saved lessons unchanged.
+  * 5a2. TutorContacts restores the previously displayed lessons. The data file may remain partially written, so the
+    previously saved data is not guaranteed to be preserved.
 
   Use case ends.
 
-**Use case: UC06 — View upcoming lessons**
+**Use case: UC10 — View upcoming lessons**
 
 **MSS**
 
@@ -671,7 +674,7 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
 * 2b. User requests to schedule, clear, archive, or delete a lesson's student at a displayed index.
 
-  * 2b1. TutorContacts acts on the student shown at that index in the upcoming list (UC04, UC05).
+  * 2b1. TutorContacts acts on the student shown at that index in the upcoming list (UC08, UC09).
 
   Use case ends.
 
