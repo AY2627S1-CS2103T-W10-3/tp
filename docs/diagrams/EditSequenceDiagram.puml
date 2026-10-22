@@ -1,0 +1,93 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
+participant ":EditCommandParser" as EditCommandParser LOGIC_COLOR
+participant "d:EditPersonDescriptor" as Descriptor LOGIC_COLOR
+participant "e:EditCommand" as EditCommand LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "m:Model" as Model MODEL_COLOR
+participant "editedStudent:Person" as EditedStudent MODEL_COLOR
+end box
+
+[-> LogicManager : execute("edit 1 p/91234567 e/")
+activate LogicManager
+
+LogicManager -> AddressBookParser : parseCommand("edit 1 p/91234567 e/")
+activate AddressBookParser
+
+create EditCommandParser
+AddressBookParser -> EditCommandParser
+activate EditCommandParser
+EditCommandParser --> AddressBookParser
+deactivate EditCommandParser
+
+AddressBookParser -> EditCommandParser : parse("1 p/91234567 e/")
+activate EditCommandParser
+
+create Descriptor
+EditCommandParser -> Descriptor
+activate Descriptor
+EditCommandParser -> Descriptor : setPhone(91234567)
+EditCommandParser -> Descriptor : clearEmail()
+Descriptor --> EditCommandParser
+deactivate Descriptor
+
+create EditCommand
+EditCommandParser -> EditCommand : EditCommand(1, d)
+activate EditCommand
+EditCommand --> EditCommandParser
+deactivate EditCommand
+
+EditCommandParser --> AddressBookParser : e
+deactivate EditCommandParser
+EditCommandParser -[hidden]-> AddressBookParser
+destroy EditCommandParser
+
+AddressBookParser --> LogicManager : e
+deactivate AddressBookParser
+
+LogicManager -> EditCommand : execute(m)
+activate EditCommand
+EditCommand -> Model : getFilteredPersonList()
+activate Model
+Model --> EditCommand : displayed students
+deactivate Model
+
+EditCommand -> EditCommand : createEditedPerson(student, d)
+activate EditCommand
+create EditedStudent
+EditCommand -> EditedStudent : Person(updated and preserved fields)
+activate EditedStudent
+EditedStudent --> EditCommand : editedStudent
+deactivate EditedStudent
+deactivate EditCommand
+
+opt name changed
+    EditCommand -> Model : hasPerson(editedStudent)
+    activate Model
+    Model --> EditCommand : false
+    deactivate Model
+end
+EditCommand -> Model : setPerson(student, editedStudent)
+activate Model
+Model --> EditCommand
+deactivate Model
+
+EditCommand -> Model : updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS)
+activate Model
+Model --> EditCommand
+deactivate Model
+
+EditCommand --> LogicManager : CommandResult
+deactivate EditCommand
+
+LogicManager -> LogicManager : save address book
+[<-- LogicManager : command result
+deactivate LogicManager
+@enduml

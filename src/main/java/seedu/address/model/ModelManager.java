@@ -3,11 +3,13 @@ package seedu.address.model;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.person.Person;
@@ -21,6 +23,7 @@ public class ModelManager implements Model {
     private final AddressBook addressBook;
     private final UserPrefs userPrefs;
     private final FilteredList<Person> filteredPersons;
+    private final SortedList<Person> displayedPersons;
     private ResultViewScope resultViewScope;
 
     /**
@@ -34,6 +37,7 @@ public class ModelManager implements Model {
         this.addressBook = new AddressBook(addressBook);
         this.userPrefs = new UserPrefs(userPrefs);
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
+        displayedPersons = new SortedList<>(filteredPersons);
         updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
     }
 
@@ -99,11 +103,11 @@ public class ModelManager implements Model {
 
     /**
      * Returns an unmodifiable view of the list of {@code Person} backed by the internal list of
-     * {@code addressBook}
+     * {@code addressBook}, filtered and ordered as currently displayed.
      */
     @Override
     public ObservableList<Person> getFilteredPersonList() {
-        return filteredPersons;
+        return displayedPersons;
     }
 
     @Override
@@ -120,11 +124,19 @@ public class ModelManager implements Model {
     public void updateFilteredPersonList(Predicate<Person> predicate, ResultViewScope scope) {
         requireNonNull(predicate);
         requireNonNull(scope);
+        // Clear the order first so that a comparator written for the previous view never sees the new students.
+        displayedPersons.setComparator(null);
         Predicate<Person> scopePredicate = scope == ResultViewScope.ACTIVE
                 ? PREDICATE_SHOW_ACTIVE_PERSONS
                 : PREDICATE_SHOW_ARCHIVED_PERSONS;
         filteredPersons.setPredicate(scopePredicate.and(predicate));
         resultViewScope = scope;
+    }
+
+    @Override
+    public void updateSortedPersonList(Comparator<Person> comparator) {
+        requireNonNull(comparator);
+        displayedPersons.setComparator(comparator);
     }
 
     @Override
@@ -140,7 +152,7 @@ public class ModelManager implements Model {
 
         return addressBook.equals(otherModelManager.addressBook)
                 && userPrefs.equals(otherModelManager.userPrefs)
-                && filteredPersons.equals(otherModelManager.filteredPersons)
+                && displayedPersons.equals(otherModelManager.displayedPersons)
                 && resultViewScope == otherModelManager.resultViewScope;
     }
 
