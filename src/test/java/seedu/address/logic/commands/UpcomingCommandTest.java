@@ -143,6 +143,21 @@ public class UpcomingCommandTest {
     }
 
     @Test
+    public void execute_commandsThatShowAllStudentsAfterUpcoming_restoreSavedOrder() throws CommandException {
+        new UpcomingCommand(CLOCK).execute(model);
+        model.addPerson(new PersonBuilder().withName("New Student").build());
+
+        assertEquals(8, model.getFilteredPersonList().size());
+        assertEquals(PAST, model.getFilteredPersonList().get(0));
+    }
+
+    @Test
+    public void lessonOrder_studentWithoutLesson_sortsLast() {
+        assertTrue(UpcomingCommand.LESSON_ORDER.compare(NO_LESSON, LATER) > 0);
+        assertTrue(UpcomingCommand.LESSON_ORDER.compare(LATER, NO_LESSON) < 0);
+    }
+
+    @Test
     public void equals() {
         UpcomingCommand upcomingCommand = new UpcomingCommand(CLOCK);
 

@@ -24,9 +24,13 @@ public class UpcomingCommand extends Command {
     public static final String MESSAGE_NO_UPCOMING_LESSONS = "No upcoming lessons. Use `schedule INDEX at/"
             + Lesson.FORMAT + "` to schedule one.";
 
-    /** Orders students by lesson time, then by case-insensitive name, then by exact name. */
+    /**
+     * Orders students by lesson time, then by case-insensitive name, then by exact name.
+     * Students without a lesson are placed last, although the upcoming view never displays them.
+     */
     static final Comparator<Person> LESSON_ORDER = Comparator
-            .comparing((Person person) -> person.getLesson().orElseThrow().getDateTime())
+            .comparing((Person person) -> person.getLesson().map(Lesson::getDateTime).orElse(null),
+                    Comparator.nullsLast(Comparator.naturalOrder()))
             .thenComparing(person -> person.getName().fullName.toLowerCase(Locale.ROOT))
             .thenComparing(person -> person.getName().fullName);
 

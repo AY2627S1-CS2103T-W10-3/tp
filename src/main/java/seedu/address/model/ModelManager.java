@@ -111,8 +111,9 @@ public class ModelManager implements Model {
     @Override
     public void updateFilteredPersonList(Predicate<Person> predicate) {
         requireNonNull(predicate);
-        filteredPersons.setPredicate(predicate);
+        // Clear the order first so that a comparator written for the previous view never sees the new students.
         displayedPersons.setComparator(null);
+        filteredPersons.setPredicate(predicate);
     }
 
     @Override
