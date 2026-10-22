@@ -171,7 +171,9 @@ Validation follows a fixed order: token structure, required `n/`, repeated prefi
 
 ### Edit workflow
 
-`EditCommandParser` accepts every student-detail prefix supported by TutorContacts. It builds an
+`EditCommandParser` accepts every editable student-detail prefix, that is, the prefixes for details that can be
+changed using `edit`. Lesson times are deliberately excluded, as they are managed through `schedule` and `unschedule`
+instead. It builds an
 `EditPersonDescriptor` that distinguishes three states for each optional field: the prefix was omitted, the prefix
 contained a replacement value, or the prefix was explicitly supplied without a value to clear the field. The
 descriptor stores an edited flag separately from each nullable value so an omitted field and a clear request do not
@@ -656,7 +658,7 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
 * 3b. The user supplies no field prefix, an unsupported prefix, or a repeated single-valued prefix.
 
-  * 3b1. TutorContacts reports the required command format or repeated prefix.
+  * 3b1. TutorContacts reports the corresponding error.
 
   Use case ends.
 
@@ -688,7 +690,8 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * 6a. TutorContacts cannot save the updated data.
 
   * 6a1. TutorContacts reports the save failure.
-  * 6a2. TutorContacts restores the previous displayed and saved records.
+  * 6a2. TutorContacts restores the previous in-memory records. The data file may remain partially written, so the
+    previously saved data is not guaranteed to be preserved.
 
   Use case ends.
 

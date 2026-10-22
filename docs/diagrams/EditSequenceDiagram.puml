@@ -12,7 +12,7 @@ end box
 
 box Model MODEL_COLOR_T1
 participant "m:Model" as Model MODEL_COLOR
-participant "student:Person" as Student MODEL_COLOR
+participant "editedStudent:Person" as EditedStudent MODEL_COLOR
 end box
 
 [-> LogicManager : execute("edit 1 p/91234567 e/")
@@ -61,16 +61,19 @@ deactivate Model
 
 EditCommand -> EditCommand : createEditedPerson(student, d)
 activate EditCommand
-EditCommand -> Student : Person(updated and preserved fields)
-activate Student
-Student --> EditCommand : editedStudent
-deactivate Student
+create EditedStudent
+EditCommand -> EditedStudent : Person(updated and preserved fields)
+activate EditedStudent
+EditedStudent --> EditCommand : editedStudent
+deactivate EditedStudent
 deactivate EditCommand
 
-EditCommand -> Model : hasPerson(editedStudent)
-activate Model
-Model --> EditCommand : false
-deactivate Model
+opt name changed
+    EditCommand -> Model : hasPerson(editedStudent)
+    activate Model
+    Model --> EditCommand : false
+    deactivate Model
+end
 EditCommand -> Model : setPerson(student, editedStudent)
 activate Model
 Model --> EditCommand
@@ -80,6 +83,6 @@ EditCommand --> LogicManager : CommandResult
 deactivate EditCommand
 
 LogicManager -> LogicManager : save address book
-LogicManager -->] : command result
+[<-- LogicManager : command result
 deactivate LogicManager
 @enduml
