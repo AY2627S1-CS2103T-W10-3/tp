@@ -2,11 +2,16 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_EDUCATION_LEVEL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_NAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_LEARNING_FOCUS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NEXT_ACTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_SUBJECT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
@@ -25,12 +30,15 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.ResultViewScope;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.Guardian;
 import seedu.address.model.person.LearningFocus;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Subject;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -48,6 +56,11 @@ public class EditCommand extends Command {
             + "[" + PREFIX_PHONE + "PHONE] "
             + "[" + PREFIX_EMAIL + "EMAIL] "
             + "[" + PREFIX_ADDRESS + "ADDRESS] "
+            + "[" + PREFIX_GUARDIAN_NAME + "GUARDIAN_NAME] "
+            + "[" + PREFIX_GUARDIAN_PHONE + "GUARDIAN_PHONE] "
+            + "[" + PREFIX_GUARDIAN_EMAIL + "GUARDIAN_EMAIL] "
+            + "[" + PREFIX_SUBJECT + "SUBJECT] "
+            + "[" + PREFIX_EDUCATION_LEVEL + "EDUCATION_LEVEL] "
             + "[" + PREFIX_LEARNING_FOCUS + "LEARNING_FOCUS] "
             + "[" + PREFIX_NEXT_ACTION + "NEXT_ACTION] "
             + "[" + PREFIX_TAG + "TAG]...\n"
@@ -60,6 +73,8 @@ public class EditCommand extends Command {
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
     public static final String MESSAGE_REQUIRES_ACTIVE_VIEW =
             "Edit can only be used from an active student view. Run `list` first.";
+    public static final String MESSAGE_GUARDIAN_NAME_REQUIRED =
+            "Guardian name is required when guardian phone or email is provided.";
 
     private final Index index;
     private final EditPersonDescriptor editPersonDescriptor;
@@ -104,13 +119,28 @@ public class EditCommand extends Command {
      * Creates and returns a {@code Person} with the details of {@code personToEdit}
      * edited with {@code editPersonDescriptor}.
      */
-    private static Person createEditedPerson(Person personToEdit, EditPersonDescriptor editPersonDescriptor) {
+    private static Person createEditedPerson(Person personToEdit, EditPersonDescriptor editPersonDescriptor)
+            throws CommandException {
         assert personToEdit != null;
 
         Name updatedName = editPersonDescriptor.getName().orElse(personToEdit.getName());
         Optional<Phone> updatedPhone = editPersonDescriptor.getPhone().or(personToEdit::getPhone);
         Optional<Email> updatedEmail = editPersonDescriptor.getEmail().or(personToEdit::getEmail);
         Optional<Address> updatedAddress = editPersonDescriptor.getAddress().or(personToEdit::getAddress);
+        Optional<Name> updatedGuardianName = editPersonDescriptor.getGuardianName()
+                .or(() -> personToEdit.getGuardian().map(Guardian::getName));
+        Optional<Phone> updatedGuardianPhone = editPersonDescriptor.getGuardianPhone()
+                .or(() -> personToEdit.getGuardian().flatMap(Guardian::getPhone));
+        Optional<Email> updatedGuardianEmail = editPersonDescriptor.getGuardianEmail()
+                .or(() -> personToEdit.getGuardian().flatMap(Guardian::getEmail));
+        if (updatedGuardianName.isEmpty() && (updatedGuardianPhone.isPresent() || updatedGuardianEmail.isPresent())) {
+            throw new CommandException(MESSAGE_GUARDIAN_NAME_REQUIRED);
+        }
+        Optional<Guardian> updatedGuardian = updatedGuardianName.map(name ->
+                new Guardian(name, updatedGuardianPhone, updatedGuardianEmail));
+        Optional<Subject> updatedSubject = editPersonDescriptor.getSubject().or(personToEdit::getSubject);
+        Optional<EducationLevel> updatedEducationLevel = editPersonDescriptor.getEducationLevel()
+                .or(personToEdit::getEducationLevel);
         Optional<LearningFocus> updatedLearningFocus = editPersonDescriptor.getLearningFocus()
                 .or(personToEdit::getLearningFocus);
         Optional<NextAction> updatedNextAction = editPersonDescriptor.getNextAction()
@@ -118,8 +148,8 @@ public class EditCommand extends Command {
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
 
         return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress,
-                personToEdit.getGuardian(), personToEdit.getSubject(), personToEdit.getEducationLevel(),
-                updatedLearningFocus, updatedNextAction, personToEdit.isArchived(), updatedTags);
+                updatedGuardian, updatedSubject, updatedEducationLevel, updatedLearningFocus,
+                updatedNextAction, personToEdit.isArchived(), updatedTags);
     }
 
     @Override
@@ -154,6 +184,11 @@ public class EditCommand extends Command {
         private Phone phone;
         private Email email;
         private Address address;
+        private Name guardianName;
+        private Phone guardianPhone;
+        private Email guardianEmail;
+        private Subject subject;
+        private EducationLevel educationLevel;
         private LearningFocus learningFocus;
         private NextAction nextAction;
         private Set<Tag> tags;
@@ -169,6 +204,11 @@ public class EditCommand extends Command {
             setPhone(toCopy.phone);
             setEmail(toCopy.email);
             setAddress(toCopy.address);
+            setGuardianName(toCopy.guardianName);
+            setGuardianPhone(toCopy.guardianPhone);
+            setGuardianEmail(toCopy.guardianEmail);
+            setSubject(toCopy.subject);
+            setEducationLevel(toCopy.educationLevel);
             setLearningFocus(toCopy.learningFocus);
             setNextAction(toCopy.nextAction);
             setTags(toCopy.tags);
@@ -178,7 +218,8 @@ public class EditCommand extends Command {
          * Returns true if at least one field is edited.
          */
         public boolean isAnyFieldEdited() {
-            return CollectionUtil.isAnyNonNull(name, phone, email, address, learningFocus, nextAction, tags);
+            return CollectionUtil.isAnyNonNull(name, phone, email, address, guardianName,
+                    guardianPhone, guardianEmail, subject, educationLevel, learningFocus, nextAction, tags);
         }
 
         public void setName(Name name) {
@@ -211,6 +252,46 @@ public class EditCommand extends Command {
 
         public Optional<Address> getAddress() {
             return Optional.ofNullable(address);
+        }
+
+        public void setGuardianName(Name guardianName) {
+            this.guardianName = guardianName;
+        }
+
+        public Optional<Name> getGuardianName() {
+            return Optional.ofNullable(guardianName);
+        }
+
+        public void setGuardianPhone(Phone guardianPhone) {
+            this.guardianPhone = guardianPhone;
+        }
+
+        public Optional<Phone> getGuardianPhone() {
+            return Optional.ofNullable(guardianPhone);
+        }
+
+        public void setGuardianEmail(Email guardianEmail) {
+            this.guardianEmail = guardianEmail;
+        }
+
+        public Optional<Email> getGuardianEmail() {
+            return Optional.ofNullable(guardianEmail);
+        }
+
+        public void setSubject(Subject subject) {
+            this.subject = subject;
+        }
+
+        public Optional<Subject> getSubject() {
+            return Optional.ofNullable(subject);
+        }
+
+        public void setEducationLevel(EducationLevel educationLevel) {
+            this.educationLevel = educationLevel;
+        }
+
+        public Optional<EducationLevel> getEducationLevel() {
+            return Optional.ofNullable(educationLevel);
         }
 
         public void setLearningFocus(LearningFocus learningFocus) {
@@ -261,6 +342,11 @@ public class EditCommand extends Command {
                     && Objects.equals(phone, otherEditPersonDescriptor.phone)
                     && Objects.equals(email, otherEditPersonDescriptor.email)
                     && Objects.equals(address, otherEditPersonDescriptor.address)
+                    && Objects.equals(guardianName, otherEditPersonDescriptor.guardianName)
+                    && Objects.equals(guardianPhone, otherEditPersonDescriptor.guardianPhone)
+                    && Objects.equals(guardianEmail, otherEditPersonDescriptor.guardianEmail)
+                    && Objects.equals(subject, otherEditPersonDescriptor.subject)
+                    && Objects.equals(educationLevel, otherEditPersonDescriptor.educationLevel)
                     && Objects.equals(learningFocus, otherEditPersonDescriptor.learningFocus)
                     && Objects.equals(nextAction, otherEditPersonDescriptor.nextAction)
                     && Objects.equals(tags, otherEditPersonDescriptor.tags);
@@ -273,6 +359,11 @@ public class EditCommand extends Command {
                     .add("phone", phone)
                     .add("email", email)
                     .add("address", address)
+                    .add("guardianName", guardianName)
+                    .add("guardianPhone", guardianPhone)
+                    .add("guardianEmail", guardianEmail)
+                    .add("subject", subject)
+                    .add("educationLevel", educationLevel)
                     .add("learningFocus", learningFocus)
                     .add("nextAction", nextAction)
                     .add("tags", tags)
