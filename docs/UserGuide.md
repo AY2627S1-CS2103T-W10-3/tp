@@ -170,31 +170,40 @@ removes the displayed record. Run `list` whenever you want to restore the comple
 
 ### Editing a student: `edit`
 
-Edits an existing student in TutorContacts.
+Updates or clears details of an existing student without recreating the record.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [s/SUBJECT] [l/EDUCATION_LEVEL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`
+Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`
 
-* Edits the student at the specified `INDEX`. The index refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, …​
-* At least one of the optional fields must be provided.
-* Existing values will be updated to the input values. An omitted prefix preserves its existing value.
-* To clear an optional value, supply its prefix with no value, for example `lf/` or `p/`. The required `n/` field
-  cannot be cleared.
-* Guardian, subject, education-level, learning-focus, and next-action fields use the same validation rules as `add`.
-  Clearing `gn/` also clears `gp/` and `ge/`. A guardian phone or email cannot be set when no guardian name remains.
-* `lf/` and `na/` use the same validation and whitespace normalization as `add`.
-* When editing tags, all of the student's existing tags are removed; adding tags is not cumulative.
-* To remove all of a student's tags, enter `t/` without a tag after it.
-* Enclose an address in double quotes if it contains separate prefix-like text, for example `a/"Block n/7"`.
+* `INDEX` refers to the index shown in the current result view, including a view produced by `find` or `filter`.
+  It **must be a positive integer** 1, 2, 3, …​
+* Supply at least one field prefix. A prefix with a value replaces that field; an omitted prefix leaves its field
+  unchanged.
+* Leave an optional prefix empty to clear that field, for example `e/` to clear the student's email. `n/` cannot be
+  empty because every student must have a name.
+* Clearing `gn/` removes the guardian name, phone, and email together. `gp/` or `ge/` cannot contain a value unless a
+  guardian name already exists or is supplied in the same command.
+* Supplying one or more `t/` prefixes replaces all existing tags. Use `t/` by itself to clear all tags.
+* Repeated single-valued prefixes, unsupported prefixes, invalid values, and edits that would create a duplicate
+  normalized student name are rejected without changing displayed or saved data.
+* Enclose a free-text value in double quotes if it contains separate prefix-like text, for example
+  `a/"Block n/7"` or `s/"English l/Literature"`.
+* After a successful edit the full student list is shown again, so a `find` or `filter` view is cleared. For example,
+  `find Bernice` followed by `edit 1 p/91234567` ends with every student displayed rather than only the search results.
+* `edit` works only on the active student list. If `list archived` is showing, run `list` first to return to an active
+  view.
 
 Examples:
-* `edit 1 p/91234567 e/johndoe@example.com s/Mathematics l/S3` edits the contact and tutoring details of the 1st student.
-* `edit 1 gn/Jane Doe gp/81234567 ge/jane@example.com` updates the 1st student's guardian details.
-* `edit 1 lf/Linear equations na/Review exercise 2` updates both learning fields.
-* `edit 1 lf/ na/` clears both learning fields while preserving every omitted field.
-* `edit 1 gn/` clears the guardian name, phone, and email together.
-* `edit 1 gn/ gp/81234567` is rejected because a guardian phone cannot remain without a guardian name.
-* `edit 1 n/` is rejected because the student name is required.
-* `edit 2 n/Betsy Crower t/` changes the name of the 2nd student to `Betsy Crower` and clears all existing tags.
+* `edit 1 p/91234567 s/H2 Mathematics l/JC2` updates three fields of the first displayed student while preserving
+  every omitted field.
+* `find Bernice` followed by `edit 1 lf/Quadratic equations na/Complete worksheet 4` updates the first student in the
+  search results.
+* `edit 2 e/ a/ lf/ na/ t/` clears the email, address, learning focus, next action, and tags of the second displayed
+  student.
+* `edit 1 gn/` clears the guardian and both guardian contact fields.
+* Invalid, because the name is required: `edit 1 n/`
+* Invalid, because a guardian phone requires a guardian name: `edit 1 gn/ gp/91234567`
+* Invalid if `Alex Tan` already belongs to another student: `edit 1 n/Alex Tan`
+* Invalid, because the archived list is showing: `list archived` followed by `edit 1 p/91234567`
 
 ### Locating students by name: `find`
 
@@ -397,7 +406,7 @@ Action | Format, Examples
 **Archive** | `archive INDEX`<br> e.g., `archive 1`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
-**Edit** | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [s/SUBJECT] [l/EDUCATION_LEVEL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`<br> e.g., `edit 2 lf/Algebra na/Review exercise 2`
+**Edit** | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`<br> e.g., `edit 2 p/91234567 s/Mathematics l/S3`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **Filter** | `filter [s/SUBJECT] [l/EDUCATION_LEVEL]`<br> e.g., `filter s/Mathematics l/S3`
 **List** | `list` or `list archived`

@@ -169,6 +169,39 @@ Validation follows a fixed order: token structure, required `n/`, repeated prefi
 
 `HelpCommand` keeps the command formats in bundled text so help is available without a network connection. `LogicManager` returns the help result without saving the address book, which also allows help when the existing data file cannot be loaded. `HelpWindow` displays the same text directly in a scrollable JavaFX control.
 
+### Edit workflow
+
+`EditCommandParser` accepts every editable student-detail prefix, that is, the prefixes for details that can be
+changed using `edit`. Lesson times are deliberately excluded, as they are managed through `schedule` and `unschedule`
+instead. It builds an
+`EditPersonDescriptor` that distinguishes three states for each optional field: the prefix was omitted, the prefix
+contained a replacement value, or the prefix was explicitly supplied without a value to clear the field. The
+descriptor stores an edited flag separately from each nullable value so an omitted field and a clear request do not
+become indistinguishable.
+
+The diagram below shows the main success path for `edit 1 p/91234567 e/`, which replaces the phone number and clears
+the email while preserving all omitted fields.
+
+<img src="images/EditSequenceDiagram.png" width="800" />
+
+`EditCommand` resolves the index against `Model#getFilteredPersonList`, ensuring that the index identifies the student
+shown in the current result view. `createEditedPerson` combines supplied values and clear requests with the selected
+student's existing values, then constructs one complete replacement `Person`. Normal model validation and
+`Person#isSamePerson` duplicate detection are therefore applied to the final record rather than to isolated fields.
+After replacing the record, `EditCommand` calls `Model#updateFilteredPersonList` with `PREDICATE_SHOW_ALL_PERSONS`, so
+the view returns to the full student list and any active `find` or `filter` result is cleared.
+
+Guardian fields require additional dependency handling. Clearing the guardian name clears the entire `Guardian`,
+including its phone and email. Supplying a guardian phone or email is rejected when no guardian name remains. Clearing
+only a guardian phone or email preserves the guardian name and the other contact field.
+
+If parsing, validation, index checking, or duplicate detection fails, the model is not modified. After a successful
+command, `LogicManager` saves the updated address book. If saving fails, it restores the in-memory address book
+snapshot taken before command execution, so the displayed data reverts to its previous state. This restores only the
+in-memory model: `FileUtil.writeToFile` writes directly to the existing file, so an `IOException` during writing can
+leave the file partially overwritten, and restoring the snapshot does not guarantee that the previously persisted data
+is preserved.
+
 ### Guardian details
 
 TutorContacts represents a student's guardian as an immutable `Guardian` value object containing a required `Name` and optional `Phone` and `Email` values. `Person` stores the whole value as `Optional<Guardian>`, so the model cannot represent guardian contact details without a guardian name.
@@ -331,7 +364,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *` | private tutor | delete an obsolete or incorrect student record | keep my records relevant and accurate |
 | `* * *` | private tutor | have my data saved locally | retain my records after closing the application |
 | `* *` | new user | view command instructions | learn or recall how to use the application |
-| `* *` | private tutor | edit an existing student record | correct information without deleting and recreating the record |
+| `* *` | private tutor | edit or clear details in an existing student record | keep information accurate without deleting and recreating the record |
 | `* *` | private tutor | find a student by name | retrieve a record without scanning the full list |
 | `* *` | private tutor | filter students by subject or education level | retrieve a relevant group of students quickly |
 | `* *` | private tutor | record upcoming lessons | keep track of tutoring arrangements |
@@ -531,6 +564,73 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * 4a or 8a. TutorContacts cannot save the transition.
 
   * 4a1. TutorContacts restores the previous archive state and reports the save failure.
+
+  Use case ends.
+
+**Use case: UC06 — Edit a student**
+
+**MSS**
+
+1. User requests to display a set of students.
+2. TutorContacts displays the students with their current indices.
+3. User requests to edit one or more details of the student at a specified index.
+4. TutorContacts validates the index and supplied changes.
+5. TutorContacts combines the changes with the student's preserved details.
+6. TutorContacts replaces the student record and saves the updated data.
+7. TutorContacts displays the updated student and reports that the operation was successful.
+
+    Use case ends.
+
+**Extensions**
+
+* 3a. The user supplies an optional prefix without a value.
+
+  * 3a1. TutorContacts treats it as a request to clear that field.
+
+  Use case resumes at step 4.
+
+* 3b. The user supplies no field prefix, an unsupported prefix, or a repeated single-valued prefix.
+
+  * 3b1. TutorContacts reports the corresponding error.
+
+  Use case ends.
+
+* 3c. The archived student list is displayed.
+
+  * 3c1. TutorContacts reports that the command can only be used from the active student list.
+
+  Use case resumes at step 1.
+
+* 4a. The supplied index does not identify a student in the displayed result view.
+
+  * 4a1. TutorContacts reports that no student exists at that index.
+
+  Use case resumes at step 2.
+
+* 4b. A supplied value is invalid, including an empty student name.
+
+  * 4b1. TutorContacts reports the relevant validation rule.
+
+  Use case ends.
+
+* 4c. A guardian phone or email is supplied but no guardian name remains.
+
+  * 4c1. TutorContacts reports that the guardian name is required.
+
+  Use case ends.
+
+* 5a. The resulting name duplicates another student's normalized name.
+
+  * 5a1. TutorContacts reports the duplicate student.
+  * 5a2. TutorContacts leaves the existing records unchanged.
+
+  Use case ends.
+
+* 6a. TutorContacts cannot save the updated data.
+
+  * 6a1. TutorContacts reports the save failure.
+  * 6a2. TutorContacts restores the previous in-memory records. The data file may remain partially written, so the
+    previously saved data is not guaranteed to be preserved.
 
   Use case ends.
 
@@ -736,6 +836,38 @@ testers are expected to do more *exploratory* testing.
 
    1. Test case: `add n/Chris Lim l/University`<br>
       Expected: The command is rejected with the education-level constraint. Existing student records remain unchanged.
+
+### Editing and clearing student details
+
+1. Updating fields while preserving omitted fields
+
+   1. Prerequisites: The first displayed student has a name, email, address, subject, and guardian details.
+
+   1. Test case: `edit 1 p/91234567 s/H2 Mathematics l/JC2`<br>
+      Expected: The phone, subject, and education level are updated. The name, email, address, guardian, learning
+      focus, next action, and tags remain unchanged.
+
+   1. Test case: Run `find` for a student, then run `edit 1 na/Review corrections`.<br>
+      Expected: The first student in the search results is updated, rather than the first student in the full list.
+
+1. Clearing optional fields
+
+   1. Test case: `edit 1 e/ a/ s/ l/ lf/ na/ t/`<br>
+      Expected: Each supplied optional field and all tags are cleared. Omitted fields remain unchanged.
+
+   1. Test case: `edit 1 gn/`<br>
+      Expected: The guardian name, phone, and email are cleared together.
+
+1. Rejecting invalid edits
+
+   1. Test case: `edit 1 n/`<br>
+      Expected: The edit is rejected because the student name cannot be empty.
+
+   1. Test case: `edit 1 gn/ gp/91234567`<br>
+      Expected: The edit is rejected because guardian contact details require a guardian name.
+
+   1. Test case: Change a student's name to the name of another existing student.<br>
+      Expected: The duplicate edit is rejected and both student records remain unchanged.
 
 ### Student-list UI, keyboard, and deletion feedback
 

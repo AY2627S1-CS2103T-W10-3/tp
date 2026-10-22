@@ -39,6 +39,7 @@ public class HelpCommandTest {
         assertTrue(help.contains("delete INDEX"));
         assertTrue(help.contains("schedule INDEX at/YYYY-MM-DD HH:mm"));
         assertTrue(help.contains("unschedule INDEX"));
+        assertTrue(help.contains("upcoming\n"));
         assertTrue(help.contains("clear\n"));
         assertTrue(help.contains("help\n"));
         assertTrue(help.contains("exit\n"));
