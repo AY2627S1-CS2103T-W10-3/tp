@@ -39,7 +39,7 @@ final class CommandArgumentTokenizer {
                 throw new ParseException("Unsupported prefix in " + commandWord + " command: " + field.token());
             }
             int end = i + 1 < fields.size() ? fields.get(i + 1).start() : args.length();
-            values.put(prefix, parseValue(args.substring(field.end(), end), commandWord));
+            values.put(prefix, parseValue(args.substring(field.end(), end)));
         }
         return values;
     }
@@ -68,17 +68,12 @@ final class CommandArgumentTokenizer {
         return fields;
     }
 
-    private static String parseValue(String rawValue, String commandWord) throws ParseException {
+    private static String parseValue(String rawValue) {
         String value = rawValue.strip();
-        if (!value.contains("\"")) {
-            return value;
+        if (value.length() >= 2 && value.charAt(0) == '"' && value.charAt(value.length() - 1) == '"') {
+            return value.substring(1, value.length() - 1);
         }
-        if (value.length() < 2 || value.charAt(0) != '"' || value.charAt(value.length() - 1) != '"'
-                || value.substring(1, value.length() - 1).contains("\"")) {
-            throw new ParseException("Quoted values in " + commandWord
-                    + " command must be enclosed by one pair of double quotes.");
-        }
-        return value.substring(1, value.length() - 1);
+        return value;
     }
 
     private record FieldPosition(String token, int start, int end) {

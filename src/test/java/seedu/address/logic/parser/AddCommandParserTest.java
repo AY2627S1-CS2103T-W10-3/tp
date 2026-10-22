@@ -128,6 +128,12 @@ public class AddCommandParserTest {
                 .withoutEducationLevel().withTags().build();
         assertParseSuccess(parser, " n/Alice a/\"Block n/7 x/West\" s/\"A l/Mathematics\"",
                 new AddCommand(withQuotedPrefixLikeText));
+
+        Person withLiteralQuotes = new PersonBuilder().withName("Alice").withoutPhone().withoutEmail()
+                .withoutAddress().withoutGuardian().withSubject("English \"l/Literature\"")
+                .withoutEducationLevel().withTags().build();
+        assertParseSuccess(parser, " n/Alice s/English \"l/Literature\"",
+                new AddCommand(withLiteralQuotes));
     }
 
     @Test

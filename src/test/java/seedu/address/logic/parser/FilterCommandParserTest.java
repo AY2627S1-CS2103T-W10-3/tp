@@ -36,6 +36,8 @@ public class FilterCommandParserTest {
         assertParseSuccess(parser, " s/A Level/Mathematics", command("A Level/Mathematics", null));
         assertParseSuccess(parser, " s/\"A l/Mathematics x/Extension\"",
                 command("A l/Mathematics x/Extension", null));
+        assertParseSuccess(parser, " s/English \"l/Literature\"",
+                command("English \"l/Literature\"", null));
     }
 
     @Test
