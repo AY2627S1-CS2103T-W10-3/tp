@@ -205,6 +205,14 @@ public class EditCommandParserTest {
     }
 
     @Test
+    public void parse_nameWithRepeatedSpaces_normalizesName() {
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName("Alex Tan").build();
+
+        assertParseSuccess(parser, "1 n/ Alex    Tan ",
+                new EditCommand(INDEX_FIRST_PERSON, descriptor));
+    }
+
+    @Test
     public void parse_prefixLikeTextInsideAddress_success() {
         EditPersonDescriptor longPrefixDescriptor = new EditPersonDescriptorBuilder()
                 .withAddress("A Level/Mathematics Centre").build();
