@@ -17,7 +17,10 @@ import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.EducationLevel;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.LearningFocus;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.NextAction;
+import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Subject;
 import seedu.address.testutil.PersonBuilder;
@@ -122,6 +125,29 @@ public class JsonAdaptedPersonTest {
         JsonAdaptedPerson person = JsonUtil.fromJsonString("{\"name\":\"Name Only\"}", JsonAdaptedPerson.class);
         assertEquals(new PersonBuilder().withName("Name Only").withoutPhone().withoutEmail()
                 .withoutAddress().withTags().build(), person.toModelType());
+        assertEquals(Optional.empty(), person.toModelType().getLearningFocus());
+        assertEquals(Optional.empty(), person.toModelType().getNextAction());
+    }
+
+    @Test
+    public void toModelType_validLearningContext_returnsPersonWithLearningContext() throws Exception {
+        Person expected = new PersonBuilder(BENSON).withLearningFocus("Fractions and ratios")
+                .withNextAction("Complete worksheet 2").build();
+
+        assertEquals(expected, new JsonAdaptedPerson(expected).toModelType());
+    }
+
+    @Test
+    public void toModelType_invalidLearningContext_throwsIllegalValueException() throws Exception {
+        JsonAdaptedPerson invalidLearningFocus = JsonUtil.fromJsonString(
+                "{\"name\":\"Student\",\"learningFocus\":\"\"}", JsonAdaptedPerson.class);
+        JsonAdaptedPerson invalidNextAction = JsonUtil.fromJsonString(
+                "{\"name\":\"Student\",\"nextAction\":\"\"}", JsonAdaptedPerson.class);
+
+        assertThrows(IllegalValueException.class, LearningFocus.MESSAGE_CONSTRAINTS,
+                invalidLearningFocus::toModelType);
+        assertThrows(IllegalValueException.class, NextAction.MESSAGE_CONSTRAINTS,
+                invalidNextAction::toModelType);
     }
 
     @Test
