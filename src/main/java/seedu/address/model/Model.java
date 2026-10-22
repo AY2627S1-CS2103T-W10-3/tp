@@ -12,6 +12,10 @@ import seedu.address.model.person.Person;
 public interface Model {
     /** {@code Predicate} that always evaluates to true */
     Predicate<Person> PREDICATE_SHOW_ALL_PERSONS = unused -> true;
+    /** {@code Predicate} that shows only active students. */
+    Predicate<Person> PREDICATE_SHOW_ACTIVE_PERSONS = person -> !person.isArchived();
+    /** {@code Predicate} that shows only archived students. */
+    Predicate<Person> PREDICATE_SHOW_ARCHIVED_PERSONS = Person::isArchived;
 
     /**
      * Returns the user prefs.
@@ -63,9 +67,17 @@ public interface Model {
     /** Returns an unmodifiable view of the filtered person list */
     ObservableList<Person> getFilteredPersonList();
 
+    /** Returns the scope represented by the current result view. */
+    default ResultViewScope getResultViewScope() {
+        return ResultViewScope.ACTIVE;
+    }
+
     /**
      * Updates the filter of the filtered person list to filter by the given {@code predicate}.
      * @throws NullPointerException if {@code predicate} is null.
      */
     void updateFilteredPersonList(Predicate<Person> predicate);
+
+    /** Updates the current result view predicate and scope together. */
+    void updateFilteredPersonList(Predicate<Person> predicate, ResultViewScope scope);
 }

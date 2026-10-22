@@ -25,7 +25,8 @@ public class PersonTest {
     @Test
     public void constructor_nameOnly_hasEmptyOptionalDetails() {
         Person person = new Person(new Name("Only Name"), Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Set.of());
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), false,
+                Set.of());
         assertEquals(Optional.empty(), person.getPhone());
         assertEquals(Optional.empty(), person.getEmail());
         assertEquals(Optional.empty(), person.getAddress());
@@ -41,7 +42,7 @@ public class PersonTest {
     public void constructor_nullName_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
                 new Person(null, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Set.of()));
+                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), false, Set.of()));
     }
 
     @Test
@@ -105,6 +106,28 @@ public class PersonTest {
                 new PersonBuilder(withLearningContext).withoutNextAction().build());
         assertTrue(withLearningContext.isSamePerson(
                 new PersonBuilder(withLearningContext).withoutLearningFocus().withoutNextAction().build()));
+    }
+
+    @Test
+    public void withArchived_preservesFieldsAndChangesOnlyArchiveState() {
+        Person active = new PersonBuilder(ALICE).withLearningFocus("Fractions")
+                .withNextAction("Complete worksheet 2").build();
+
+        Person archived = active.withArchived(true);
+
+        assertTrue(archived.isArchived());
+        assertEquals(active.getName(), archived.getName());
+        assertEquals(active.getPhone(), archived.getPhone());
+        assertEquals(active.getEmail(), archived.getEmail());
+        assertEquals(active.getAddress(), archived.getAddress());
+        assertEquals(active.getGuardian(), archived.getGuardian());
+        assertEquals(active.getSubject(), archived.getSubject());
+        assertEquals(active.getEducationLevel(), archived.getEducationLevel());
+        assertEquals(active.getLearningFocus(), archived.getLearningFocus());
+        assertEquals(active.getNextAction(), archived.getNextAction());
+        assertEquals(active.getTags(), archived.getTags());
+        assertFalse(archived.withArchived(false).isArchived());
+        assertNotEquals(active, archived);
     }
 
     @Test
@@ -187,7 +210,7 @@ public class PersonTest {
                 + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", guardian="
                 + ALICE.getGuardian() + ", subject=" + ALICE.getSubject() + ", educationLevel="
                 + ALICE.getEducationLevel() + ", learningFocus=" + ALICE.getLearningFocus() + ", nextAction="
-                + ALICE.getNextAction() + ", tags=" + ALICE.getTags() + "}";
+                + ALICE.getNextAction() + ", archived=" + ALICE.isArchived() + ", tags=" + ALICE.getTags() + "}";
         assertEquals(expected, ALICE.toString());
     }
 }

@@ -38,6 +38,7 @@ public class PersonBuilder {
     private Optional<EducationLevel> educationLevel;
     private Optional<LearningFocus> learningFocus;
     private Optional<NextAction> nextAction;
+    private boolean archived;
     private Set<Tag> tags;
 
     /**
@@ -53,6 +54,7 @@ public class PersonBuilder {
         educationLevel = Optional.empty();
         learningFocus = Optional.empty();
         nextAction = Optional.empty();
+        archived = false;
         tags = new HashSet<>();
     }
 
@@ -69,6 +71,7 @@ public class PersonBuilder {
         educationLevel = personToCopy.getEducationLevel();
         learningFocus = personToCopy.getLearningFocus();
         nextAction = personToCopy.getNextAction();
+        archived = personToCopy.isArchived();
         tags = new HashSet<>(personToCopy.getTags());
     }
 
@@ -197,10 +200,16 @@ public class PersonBuilder {
         return this;
     }
 
+    /** Sets whether the student is archived. */
+    public PersonBuilder withArchived(boolean archived) {
+        this.archived = archived;
+        return this;
+    }
+
     /** Builds a {@code Person} with the configured fields. */
     public Person build() {
         return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, tags);
+                nextAction, archived, tags);
     }
 
 }

@@ -21,6 +21,7 @@ public class ModelManager implements Model {
     private final AddressBook addressBook;
     private final UserPrefs userPrefs;
     private final FilteredList<Person> filteredPersons;
+    private ResultViewScope resultViewScope;
 
     /**
      * Initializes a ModelManager with the given addressBook and userPrefs.
@@ -33,6 +34,7 @@ public class ModelManager implements Model {
         this.addressBook = new AddressBook(addressBook);
         this.userPrefs = new UserPrefs(userPrefs);
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
+        updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
     }
 
     public ModelManager() {
@@ -105,9 +107,24 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public ResultViewScope getResultViewScope() {
+        return resultViewScope;
+    }
+
+    @Override
     public void updateFilteredPersonList(Predicate<Person> predicate) {
+        updateFilteredPersonList(predicate, ResultViewScope.ACTIVE);
+    }
+
+    @Override
+    public void updateFilteredPersonList(Predicate<Person> predicate, ResultViewScope scope) {
         requireNonNull(predicate);
-        filteredPersons.setPredicate(predicate);
+        requireNonNull(scope);
+        Predicate<Person> scopePredicate = scope == ResultViewScope.ACTIVE
+                ? PREDICATE_SHOW_ACTIVE_PERSONS
+                : PREDICATE_SHOW_ARCHIVED_PERSONS;
+        filteredPersons.setPredicate(scopePredicate.and(predicate));
+        resultViewScope = scope;
     }
 
     @Override
@@ -123,7 +140,8 @@ public class ModelManager implements Model {
 
         return addressBook.equals(otherModelManager.addressBook)
                 && userPrefs.equals(otherModelManager.userPrefs)
-                && filteredPersons.equals(otherModelManager.filteredPersons);
+                && filteredPersons.equals(otherModelManager.filteredPersons)
+                && resultViewScope == otherModelManager.resultViewScope;
     }
 
 }
