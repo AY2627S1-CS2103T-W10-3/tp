@@ -50,6 +50,7 @@ public class QueryResultViewTest {
 
         Person editedAlice = new PersonBuilder(ALICE).withPhone("91234567").build();
         assertEquals(List.of(BOB, editedAlice, CARLA), model.getAddressBook().getPersonList());
+        assertEquals(List.of(BOB, editedAlice, CARLA), model.getFilteredPersonList());
     }
 
     @Test
