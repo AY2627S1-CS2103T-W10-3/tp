@@ -299,7 +299,7 @@ Examples:
 * Invalid, because the archived list is showing: `list archived` followed by `schedule 1 at/2099-10-30 16:00`
 
 <div markdown="span" class="alert alert-info">:information_source: **Note:**
-TutorContacts records only one upcoming lesson per student. Recurring lessons, reminders, lesson history, attendance,
+TutorContacts records at most one lesson per student, which may be upcoming or overdue. Recurring lessons, reminders, lesson history, attendance,
 calendar integration, and time-zone conversion are not supported.
 </div>
 

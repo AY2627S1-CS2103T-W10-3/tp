@@ -777,7 +777,8 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
-* 2b. User requests to schedule, clear, archive, or delete a lesson's student at a displayed index.
+* 2b. User requests to reschedule or clear the displayed student's lesson, or archive or delete the displayed student, at
+  a displayed index.
 
   * 2b1. TutorContacts acts on the student shown at that index in the upcoming list (UC03, UC05, UC08, UC09).
 
@@ -805,7 +806,8 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 * **Education level**: The student's current school level, such as `P6`, `S3`, or `JC1`.
 * **Guardian**: A parent or other responsible adult whose contact details are associated with a student.
 * **Independent private tutor**: A tutor who manages their own students and tutoring arrangements rather than relying on an organization to manage them.
-* **Lesson**: The single upcoming tutoring session recorded for a student, as a local date and time with minute precision.
+* **Lesson**: The single tutoring session recorded for a student, as a local date and time with minute precision. It is
+  upcoming until its time is reached, and overdue afterwards.
 * **Overdue lesson**: A lesson whose time has been reached. It stays recorded until it is rescheduled or cleared.
 * **Student record**: The information stored for one student, including contact, guardian, tutoring, learning-context,
   lesson, and archive-state details.
