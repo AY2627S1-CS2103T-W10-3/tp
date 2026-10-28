@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import seedu.address.logic.Messages;
@@ -61,7 +61,7 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private Label guardianEmail;
     @FXML
-    private FlowPane tags;
+    private HBox tags;
 
     /**
      * Creates a {@code PersonCard} with the given {@code Person} and index to display.

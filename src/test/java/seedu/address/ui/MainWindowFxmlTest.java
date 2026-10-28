@@ -40,10 +40,10 @@ public class MainWindowFxmlTest {
     }
 
     @Test
-    public void tutorContactsTheme_usesNativeSystemFont() throws IOException, URISyntaxException {
+    public void tutorContactsTheme_usesReadableArialFont() throws IOException, URISyntaxException {
         String stylesheet = readResource("/view/TutorContactsTheme.css");
 
-        assertTrue(stylesheet.contains("-fx-font-family: \"System\";"));
+        assertTrue(stylesheet.contains("-fx-font-family: \"Arial\";"));
         assertFalse(stylesheet.contains("Segoe UI"));
     }
 
