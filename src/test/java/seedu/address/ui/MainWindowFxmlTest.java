@@ -24,6 +24,8 @@ public class MainWindowFxmlTest {
         assertTrue(fxml.contains("text=\"All Students\""));
         assertTrue(fxml.contains("text=\"Upcoming Lessons\""));
         assertTrue(fxml.contains("text=\"Archived Students\""));
+        assertTrue(countOccurrences(fxml, "styleClass=\"view-icon\"") == 3);
+        assertFalse(fxml.contains("text=\"VIEWS\""));
         assertFalse(fxml.contains("DarkTheme.css"));
     }
 
@@ -40,5 +42,9 @@ public class MainWindowFxmlTest {
     private static String readResource(String resourcePath) throws IOException, URISyntaxException {
         Path path = Path.of(MainApp.class.getResource(resourcePath).toURI());
         return Files.readString(path);
+    }
+
+    private static int countOccurrences(String text, String value) {
+        return text.split(value, -1).length - 1;
     }
 }

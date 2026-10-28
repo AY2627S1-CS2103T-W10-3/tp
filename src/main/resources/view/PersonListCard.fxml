@@ -8,34 +8,34 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox id="cardPane" fx:id="cardPane" spacing="7" xmlns="http://javafx.com/javafx/17"
+<VBox id="cardPane" fx:id="cardPane" spacing="9" xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1">
-  <padding><Insets top="10" right="12" bottom="10" left="12" /></padding>
-  <HBox alignment="CENTER_LEFT" spacing="5">
+  <padding><Insets top="12" right="14" bottom="12" left="14" /></padding>
+  <HBox alignment="CENTER_LEFT" spacing="7">
     <Label fx:id="id" styleClass="card-index" />
     <Label fx:id="name" styleClass="card-name" />
     <FlowPane fx:id="tags" HBox.hgrow="ALWAYS" />
   </HBox>
-  <HBox alignment="CENTER_LEFT" spacing="14">
+  <HBox alignment="CENTER_LEFT" spacing="18">
     <Label fx:id="subject" minWidth="0" styleClass="summary-label" />
     <Label fx:id="educationLevel" minWidth="0" styleClass="summary-label" />
     <Label fx:id="lesson" minWidth="0" maxWidth="Infinity" styleClass="summary-label" HBox.hgrow="ALWAYS" />
   </HBox>
-  <GridPane hgap="16" vgap="5">
+  <GridPane hgap="22" vgap="7">
     <columnConstraints>
       <ColumnConstraints percentWidth="33" hgrow="ALWAYS" />
       <ColumnConstraints percentWidth="34" hgrow="ALWAYS" />
       <ColumnConstraints percentWidth="33" hgrow="ALWAYS" />
     </columnConstraints>
-    <HBox maxWidth="Infinity" spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
+    <HBox maxWidth="Infinity" spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
       <Label text="Phone" styleClass="detail-label, detail-key" />
       <Label fx:id="phone" minWidth="0" maxWidth="Infinity" styleClass="detail-label" HBox.hgrow="ALWAYS" />
     </HBox>
-    <HBox maxWidth="Infinity" spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+    <HBox maxWidth="Infinity" spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
       <Label text="Email" styleClass="detail-label, detail-key" />
       <Label fx:id="email" minWidth="0" maxWidth="Infinity" styleClass="detail-label" HBox.hgrow="ALWAYS" />
     </HBox>
-    <HBox maxWidth="Infinity" spacing="4" GridPane.columnIndex="2" GridPane.rowIndex="0">
+    <HBox maxWidth="Infinity" spacing="6" GridPane.columnIndex="2" GridPane.rowIndex="0">
       <Label text="Address" styleClass="detail-label, detail-key" />
       <Label fx:id="address" minWidth="0" maxWidth="Infinity" styleClass="detail-label" HBox.hgrow="ALWAYS" />
     </HBox>
