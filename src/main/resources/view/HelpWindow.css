@@ -130,6 +130,31 @@
     -fx-text-fill: #625e70;
 }
 
+.field-guide { -fx-background-color: #faf9fe; }
+
+.field-group-title {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #777282;
+}
+
+.field-item {
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 6;
+    -fx-border-color: #e5e1ec;
+    -fx-border-radius: 6;
+    -fx-padding: 5 8;
+}
+
+.field-item .label { -fx-text-fill: #625e70; }
+
+.prefix-chip {
+    -fx-font-family: "Menlo";
+    -fx-font-weight: bold;
+    -fx-text-fill: #4b5f9b;
+}
+
 .scroll-bar { -fx-background-color: transparent; }
 
 .scroll-bar .thumb {

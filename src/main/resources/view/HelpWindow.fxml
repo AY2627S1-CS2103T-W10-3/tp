@@ -7,6 +7,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -66,7 +67,7 @@
                 </VBox>
                 <VBox spacing="8" styleClass="help-card">
                   <Label text="Important behaviour" styleClass="section-title" />
-                  <Label text="• Displayed indices belong to the current result list.&#10;• list restores all active students in saved order.&#10;• find matches partial student names using OR semantics.&#10;• Archived students are hidden from active views until restored.&#10;• clear permanently deletes every student record."
+                  <Label text="• Use the number shown beside a student when a command asks for an INDEX.&#10;• Commands act on the student list currently shown on screen.&#10;• list returns to the complete list of current students.&#10;• Archived students stay saved but are hidden from the main list.&#10;• clear permanently deletes every student record."
                          wrapText="true" styleClass="body-text" />
                 </VBox>
                 <VBox spacing="8" styleClass="help-card, warm-card">
@@ -83,12 +84,11 @@
                         visible="false" managed="false" styleClass="help-scroll">
               <VBox spacing="14" styleClass="help-page">
                 <Label text="Student management" styleClass="page-title" />
-                <Label text="Add, inspect, update, and permanently delete student records."
+                <Label text="Add, update, view, and permanently delete student records."
                        wrapText="true" styleClass="page-intro" />
                 <VBox spacing="7" styleClass="help-card, blue-card">
                   <Label text="Add a student" styleClass="section-title" />
-                  <Label text="add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]"
-                         wrapText="true" styleClass="command-format" />
+                  <Label text="add n/NAME [optional fields]" styleClass="command-format" />
                   <Label text="Example: add n/Alex Tan s/H2 Mathematics l/JC1 lf/Quadratic graphs"
                          wrapText="true" styleClass="example-text" />
                   <Label text="Only the name is required. Guardian phone or email requires a guardian name. Supported education levels are P1–P6, S1–S5, and JC1–JC2."
@@ -96,17 +96,42 @@
                 </VBox>
                 <VBox spacing="7" styleClass="help-card">
                   <Label text="Edit a student" styleClass="section-title" />
-                  <Label text="edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]..."
-                         wrapText="true" styleClass="command-format" />
+                  <Label text="edit INDEX PREFIX/VALUE [other field changes]" styleClass="command-format" />
                   <Label text="Example: edit 1 p/91234567 lf/Linear equations"
                          wrapText="true" styleClass="example-text" />
-                  <Label text="Omitted fields are preserved. Supply an optional prefix with no value to clear it; the student name cannot be cleared."
+                  <Label text="Change one or several fields in the same command. Fields you do not include stay unchanged. Leave an optional field empty to clear it; the student name cannot be cleared."
+                         wrapText="true" styleClass="body-text" />
+                </VBox>
+                <VBox spacing="9" styleClass="help-card, field-guide">
+                  <Label text="Field prefixes for add and edit" styleClass="section-title" />
+                  <Label text="Student details" styleClass="field-group-title" />
+                  <FlowPane hgap="8" vgap="8" prefWrapLength="580">
+                    <HBox spacing="5" styleClass="field-item"><Label text="n/" styleClass="prefix-chip" /><Label text="name" /></HBox>
+                    <HBox spacing="5" styleClass="field-item"><Label text="p/" styleClass="prefix-chip" /><Label text="phone" /></HBox>
+                    <HBox spacing="5" styleClass="field-item"><Label text="e/" styleClass="prefix-chip" /><Label text="email" /></HBox>
+                    <HBox spacing="5" styleClass="field-item"><Label text="a/" styleClass="prefix-chip" /><Label text="address" /></HBox>
+                  </FlowPane>
+                  <Label text="Tutoring details" styleClass="field-group-title" />
+                  <FlowPane hgap="8" vgap="8" prefWrapLength="580">
+                    <HBox spacing="5" styleClass="field-item"><Label text="s/" styleClass="prefix-chip" /><Label text="subject" /></HBox>
+                    <HBox spacing="5" styleClass="field-item"><Label text="l/" styleClass="prefix-chip" /><Label text="education level" /></HBox>
+                    <HBox spacing="5" styleClass="field-item"><Label text="lf/" styleClass="prefix-chip" /><Label text="learning focus" /></HBox>
+                    <HBox spacing="5" styleClass="field-item"><Label text="na/" styleClass="prefix-chip" /><Label text="next action" /></HBox>
+                    <HBox spacing="5" styleClass="field-item"><Label text="t/" styleClass="prefix-chip" /><Label text="tag" /></HBox>
+                  </FlowPane>
+                  <Label text="Guardian details" styleClass="field-group-title" />
+                  <FlowPane hgap="8" vgap="8" prefWrapLength="580">
+                    <HBox spacing="5" styleClass="field-item"><Label text="gn/" styleClass="prefix-chip" /><Label text="guardian name" /></HBox>
+                    <HBox spacing="5" styleClass="field-item"><Label text="gp/" styleClass="prefix-chip" /><Label text="guardian phone" /></HBox>
+                    <HBox spacing="5" styleClass="field-item"><Label text="ge/" styleClass="prefix-chip" /><Label text="guardian email" /></HBox>
+                  </FlowPane>
+                  <Label text="For add, n/ is required. For edit, include only the fields you want to change. Repeat t/ to provide more than one tag."
                          wrapText="true" styleClass="body-text" />
                 </VBox>
                 <VBox spacing="7" styleClass="help-card">
                   <Label text="List students" styleClass="section-title" />
                   <Label text="list" styleClass="command-format" />
-                  <Label text="Show every active student and reset the current result view." wrapText="true" styleClass="body-text" />
+                  <Label text="Show every current student again, replacing any search, filter, or upcoming list." wrapText="true" styleClass="body-text" />
                 </VBox>
                 <VBox spacing="7" styleClass="help-card">
                   <Label text="Delete a student permanently" styleClass="section-title" />
@@ -127,20 +152,20 @@
                         visible="false" managed="false" styleClass="help-scroll">
               <VBox spacing="14" styleClass="help-page">
                 <Label text="Search and filter" styleClass="page-title" />
-                <Label text="Create a temporary active-student result view, then use its displayed indices with other commands."
+                <Label text="Search by name or narrow the list by tutoring details. Use the student numbers shown in the results with other commands."
                        wrapText="true" styleClass="page-intro" />
                 <VBox spacing="7" styleClass="help-card, green-card">
                   <Label text="Find by student name" styleClass="section-title" />
                   <Label text="find KEYWORD [MORE_KEYWORDS]" styleClass="command-format" />
                   <Label text="Example: find alex david" styleClass="example-text" />
-                  <Label text="Matches partial names case-insensitively. Multiple keywords use OR semantics. It does not search phone, email, address, or subject."
+                  <Label text="Capital letters do not matter, and part of a name is enough. If you enter several words, a student is shown when their name matches any one of them. This command searches names only."
                          wrapText="true" styleClass="body-text" />
                 </VBox>
                 <VBox spacing="7" styleClass="help-card, green-card">
                   <Label text="Filter by tutoring details" styleClass="section-title" />
                   <Label text="filter [s/SUBJECT] [l/EDUCATION_LEVEL]" styleClass="command-format" />
                   <Label text="Example: filter s/H2 Mathematics l/JC1" styleClass="example-text" />
-                  <Label text="Subject and education level use AND when both are supplied. At least one criterion is required. Run list to restore all active students."
+                  <Label text="You can filter by subject, education level, or both. When both are provided, a student must match both. Run list to show every current student again."
                          wrapText="true" styleClass="body-text" />
                 </VBox>
               </VBox>
@@ -150,7 +175,7 @@
                         visible="false" managed="false" styleClass="help-scroll">
               <VBox spacing="14" styleClass="help-page">
                 <Label text="Scheduling" styleClass="page-title" />
-                <Label text="Record one upcoming lesson per active student and review lessons chronologically."
+                <Label text="Record one upcoming lesson per current student and review the soonest lessons first."
                        wrapText="true" styleClass="page-intro" />
                 <VBox spacing="7" styleClass="help-card, warm-card">
                   <Label text="Schedule or replace a lesson" styleClass="section-title" />
@@ -167,7 +192,7 @@
                 <VBox spacing="7" styleClass="help-card, warm-card">
                   <Label text="List upcoming lessons" styleClass="section-title" />
                   <Label text="upcoming" styleClass="command-format" />
-                  <Label text="Shows active students with future lessons in chronological order. Run upcoming again to refresh the snapshot."
+                  <Label text="Shows current students with future lessons, with the soonest lesson first. Run upcoming again to refresh the list."
                          wrapText="true" styleClass="body-text" />
                 </VBox>
               </VBox>
@@ -183,19 +208,19 @@
                   <Label text="Archive a student" styleClass="section-title" />
                   <Label text="archive INDEX" styleClass="command-format" />
                   <Label text="Example: archive 1" styleClass="example-text" />
-                  <Label text="Archive works only from an active result view and preserves the complete student record."
+                  <Label text="Use archive while viewing current students, including search or filtered lists. The student's complete record remains saved."
                          wrapText="true" styleClass="body-text" />
                 </VBox>
                 <VBox spacing="7" styleClass="help-card, purple-card">
                   <Label text="View archived students" styleClass="section-title" />
                   <Label text="list archived" styleClass="command-format" />
-                  <Label text="Opens the archived result view with its own displayed indices." wrapText="true" styleClass="body-text" />
+                  <Label text="Shows archived students and gives them numbers for archive-related commands." wrapText="true" styleClass="body-text" />
                 </VBox>
                 <VBox spacing="7" styleClass="help-card, purple-card">
                   <Label text="Restore an archived student" styleClass="section-title" />
                   <Label text="unarchive INDEX" styleClass="command-format" />
                   <Label text="Example: list archived, then unarchive 1" styleClass="example-text" />
-                  <Label text="Unarchive works only from the archived view. Run list afterward to return to active students."
+                  <Label text="First run list archived, then restore the student using the number shown. Run list afterward to return to current students."
                          wrapText="true" styleClass="body-text" />
                 </VBox>
               </VBox>
