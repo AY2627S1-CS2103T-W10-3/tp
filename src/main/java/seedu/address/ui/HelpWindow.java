@@ -4,12 +4,11 @@ import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
 import seedu.address.commons.core.LogsCenter;
-import seedu.address.logic.commands.HelpCommand;
 
 /**
  * Controller for a help page
@@ -25,7 +24,26 @@ public class HelpWindow extends UiPart<Stage> {
     private Button copyButton;
 
     @FXML
-    private TextArea helpMessage;
+    private Button overviewButton;
+    @FXML
+    private Button studentsButton;
+    @FXML
+    private Button searchButton;
+    @FXML
+    private Button schedulingButton;
+    @FXML
+    private Button archivingButton;
+
+    @FXML
+    private ScrollPane overviewPage;
+    @FXML
+    private ScrollPane studentsPage;
+    @FXML
+    private ScrollPane searchPage;
+    @FXML
+    private ScrollPane schedulingPage;
+    @FXML
+    private ScrollPane archivingPage;
 
     /**
      * Creates a new HelpWindow.
@@ -34,7 +52,6 @@ public class HelpWindow extends UiPart<Stage> {
      */
     public HelpWindow(Stage root) {
         super(FXML, root);
-        helpMessage.setText(HelpCommand.HELP_TEXT);
     }
 
     /**
@@ -87,6 +104,50 @@ public class HelpWindow extends UiPart<Stage> {
      */
     public void focus() {
         getRoot().requestFocus();
+    }
+
+    @FXML
+    private void showOverview() {
+        showPage(overviewPage, overviewButton);
+    }
+
+    @FXML
+    private void showStudents() {
+        showPage(studentsPage, studentsButton);
+    }
+
+    @FXML
+    private void showSearch() {
+        showPage(searchPage, searchButton);
+    }
+
+    @FXML
+    private void showScheduling() {
+        showPage(schedulingPage, schedulingButton);
+    }
+
+    @FXML
+    private void showArchiving() {
+        showPage(archivingPage, archivingButton);
+    }
+
+    private void showPage(ScrollPane selectedPage, Button selectedButton) {
+        ScrollPane[] pages = {overviewPage, studentsPage, searchPage, schedulingPage, archivingPage};
+        Button[] buttons = {overviewButton, studentsButton, searchButton, schedulingButton, archivingButton};
+
+        for (ScrollPane page : pages) {
+            boolean selected = page == selectedPage;
+            page.setVisible(selected);
+            page.setManaged(selected);
+            if (selected) {
+                page.setVvalue(0);
+            }
+        }
+
+        for (Button button : buttons) {
+            button.getStyleClass().remove("help-nav-button-active");
+        }
+        selectedButton.getStyleClass().add("help-nav-button-active");
     }
 
     /**
