@@ -1,16 +1,16 @@
 .root {
     -fx-font-family: "Arial";
     -fx-font-size: 14px;
-    -fx-background-color: #fbf7f3;
+    -fx-background-color: #f8f7fc;
     -fx-focus-color: #829bd6;
     -fx-faint-focus-color: rgba(130, 155, 214, 0.16);
 }
 
-.help-shell { -fx-background-color: #fbf7f3; }
+.help-shell { -fx-background-color: #f8f7fc; }
 
 .help-header {
-    -fx-background-color: #fffdfb;
-    -fx-border-color: transparent transparent #eadfd8 transparent;
+    -fx-background-color: #fdfcff;
+    -fx-border-color: transparent transparent #e4e0ed transparent;
     -fx-border-width: 0 0 1 0;
     -fx-padding: 12 20;
 }
@@ -24,8 +24,8 @@
 .help-subtitle, .sidebar-note { -fx-text-fill: #817d8b; }
 
 .help-sidebar {
-    -fx-background-color: linear-gradient(to bottom, #fff8f3, #fffbf8);
-    -fx-border-color: transparent #eadfd8 transparent transparent;
+    -fx-background-color: linear-gradient(to bottom, #f8f6ff, #fbfaff);
+    -fx-border-color: transparent #e4e0ed transparent transparent;
     -fx-border-width: 0 1 0 0;
     -fx-padding: 18 14;
 }
@@ -38,7 +38,7 @@
     -fx-text-fill: #4a4755;
 }
 
-.help-nav-button:hover { -fx-background-color: #f6eee9; }
+.help-nav-button:hover { -fx-background-color: #f0edf7; }
 
 .help-nav-button-active {
     -fx-background-color: #edf2ff;
@@ -54,16 +54,16 @@
 .sidebar-note { -fx-font-size: 12px; }
 
 .secondary-button {
-    -fx-background-color: #fffdfb;
+    -fx-background-color: #fdfcff;
     -fx-background-radius: 7;
-    -fx-border-color: #d9d2d0;
+    -fx-border-color: #dcd7e6;
     -fx-border-radius: 7;
     -fx-padding: 8 12;
     -fx-text-fill: #4a4755;
 }
 
-.secondary-button:hover { -fx-background-color: #f6f1ee; }
-.help-content { -fx-background-color: #fbf7f3; }
+.secondary-button:hover { -fx-background-color: #f1eef7; }
+.help-content { -fx-background-color: #f8f7fc; }
 
 .help-scroll, .help-scroll > .viewport {
     -fx-background-color: transparent;
@@ -86,9 +86,9 @@
 }
 
 .help-card {
-    -fx-background-color: #fffdfb;
+    -fx-background-color: #fdfcff;
     -fx-background-radius: 10;
-    -fx-border-color: #e9e1dc;
+    -fx-border-color: #e5e1ec;
     -fx-border-radius: 10;
     -fx-padding: 15 17;
 }
@@ -111,7 +111,7 @@
 .danger-card .section-title { -fx-text-fill: #963e3e; }
 
 .command-format {
-    -fx-background-color: #f2f5fb;
+    -fx-background-color: #f1f0f8;
     -fx-background-radius: 6;
     -fx-font-family: "Menlo";
     -fx-font-size: 13px;
