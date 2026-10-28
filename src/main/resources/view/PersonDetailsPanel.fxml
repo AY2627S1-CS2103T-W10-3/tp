@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           styleClass="details-panel">
+  <VBox fx:id="emptyState" alignment="CENTER" spacing="8" styleClass="details-empty-state">
+    <Label text="No student selected" styleClass="details-empty-title" />
+    <Label text="Choose a student from the list to view their details."
+           wrapText="true" styleClass="details-empty-text" />
+  </VBox>
+  <ScrollPane fx:id="detailsScroll" fitToWidth="true" hbarPolicy="NEVER" styleClass="details-scroll">
+    <VBox spacing="14" styleClass="details-content">
+      <VBox spacing="5">
+        <Label fx:id="name" wrapText="true" styleClass="details-name" />
+        <Label fx:id="tags" wrapText="true" styleClass="details-tags" />
+      </VBox>
+
+      <VBox spacing="8" styleClass="details-section, contact-section">
+        <Label text="Contact information" styleClass="details-section-title" />
+        <Label text="Phone" styleClass="details-key" />
+        <Label fx:id="phone" wrapText="true" styleClass="details-value" />
+        <Label text="Email" styleClass="details-key" />
+        <Label fx:id="email" wrapText="true" styleClass="details-value" />
+        <Label text="Address" styleClass="details-key" />
+        <Label fx:id="address" wrapText="true" styleClass="details-value" />
+      </VBox>
+
+      <VBox spacing="8" styleClass="details-section, learning-section">
+        <Label text="Learning details" styleClass="details-section-title" />
+        <Label text="Subject" styleClass="details-key" />
+        <Label fx:id="subject" wrapText="true" styleClass="details-value" />
+        <Label text="Education level" styleClass="details-key" />
+        <Label fx:id="educationLevel" wrapText="true" styleClass="details-value" />
+        <Label text="Learning focus" styleClass="details-key" />
+        <Label fx:id="learningFocus" wrapText="true" styleClass="details-value" />
+        <Label text="Next action" styleClass="details-key" />
+        <Label fx:id="nextAction" wrapText="true" styleClass="details-value" />
+      </VBox>
+
+      <VBox spacing="8" styleClass="details-section, schedule-section">
+        <Label text="Next lesson" styleClass="details-section-title" />
+        <Label fx:id="lesson" wrapText="true" styleClass="details-value" />
+      </VBox>
+
+      <VBox spacing="8" styleClass="details-section, guardian-section">
+        <Label text="Guardian information" styleClass="details-section-title" />
+        <Label text="Name" styleClass="details-key" />
+        <Label fx:id="guardianName" wrapText="true" styleClass="details-value" />
+        <Label text="Phone" styleClass="details-key" />
+        <Label fx:id="guardianPhone" wrapText="true" styleClass="details-value" />
+        <Label text="Email" styleClass="details-key" />
+        <Label fx:id="guardianEmail" wrapText="true" styleClass="details-value" />
+      </VBox>
+      <padding><Insets top="18" right="18" bottom="18" left="18" /></padding>
+    </VBox>
+  </ScrollPane>
+</StackPane>

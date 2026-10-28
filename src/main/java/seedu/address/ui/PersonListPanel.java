@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -40,6 +41,31 @@ public class PersonListPanel extends UiPart<Region> {
         personListView.setPlaceholder(emptyListPlaceholder);
         personListView.setCellFactory(listView -> new PersonListViewCell());
         personList.addListener(this::refreshIfReordered);
+        personList.addListener((ListChangeListener<Person>) change -> keepSelectionValid());
+        selectFirstStudent();
+    }
+
+    /** Returns the student currently selected in the displayed list. */
+    public ReadOnlyObjectProperty<Person> selectedPersonProperty() {
+        return personListView.getSelectionModel().selectedItemProperty();
+    }
+
+    /** Selects the first displayed student, or clears selection when the list is empty. */
+    private void selectFirstStudent() {
+        if (personListView.getItems().isEmpty()) {
+            personListView.getSelectionModel().clearSelection();
+        } else {
+            personListView.getSelectionModel().selectFirst();
+        }
+    }
+
+    private void keepSelectionValid() {
+        Person selectedPerson = personListView.getSelectionModel().getSelectedItem();
+        Platform.runLater(() -> {
+            if (selectedPerson == null || !personListView.getItems().contains(selectedPerson)) {
+                selectFirstStudent();
+            }
+        });
     }
 
     /**
@@ -100,7 +126,9 @@ public class PersonListPanel extends UiPart<Region> {
                 setGraphic(null);
                 setText(null);
             } else {
-                setGraphic(new PersonCard(person, getIndex() + 1).getRoot());
+                Region card = new PersonCard(person, getIndex() + 1).getRoot();
+                card.prefWidthProperty().bind(personListView.widthProperty().subtract(22));
+                setGraphic(card);
             }
         }
     }
