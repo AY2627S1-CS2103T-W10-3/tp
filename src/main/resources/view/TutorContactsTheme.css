@@ -111,10 +111,19 @@
 }
 
 .details-tags {
+    -fx-padding: 0;
+}
+
+.details-tags .label {
     -fx-background-color: #eee8fb;
     -fx-background-radius: 9;
     -fx-padding: 4 8;
     -fx-text-fill: #624b91;
+}
+
+.details-tags .details-tag-absent {
+    -fx-background-color: #f1eff3;
+    -fx-text-fill: #817d8b;
 }
 
 .details-section {

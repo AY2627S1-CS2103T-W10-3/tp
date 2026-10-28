@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
@@ -17,7 +18,7 @@
     <VBox spacing="12" styleClass="details-content">
       <VBox spacing="5">
         <Label fx:id="name" wrapText="true" styleClass="details-name" />
-        <Label fx:id="tags" wrapText="true" styleClass="details-tags" />
+        <FlowPane fx:id="tags" hgap="6" vgap="5" styleClass="details-tags" />
       </VBox>
 
       <VBox styleClass="details-section, contact-section">

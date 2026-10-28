@@ -3,12 +3,12 @@ package seedu.address.ui;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import seedu.address.logic.Messages;
@@ -29,7 +29,7 @@ public class PersonDetailsPanel extends UiPart<Region> {
     @FXML
     private Label name;
     @FXML
-    private Label tags;
+    private FlowPane tags;
     @FXML
     private Label phone;
     @FXML
@@ -74,7 +74,7 @@ public class PersonDetailsPanel extends UiPart<Region> {
         }
 
         name.setText(person.getName().fullName);
-        tags.setText(formatTags(person));
+        showTags(person);
         phone.setText(person.getPhone().map(value -> value.value).orElse(Messages.NOT_PROVIDED));
         email.setText(person.getEmail().map(value -> value.value).orElse(Messages.NOT_PROVIDED));
         address.setText(person.getAddress().map(value -> value.value).orElse(Messages.NOT_PROVIDED));
@@ -101,14 +101,18 @@ public class PersonDetailsPanel extends UiPart<Region> {
         showPerson(selectedPerson);
     }
 
-    private static String formatTags(Person person) {
+    private void showTags(Person person) {
+        tags.getChildren().clear();
         if (person.getTags().isEmpty()) {
-            return Messages.NOT_PROVIDED;
+            Label absentTag = new Label(Messages.NOT_PROVIDED);
+            absentTag.getStyleClass().add("details-tag-absent");
+            tags.getChildren().add(absentTag);
+            return;
         }
-        return person.getTags().stream()
+        person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
-                .map(tag -> tag.tagName)
-                .collect(Collectors.joining(", "));
+                .map(tag -> new Label(tag.tagName))
+                .forEach(tags.getChildren()::add);
     }
 
     static String formatLesson(Optional<Lesson> lesson, LocalDateTime now) {
