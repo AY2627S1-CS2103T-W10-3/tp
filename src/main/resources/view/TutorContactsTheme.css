@@ -113,7 +113,7 @@
 .result-display .content {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
-    -fx-padding: 7 4;
+    -fx-padding: 10 4 4 4;
 }
 
 .list-view {
