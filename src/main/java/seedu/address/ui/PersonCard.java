@@ -39,27 +39,11 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private Label id;
     @FXML
-    private Label phone;
-    @FXML
-    private Label address;
-    @FXML
-    private Label email;
-    @FXML
     private Label subject;
     @FXML
     private Label educationLevel;
     @FXML
-    private Label learningFocus;
-    @FXML
-    private Label nextAction;
-    @FXML
     private Label lesson;
-    @FXML
-    private Label guardianName;
-    @FXML
-    private Label guardianPhone;
-    @FXML
-    private Label guardianEmail;
     @FXML
     private HBox tags;
 
@@ -71,28 +55,14 @@ public class PersonCard extends UiPart<Region> {
         this.person = person;
         id.setText(displayedIndex + ". ");
         name.setText(person.getName().fullName);
-        phone.setText(person.getPhone().map(value -> value.value).orElse(Messages.NOT_PROVIDED));
-        address.setText(person.getAddress().map(value -> value.value).orElse(Messages.NOT_PROVIDED));
-        email.setText(person.getEmail().map(value -> value.value).orElse(Messages.NOT_PROVIDED));
-        subject.setText("Subject: "
-                + person.getSubject().map(value -> value.getValue()).orElse(Messages.NOT_PROVIDED));
-        educationLevel.setText("Education level: "
-                + person.getEducationLevel().map(value -> value.getValue()).orElse(Messages.NOT_PROVIDED));
-        learningFocus.setText("Learning focus: "
-                + person.getLearningFocus().map(value -> value.getValue()).orElse(Messages.NOT_PROVIDED));
-        nextAction.setText("Next action: "
-                + person.getNextAction().map(value -> value.getValue()).orElse(Messages.NOT_PROVIDED));
+        subject.setText(person.getSubject().map(value -> value.getValue()).orElse(Messages.NOT_PROVIDED));
+        educationLevel.setText(person.getEducationLevel()
+                .map(value -> value.getValue()).orElse(Messages.NOT_PROVIDED));
         LocalDateTime now = LocalDateTime.now();
         lesson.setText(formatLesson(person.getLesson(), now));
         if (person.getLesson().map(value -> value.isOverdue(now)).orElse(false)) {
             lesson.getStyleClass().add(OVERDUE_STYLE_CLASS);
         }
-        guardianName.setText("Guardian: " + person.getGuardian()
-                .map(value -> value.getName().fullName).orElse(Messages.NOT_PROVIDED));
-        guardianPhone.setText("Guardian phone: " + person.getGuardian()
-                .flatMap(value -> value.getPhone()).map(value -> value.value).orElse(Messages.NOT_PROVIDED));
-        guardianEmail.setText("Guardian email: " + person.getGuardian()
-                .flatMap(value -> value.getEmail()).map(value -> value.value).orElse(Messages.NOT_PROVIDED));
         person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
@@ -103,9 +73,9 @@ public class PersonCard extends UiPart<Region> {
      */
     static String formatLesson(Optional<Lesson> lesson, LocalDateTime now) {
         if (lesson.isEmpty()) {
-            return "Lesson: " + Messages.NOT_SCHEDULED;
+            return Messages.NOT_SCHEDULED;
         }
         String suffix = lesson.get().isOverdue(now) ? OVERDUE_SUFFIX : "";
-        return "Lesson: " + lesson.get().getValue() + suffix;
+        return lesson.get().getValue() + suffix;
     }
 }

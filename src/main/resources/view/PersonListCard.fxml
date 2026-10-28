@@ -2,8 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -16,37 +14,17 @@
     <HBox fx:id="tags" alignment="BASELINE_LEFT" spacing="6" HBox.hgrow="ALWAYS" />
   </HBox>
   <HBox alignment="CENTER_LEFT" spacing="18">
-    <Label fx:id="subject" minWidth="0" styleClass="summary-label" />
-    <Label fx:id="educationLevel" minWidth="0" styleClass="summary-label" />
-    <Label fx:id="lesson" minWidth="0" maxWidth="Infinity" styleClass="summary-label" HBox.hgrow="ALWAYS" />
+    <VBox minWidth="0" HBox.hgrow="ALWAYS">
+      <Label text="Subject" styleClass="summary-key" />
+      <Label fx:id="subject" minWidth="0" maxWidth="Infinity" styleClass="summary-label" />
+    </VBox>
+    <VBox minWidth="0" HBox.hgrow="ALWAYS">
+      <Label text="Education level" styleClass="summary-key" />
+      <Label fx:id="educationLevel" minWidth="0" maxWidth="Infinity" styleClass="summary-label" />
+    </VBox>
+    <VBox minWidth="0" HBox.hgrow="ALWAYS">
+      <Label text="Next lesson" styleClass="summary-key" />
+      <Label fx:id="lesson" minWidth="0" maxWidth="Infinity" styleClass="summary-label" />
+    </VBox>
   </HBox>
-  <GridPane hgap="22" vgap="7">
-    <columnConstraints>
-      <ColumnConstraints percentWidth="33" hgrow="ALWAYS" />
-      <ColumnConstraints percentWidth="34" hgrow="ALWAYS" />
-      <ColumnConstraints percentWidth="33" hgrow="ALWAYS" />
-    </columnConstraints>
-    <HBox maxWidth="Infinity" spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
-      <Label text="Phone" minWidth="60" styleClass="detail-label, detail-key" />
-      <Label fx:id="phone" minWidth="0" maxWidth="Infinity" styleClass="detail-label" HBox.hgrow="ALWAYS" />
-    </HBox>
-    <HBox maxWidth="Infinity" spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
-      <Label text="Email" minWidth="60" styleClass="detail-label, detail-key" />
-      <Label fx:id="email" minWidth="0" maxWidth="Infinity" styleClass="detail-label" HBox.hgrow="ALWAYS" />
-    </HBox>
-    <HBox maxWidth="Infinity" spacing="6" GridPane.columnIndex="2" GridPane.rowIndex="0">
-      <Label text="Address" minWidth="60" styleClass="detail-label, detail-key" />
-      <Label fx:id="address" minWidth="0" maxWidth="Infinity" styleClass="detail-label" HBox.hgrow="ALWAYS" />
-    </HBox>
-    <Label fx:id="learningFocus" minWidth="0" maxWidth="Infinity" styleClass="detail-label"
-           GridPane.columnIndex="0" GridPane.rowIndex="1" />
-    <Label fx:id="nextAction" minWidth="0" maxWidth="Infinity" styleClass="detail-label"
-           GridPane.columnIndex="1" GridPane.rowIndex="1" />
-    <Label fx:id="guardianName" minWidth="0" maxWidth="Infinity" styleClass="detail-label"
-           GridPane.columnIndex="0" GridPane.rowIndex="2" />
-    <Label fx:id="guardianPhone" minWidth="0" maxWidth="Infinity" styleClass="detail-label"
-           GridPane.columnIndex="1" GridPane.rowIndex="2" />
-    <Label fx:id="guardianEmail" minWidth="0" maxWidth="Infinity" styleClass="detail-label"
-           GridPane.columnIndex="2" GridPane.rowIndex="2" />
-  </GridPane>
 </VBox>

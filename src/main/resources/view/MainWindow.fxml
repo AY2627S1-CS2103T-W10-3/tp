@@ -2,6 +2,7 @@
 
 <?import java.net.URL?>
 <?import javafx.scene.Scene?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <fx:root type="javafx.stage.Stage" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-         title="TutorContacts" minWidth="900" minHeight="600" onCloseRequest="#handleExit">
+         title="TutorContacts" minWidth="1050" minHeight="600" onCloseRequest="#handleExit">
   <icons>
     <Image url="@/images/tutor_contacts.png" />
   </icons>
@@ -50,22 +51,21 @@
             </HBox>
             <Separator />
             <VBox spacing="8">
-              <HBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="10"
-                    styleClass="view-row, view-row-active">
-                <SVGPath styleClass="view-icon"
-                         content="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-                <Label text="All Students" />
-              </HBox>
-              <HBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="10" styleClass="view-row">
-                <SVGPath styleClass="view-icon"
-                         content="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" />
-                <Label text="Upcoming Lessons" />
-              </HBox>
-              <HBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="10" styleClass="view-row">
-                <SVGPath styleClass="view-icon"
-                         content="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM6.24 5h11.52l.81.97H5.44L6.24 5zM5 19V8h14v11H5zm4-9h6v2H9z" />
-                <Label text="Archived Students" />
-              </HBox>
+              <Button fx:id="allStudentsButton" text="All Students" alignment="CENTER_LEFT"
+                      graphicTextGap="10" maxWidth="Infinity" onAction="#handleAllStudents"
+                      styleClass="view-row, view-row-active">
+                <graphic><SVGPath styleClass="view-icon" content="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" /></graphic>
+              </Button>
+              <Button fx:id="upcomingLessonsButton" text="Upcoming Lessons" alignment="CENTER_LEFT"
+                      graphicTextGap="10" maxWidth="Infinity" onAction="#handleUpcomingLessons"
+                      styleClass="view-row">
+                <graphic><SVGPath styleClass="view-icon" content="M19 4h-1V2h-2v2H8V2H6c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" /></graphic>
+              </Button>
+              <Button fx:id="archivedStudentsButton" text="Archived Students" alignment="CENTER_LEFT"
+                      graphicTextGap="10" maxWidth="Infinity" onAction="#handleArchivedStudents"
+                      styleClass="view-row">
+                <graphic><SVGPath styleClass="view-icon" content="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM6.24 5h11.52l.81.97H5.44L6.24 5zM5 19V8h14v11H5zm4-9h6v2H9z" /></graphic>
+              </Button>
             </VBox>
             <Label text="Use list, upcoming, or list archived in the command box."
                    wrapText="true" styleClass="sidebar-hint" />
@@ -78,6 +78,9 @@
               <StackPane fx:id="personListPanelPlaceholder" VBox.vgrow="ALWAYS" />
             </VBox>
           </VBox>
+
+          <StackPane fx:id="personDetailsPanelPlaceholder" minWidth="300" prefWidth="320"
+                     maxWidth="340" styleClass="details-panel-container" />
         </HBox>
 
         <StackPane fx:id="commandBoxPlaceholder" styleClass="command-area" VBox.vgrow="NEVER" />

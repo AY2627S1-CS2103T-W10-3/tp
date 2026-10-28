@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCombination;
@@ -34,8 +35,10 @@ public class MainWindow extends UiPart<Stage> {
 
     // Independent Ui parts residing in this Ui container
     private PersonListPanel personListPanel;
+    private PersonDetailsPanel personDetailsPanel;
     private ResultDisplay resultDisplay;
     private HelpWindow helpWindow;
+    private CommandBox commandBox;
 
     @FXML
     private StackPane commandBoxPlaceholder;
@@ -47,10 +50,22 @@ public class MainWindow extends UiPart<Stage> {
     private StackPane personListPanelPlaceholder;
 
     @FXML
+    private StackPane personDetailsPanelPlaceholder;
+
+    @FXML
     private StackPane resultDisplayPlaceholder;
 
     @FXML
     private StackPane statusbarPlaceholder;
+
+    @FXML
+    private Button allStudentsButton;
+
+    @FXML
+    private Button upcomingLessonsButton;
+
+    @FXML
+    private Button archivedStudentsButton;
 
     /**
      * Creates a {@code MainWindow} with the given {@code Stage}, {@code Logic},
@@ -117,14 +132,51 @@ public class MainWindow extends UiPart<Stage> {
         personListPanel = new PersonListPanel(logic.getFilteredPersonList(), logic.getPersonList());
         personListPanelPlaceholder.getChildren().add(personListPanel.getRoot());
 
+        personDetailsPanel = new PersonDetailsPanel(personListPanel.selectedPersonProperty());
+        personDetailsPanelPlaceholder.getChildren().add(personDetailsPanel.getRoot());
+
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
 
         StatusBarFooter statusBarFooter = new StatusBarFooter(dataFilePath);
         statusbarPlaceholder.getChildren().add(statusBarFooter.getRoot());
 
-        CommandBox commandBox = new CommandBox(this::executeCommand);
+        commandBox = new CommandBox(this::executeCommand);
         commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
+    }
+
+    @FXML
+    private void handleAllStudents() {
+        executeNavigationCommand("list", allStudentsButton);
+    }
+
+    @FXML
+    private void handleUpcomingLessons() {
+        executeNavigationCommand("upcoming", upcomingLessonsButton);
+    }
+
+    @FXML
+    private void handleArchivedStudents() {
+        executeNavigationCommand("list archived", archivedStudentsButton);
+    }
+
+    private void executeNavigationCommand(String command, Button selectedButton) {
+        try {
+            executeCommand(command);
+            selectNavigationButton(selectedButton);
+        } catch (CommandException | ParseException e) {
+            logger.warning("Navigation command failed: " + command);
+        } finally {
+            commandBox.requestFocus();
+        }
+    }
+
+    private void selectNavigationButton(Button selectedButton) {
+        Button[] buttons = {allStudentsButton, upcomingLessonsButton, archivedStudentsButton};
+        for (Button button : buttons) {
+            button.getStyleClass().remove("view-row-active");
+        }
+        selectedButton.getStyleClass().add("view-row-active");
     }
 
     /**
@@ -198,6 +250,7 @@ public class MainWindow extends UiPart<Stage> {
         } finally {
             // Keeps time-dependent card details, such as overdue lessons, current after every command.
             personListPanel.refreshCards();
+            personDetailsPanel.refresh();
         }
     }
 }
