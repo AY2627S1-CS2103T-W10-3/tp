@@ -348,7 +348,7 @@ Index-based commands such as `schedule`, `unschedule`, `archive`, and `delete` r
 returns the sorted list, so an index always refers to the student shown at that position.
 
 `Lesson#isOverdue(now)` is the opposite of `Lesson#isAfter(now)`, so every lesson is either upcoming or overdue. A
-lesson becomes overdue as soon as it starts. `PersonCard` adds ` (overdue)` and the `lesson_overdue` style class to the
+lesson becomes overdue as soon as it starts. `PersonCard` adds ` (overdue)` and the `lesson-overdue` style class to the
 lesson label of an overdue lesson. Because the card is drawn from the current time, `MainWindow#executeCommand` calls
 `PersonListPanel#refreshCards` after every command, including rejected ones, so overdue markers stay current.
 `PersonListPanel` also refreshes its cards when the displayed list is reordered, because `ListView` does not redraw

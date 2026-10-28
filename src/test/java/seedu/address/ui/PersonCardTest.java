@@ -36,6 +36,23 @@ public class PersonCardTest {
     }
 
     @Test
+    public void personListCardFxml_containsCompactSummaryAndExistingDetails()
+            throws IOException, URISyntaxException {
+        Path fxmlPath = Path.of(MainApp.class.getResource("/view/PersonListCard.fxml").toURI());
+        String fxml = Files.readString(fxmlPath);
+
+        assertEquals(1, countOccurrences(fxml, "styleClass=\"card-name\""));
+        assertEquals(3, countOccurrences(fxml, "minWidth=\"60\" styleClass=\"detail-label, detail-key\""));
+        assertEquals(3, countOccurrences(fxml, "styleClass=\"summary-label\""));
+        assertEquals(1, countOccurrences(fxml, "fx:id=\"phone\""));
+        assertEquals(1, countOccurrences(fxml, "fx:id=\"email\""));
+        assertEquals(1, countOccurrences(fxml, "fx:id=\"address\""));
+        assertEquals(1, countOccurrences(fxml, "fx:id=\"guardianName\""));
+        assertEquals(1, countOccurrences(fxml, "fx:id=\"guardianPhone\""));
+        assertEquals(1, countOccurrences(fxml, "fx:id=\"guardianEmail\""));
+    }
+
+    @Test
     public void formatLesson_noLesson_showsNotScheduled() {
         assertEquals("Lesson: Not scheduled", PersonCard.formatLesson(Optional.empty(), NOW));
     }

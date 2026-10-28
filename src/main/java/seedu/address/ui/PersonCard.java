@@ -6,9 +6,9 @@ import java.util.Optional;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import seedu.address.logic.Messages;
 import seedu.address.model.person.Lesson;
 import seedu.address.model.person.Person;
@@ -19,7 +19,7 @@ import seedu.address.model.person.Person;
 public class PersonCard extends UiPart<Region> {
 
     private static final String FXML = "PersonListCard.fxml";
-    private static final String OVERDUE_STYLE_CLASS = "lesson_overdue";
+    private static final String OVERDUE_STYLE_CLASS = "lesson-overdue";
     private static final String OVERDUE_SUFFIX = " (overdue)";
 
     /**
@@ -33,7 +33,7 @@ public class PersonCard extends UiPart<Region> {
     public final Person person;
 
     @FXML
-    private HBox cardPane;
+    private VBox cardPane;
     @FXML
     private Label name;
     @FXML
@@ -61,7 +61,7 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private Label guardianEmail;
     @FXML
-    private FlowPane tags;
+    private HBox tags;
 
     /**
      * Creates a {@code PersonCard} with the given {@code Person} and index to display.
