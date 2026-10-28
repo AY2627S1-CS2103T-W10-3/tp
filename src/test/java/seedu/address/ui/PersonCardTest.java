@@ -44,6 +44,8 @@ public class PersonCardTest {
         String fxml = Files.readString(fxmlPath);
 
         assertEquals(1, countOccurrences(fxml, "styleClass=\"card-name\""));
+        assertEquals(1, countOccurrences(fxml, "styleClass=\"summary-grid\""));
+        assertEquals(3, countOccurrences(fxml, "<ColumnConstraints"));
         assertEquals(3, countOccurrences(fxml, "styleClass=\"summary-label\""));
     }
 

@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -13,18 +15,23 @@
     <Label fx:id="name" styleClass="card-name" />
     <HBox fx:id="tags" alignment="BASELINE_LEFT" spacing="6" HBox.hgrow="ALWAYS" />
   </HBox>
-  <HBox alignment="CENTER_LEFT" spacing="18">
-    <VBox minWidth="0" HBox.hgrow="ALWAYS">
+  <GridPane hgap="18" styleClass="summary-grid">
+    <columnConstraints>
+      <ColumnConstraints percentWidth="35" />
+      <ColumnConstraints percentWidth="32" />
+      <ColumnConstraints percentWidth="33" />
+    </columnConstraints>
+    <VBox minWidth="0" GridPane.columnIndex="0">
       <Label text="Subject" styleClass="summary-key" />
       <Label fx:id="subject" minWidth="0" maxWidth="Infinity" styleClass="summary-label" />
     </VBox>
-    <VBox minWidth="0" HBox.hgrow="ALWAYS">
+    <VBox minWidth="0" GridPane.columnIndex="1">
       <Label text="Education level" styleClass="summary-key" />
       <Label fx:id="educationLevel" minWidth="0" maxWidth="Infinity" styleClass="summary-label" />
     </VBox>
-    <VBox minWidth="0" HBox.hgrow="ALWAYS">
+    <VBox minWidth="0" GridPane.columnIndex="2">
       <Label text="Next lesson" styleClass="summary-key" />
       <Label fx:id="lesson" minWidth="0" maxWidth="Infinity" styleClass="summary-label" />
     </VBox>
-  </HBox>
+  </GridPane>
 </VBox>
