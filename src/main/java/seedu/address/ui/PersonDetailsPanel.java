@@ -103,12 +103,9 @@ public class PersonDetailsPanel extends UiPart<Region> {
 
     private void showTags(Person person) {
         tags.getChildren().clear();
-        if (person.getTags().isEmpty()) {
-            Label absentTag = new Label(Messages.NOT_PROVIDED);
-            absentTag.getStyleClass().add("details-tag-absent");
-            tags.getChildren().add(absentTag);
-            return;
-        }
+        boolean hasTags = !person.getTags().isEmpty();
+        tags.setVisible(hasTags);
+        tags.setManaged(hasTags);
         person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .map(tag -> new Label(tag.tagName))

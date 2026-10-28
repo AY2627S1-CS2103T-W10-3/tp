@@ -121,11 +121,6 @@
     -fx-text-fill: #624b91;
 }
 
-.details-tags .details-tag-absent {
-    -fx-background-color: #f1eff3;
-    -fx-text-fill: #817d8b;
-}
-
 .details-section {
     -fx-background-color: #fffefd;
     -fx-background-radius: 9;
