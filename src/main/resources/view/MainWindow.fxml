@@ -79,8 +79,8 @@
             </VBox>
           </VBox>
 
-          <StackPane fx:id="personDetailsPanelPlaceholder" minWidth="300" prefWidth="320"
-                     maxWidth="340" styleClass="details-panel-container" />
+          <StackPane fx:id="personDetailsPanelPlaceholder" minWidth="340" prefWidth="360"
+                     maxWidth="390" styleClass="details-panel-container" />
         </HBox>
 
         <StackPane fx:id="commandBoxPlaceholder" styleClass="command-area" VBox.vgrow="NEVER" />
