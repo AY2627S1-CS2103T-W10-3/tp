@@ -28,15 +28,15 @@
       <ColumnConstraints percentWidth="33" hgrow="ALWAYS" />
     </columnConstraints>
     <HBox maxWidth="Infinity" spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
-      <Label text="Phone" styleClass="detail-label, detail-key" />
+      <Label text="Phone" minWidth="60" styleClass="detail-label, detail-key" />
       <Label fx:id="phone" minWidth="0" maxWidth="Infinity" styleClass="detail-label" HBox.hgrow="ALWAYS" />
     </HBox>
     <HBox maxWidth="Infinity" spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
-      <Label text="Email" styleClass="detail-label, detail-key" />
+      <Label text="Email" minWidth="60" styleClass="detail-label, detail-key" />
       <Label fx:id="email" minWidth="0" maxWidth="Infinity" styleClass="detail-label" HBox.hgrow="ALWAYS" />
     </HBox>
     <HBox maxWidth="Infinity" spacing="6" GridPane.columnIndex="2" GridPane.rowIndex="0">
-      <Label text="Address" styleClass="detail-label, detail-key" />
+      <Label text="Address" minWidth="60" styleClass="detail-label, detail-key" />
       <Label fx:id="address" minWidth="0" maxWidth="Infinity" styleClass="detail-label" HBox.hgrow="ALWAYS" />
     </HBox>
     <Label fx:id="learningFocus" minWidth="0" maxWidth="Infinity" styleClass="detail-label"

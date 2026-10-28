@@ -39,6 +39,14 @@ public class MainWindowFxmlTest {
         assertTrue(commandBoxPosition > studentListPosition);
     }
 
+    @Test
+    public void tutorContactsTheme_usesNativeSystemFont() throws IOException, URISyntaxException {
+        String stylesheet = readResource("/view/TutorContactsTheme.css");
+
+        assertTrue(stylesheet.contains("-fx-font-family: \"System\";"));
+        assertFalse(stylesheet.contains("Segoe UI"));
+    }
+
     private static String readResource(String resourcePath) throws IOException, URISyntaxException {
         Path path = Path.of(MainApp.class.getResource(resourcePath).toURI());
         return Files.readString(path);

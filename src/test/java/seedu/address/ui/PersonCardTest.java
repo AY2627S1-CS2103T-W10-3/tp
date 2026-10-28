@@ -42,6 +42,7 @@ public class PersonCardTest {
         String fxml = Files.readString(fxmlPath);
 
         assertEquals(1, countOccurrences(fxml, "styleClass=\"card-name\""));
+        assertEquals(3, countOccurrences(fxml, "minWidth=\"60\" styleClass=\"detail-label, detail-key\""));
         assertEquals(3, countOccurrences(fxml, "styleClass=\"summary-label\""));
         assertEquals(1, countOccurrences(fxml, "fx:id=\"phone\""));
         assertEquals(1, countOccurrences(fxml, "fx:id=\"email\""));
