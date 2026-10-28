@@ -57,7 +57,7 @@ public class AddCommand extends Command {
             + PREFIX_GUARDIAN_NAME + "Jane Doe "
             + PREFIX_GUARDIAN_PHONE + "91234567 "
             + PREFIX_ADDRESS + "311, Clementi Ave 2, #02-25 "
-            + PREFIX_TAG + "friends";
+            + PREFIX_TAG + "online";
 
     public static final String MESSAGE_SUCCESS = "New student added: %1$s";
     public static final String MESSAGE_DUPLICATE_PERSON = "This student already exists in TutorContacts.";
