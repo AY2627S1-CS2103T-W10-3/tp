@@ -147,6 +147,15 @@
     -fx-scale-y: 0.72;
 }
 
+.details-icon-slot {
+    -fx-alignment: center;
+    -fx-min-width: 24;
+    -fx-pref-width: 24;
+    -fx-max-width: 24;
+    -fx-min-height: 20;
+    -fx-pref-height: 20;
+}
+
 .details-row-icon {
     -fx-fill: #747b8e;
     -fx-scale-x: 0.67;
@@ -173,8 +182,9 @@
 
 .details-key {
     -fx-font-size: 11px;
-    -fx-min-width: 82;
-    -fx-pref-width: 82;
+    -fx-min-width: 104;
+    -fx-pref-width: 104;
+    -fx-max-width: 104;
     -fx-text-fill: #3f3d48;
 }
 

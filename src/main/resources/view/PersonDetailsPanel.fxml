@@ -22,20 +22,20 @@
 
       <VBox styleClass="details-section, contact-section">
         <HBox alignment="CENTER_LEFT" spacing="9" styleClass="details-section-header">
-          <SVGPath styleClass="details-section-icon" content="M12 12 C14.21 12 16 10.21 16 8 C16 5.79 14.21 4 12 4 C9.79 4 8 5.79 8 8 C8 10.21 9.79 12 12 12 Z M12 14 C9.33 14 4 15.34 4 18 L4 20 L20 20 L20 18 C20 15.34 14.67 14 12 14 Z" />
+          <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-section-icon" content="M12 12 C14.21 12 16 10.21 16 8 C16 5.79 14.21 4 12 4 C9.79 4 8 5.79 8 8 C8 10.21 9.79 12 12 12 Z M12 14 C9.33 14 4 15.34 4 18 L4 20 L20 20 L20 18 C20 15.34 14.67 14 12 14 Z" /></StackPane>
           <Label text="Student details" styleClass="details-section-title" />
         </HBox>
         <VBox spacing="9" styleClass="details-section-body">
           <HBox alignment="TOP_LEFT" spacing="9" styleClass="details-row">
-            <SVGPath styleClass="details-row-icon" content="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+            <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-row-icon" content="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></StackPane>
             <Label text="Phone" styleClass="details-key" /><Label fx:id="phone" wrapText="true" styleClass="details-value" HBox.hgrow="ALWAYS" />
           </HBox>
           <HBox alignment="TOP_LEFT" spacing="9" styleClass="details-row">
-            <SVGPath styleClass="details-row-icon" content="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" />
+            <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-row-icon" content="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" /></StackPane>
             <Label text="Email" styleClass="details-key" /><Label fx:id="email" wrapText="true" styleClass="details-value" HBox.hgrow="ALWAYS" />
           </HBox>
           <HBox alignment="TOP_LEFT" spacing="9" styleClass="details-row">
-            <SVGPath styleClass="details-row-icon" content="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z" />
+            <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-row-icon" content="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z" /></StackPane>
             <Label text="Address" styleClass="details-key" /><Label fx:id="address" wrapText="true" styleClass="details-value" HBox.hgrow="ALWAYS" />
           </HBox>
         </VBox>
@@ -43,20 +43,20 @@
 
       <VBox styleClass="details-section, learning-section">
         <HBox alignment="CENTER_LEFT" spacing="9" styleClass="details-section-header">
-          <SVGPath styleClass="details-section-icon" content="M21 4H3c-1.1 0-2 .9-2 2v13c0 .55.45 1 1 1 .17 0 .33-.04.47-.12C4.13 18.94 6.04 18.5 8 18.5c1.45 0 2.9.25 4 .75V6.5C9.79 5.51 6.96 5 4 5h16c-2.96 0-5.79.51-8 1.5v12.75c1.1-.5 2.55-.75 4-.75 1.96 0 3.87.44 5.53 1.38.14.08.3.12.47.12.55 0 1-.45 1-1V6c0-1.1-.9-2-2-2z" />
+          <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-section-icon" content="M21 4H3c-1.1 0-2 .9-2 2v13c0 .55.45 1 1 1 .17 0 .33-.04.47-.12C4.13 18.94 6.04 18.5 8 18.5c1.45 0 2.9.25 4 .75V6.5C9.79 5.51 6.96 5 4 5h16c-2.96 0-5.79.51-8 1.5v12.75c1.1-.5 2.55-.75 4-.75 1.96 0 3.87.44 5.53 1.38.14.08.3.12.47.12.55 0 1-.45 1-1V6c0-1.1-.9-2-2-2z" /></StackPane>
           <Label text="Learning details" styleClass="details-section-title" />
         </HBox>
         <VBox spacing="9" styleClass="details-section-body">
           <HBox alignment="TOP_LEFT" spacing="9" styleClass="details-row">
-            <SVGPath styleClass="details-row-icon" content="M12 3 1 9l4 2.18v6L12 21l7-3.82v-6L21 10v7h2V9L12 3z" />
+            <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-row-icon" content="M12 3 1 9l4 2.18v6L12 21l7-3.82v-6L21 10v7h2V9L12 3z" /></StackPane>
             <Label text="Subject" styleClass="details-key" /><Label fx:id="subject" wrapText="true" styleClass="details-value" HBox.hgrow="ALWAYS" />
           </HBox>
           <HBox alignment="TOP_LEFT" spacing="9" styleClass="details-row">
-            <SVGPath styleClass="details-row-icon" content="M4 19h16v2H4zM5 9h3v8H5zm5-6h4v14h-4zm6 10h3v4h-3z" />
+            <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-row-icon" content="M4 19h16v2H4zM5 9h3v8H5zm5-6h4v14h-4zm6 10h3v4h-3z" /></StackPane>
             <Label text="Education level" styleClass="details-key" /><Label fx:id="educationLevel" wrapText="true" styleClass="details-value" HBox.hgrow="ALWAYS" />
           </HBox>
           <HBox alignment="TOP_LEFT" spacing="9" styleClass="details-row">
-            <SVGPath styleClass="details-row-icon" content="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8V2zm0 4a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4V6zm0 4a2 2 0 1 0 2 2h-2v-2zm1-8v9h9V9h-5.59l4.3-4.29-1.42-1.42L15 7.59V2h-2z" />
+            <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-row-icon" content="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8V2zm0 4a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4V6zm0 4a2 2 0 1 0 2 2h-2v-2zm1-8v9h9V9h-5.59l4.3-4.29-1.42-1.42L15 7.59V2h-2z" /></StackPane>
             <Label text="Learning focus" styleClass="details-key" /><Label fx:id="learningFocus" wrapText="true" styleClass="details-value" HBox.hgrow="ALWAYS" />
           </HBox>
         </VBox>
@@ -64,16 +64,16 @@
 
       <VBox styleClass="details-section, schedule-section">
         <HBox alignment="CENTER_LEFT" spacing="9" styleClass="details-section-header">
-          <SVGPath styleClass="details-section-icon" content="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" />
+          <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-section-icon" content="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" /></StackPane>
           <Label text="Schedule" styleClass="details-section-title" />
         </HBox>
         <VBox spacing="9" styleClass="details-section-body">
           <HBox alignment="TOP_LEFT" spacing="9" styleClass="details-row">
-            <SVGPath styleClass="details-row-icon" content="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8 14H6v-2h5v2zm7-4H6v-2h12v2zm0-4H6V7h12v2z" />
+            <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-row-icon" content="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8 14H6v-2h5v2zm7-4H6v-2h12v2zm0-4H6V7h12v2z" /></StackPane>
             <Label text="Next action" styleClass="details-key" /><Label fx:id="nextAction" wrapText="true" styleClass="details-value" HBox.hgrow="ALWAYS" />
           </HBox>
           <HBox alignment="TOP_LEFT" spacing="9" styleClass="details-row">
-            <SVGPath styleClass="details-row-icon" content="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" />
+            <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-row-icon" content="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" /></StackPane>
             <Label text="Next lesson" styleClass="details-key" /><Label fx:id="lesson" wrapText="true" styleClass="details-value" HBox.hgrow="ALWAYS" />
           </HBox>
         </VBox>
@@ -81,20 +81,20 @@
 
       <VBox styleClass="details-section, guardian-section">
         <HBox alignment="CENTER_LEFT" spacing="9" styleClass="details-section-header">
-          <SVGPath styleClass="details-section-icon" content="M12 12 C14.21 12 16 10.21 16 8 C16 5.79 14.21 4 12 4 C9.79 4 8 5.79 8 8 C8 10.21 9.79 12 12 12 Z M12 14 C9.33 14 4 15.34 4 18 L4 20 L20 20 L20 18 C20 15.34 14.67 14 12 14 Z" />
+          <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-section-icon" content="M12 12 C14.21 12 16 10.21 16 8 C16 5.79 14.21 4 12 4 C9.79 4 8 5.79 8 8 C8 10.21 9.79 12 12 12 Z M12 14 C9.33 14 4 15.34 4 18 L4 20 L20 20 L20 18 C20 15.34 14.67 14 12 14 Z" /></StackPane>
           <Label text="Guardian information" styleClass="details-section-title" />
         </HBox>
         <VBox spacing="9" styleClass="details-section-body">
           <HBox alignment="TOP_LEFT" spacing="9" styleClass="details-row">
-            <SVGPath styleClass="details-row-icon" content="M12 12 C14.21 12 16 10.21 16 8 C16 5.79 14.21 4 12 4 C9.79 4 8 5.79 8 8 C8 10.21 9.79 12 12 12 Z M12 14 C9.33 14 4 15.34 4 18 L4 20 L20 20 L20 18 C20 15.34 14.67 14 12 14 Z" />
+            <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-row-icon" content="M12 12 C14.21 12 16 10.21 16 8 C16 5.79 14.21 4 12 4 C9.79 4 8 5.79 8 8 C8 10.21 9.79 12 12 12 Z M12 14 C9.33 14 4 15.34 4 18 L4 20 L20 20 L20 18 C20 15.34 14.67 14 12 14 Z" /></StackPane>
             <Label text="Guardian name" styleClass="details-key" /><Label fx:id="guardianName" wrapText="true" styleClass="details-value" HBox.hgrow="ALWAYS" />
           </HBox>
           <HBox alignment="TOP_LEFT" spacing="9" styleClass="details-row">
-            <SVGPath styleClass="details-row-icon" content="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+            <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-row-icon" content="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></StackPane>
             <Label text="Guardian phone" styleClass="details-key" /><Label fx:id="guardianPhone" wrapText="true" styleClass="details-value" HBox.hgrow="ALWAYS" />
           </HBox>
           <HBox alignment="TOP_LEFT" spacing="9" styleClass="details-row">
-            <SVGPath styleClass="details-row-icon" content="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" />
+            <StackPane styleClass="details-icon-slot"><SVGPath styleClass="details-row-icon" content="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" /></StackPane>
             <Label text="Guardian email" styleClass="details-key" /><Label fx:id="guardianEmail" wrapText="true" styleClass="details-value" HBox.hgrow="ALWAYS" />
           </HBox>
         </VBox>
