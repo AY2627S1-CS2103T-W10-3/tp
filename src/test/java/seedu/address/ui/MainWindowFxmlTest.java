@@ -24,6 +24,10 @@ public class MainWindowFxmlTest {
         assertTrue(fxml.contains("text=\"All Students\""));
         assertTrue(fxml.contains("text=\"Upcoming Lessons\""));
         assertTrue(fxml.contains("text=\"Archived Students\""));
+        assertTrue(fxml.contains("onAction=\"#handleAllStudents\""));
+        assertTrue(fxml.contains("onAction=\"#handleUpcomingLessons\""));
+        assertTrue(fxml.contains("onAction=\"#handleArchivedStudents\""));
+        assertTrue(fxml.contains("fx:id=\"personDetailsPanelPlaceholder\""));
         assertTrue(countOccurrences(fxml, "styleClass=\"view-icon\"") == 3);
         assertFalse(fxml.contains("text=\"VIEWS\""));
         assertFalse(fxml.contains("DarkTheme.css"));
