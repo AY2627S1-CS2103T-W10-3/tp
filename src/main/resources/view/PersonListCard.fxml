@@ -11,9 +11,10 @@
       xmlns:fx="http://javafx.com/fxml/1">
   <padding><Insets top="12" right="14" bottom="12" left="14" /></padding>
   <HBox alignment="BASELINE_LEFT" spacing="8">
-    <Label fx:id="id" styleClass="card-index" />
-    <Label fx:id="name" styleClass="card-name" />
-    <HBox fx:id="tags" alignment="BASELINE_LEFT" spacing="6" HBox.hgrow="ALWAYS" />
+    <Label fx:id="id" minWidth="38" prefWidth="38" maxWidth="38" styleClass="card-index" />
+    <Label fx:id="name" minWidth="0" maxWidth="Infinity" textOverrun="ELLIPSIS"
+           styleClass="card-name" HBox.hgrow="ALWAYS" />
+    <HBox fx:id="tags" alignment="BASELINE_LEFT" spacing="6" />
   </HBox>
   <GridPane hgap="18" styleClass="summary-grid">
     <columnConstraints>
