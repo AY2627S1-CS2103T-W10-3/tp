@@ -1,0 +1,242 @@
+.root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: #f7f8fc;
+    -fx-accent: #6f8fd8;
+    -fx-focus-color: #6f8fd8;
+    -fx-faint-focus-color: rgba(111, 143, 216, 0.18);
+}
+
+.app-shell { -fx-background-color: #f7f8fc; }
+
+.menu-bar {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #e4e8f1 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 2 12;
+}
+
+.menu-bar .label {
+    -fx-text-fill: #20283a;
+    -fx-font-size: 13px;
+}
+
+.context-menu {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dfe4ef;
+}
+
+.dialog-pane, .dialog-pane > .button-bar > .container {
+    -fx-background-color: #ffffff;
+}
+
+.dialog-pane > .content.label, .dialog-pane > .header-panel .label {
+    -fx-text-fill: #20283a;
+}
+
+.button {
+    -fx-background-color: #6f8fd8;
+    -fx-background-radius: 7;
+    -fx-padding: 7 16;
+    -fx-text-fill: #ffffff;
+}
+
+.button:hover { -fx-background-color: #5e7fc7; }
+
+.workspace {
+    -fx-background-color: #f7f8fc;
+    -fx-padding: 12;
+    -fx-spacing: 12;
+}
+
+.sidebar {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-border-color: #e1e6f0;
+    -fx-border-radius: 12;
+    -fx-padding: 20 16;
+    -fx-spacing: 16;
+}
+
+.brand-title {
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #172033;
+}
+
+.brand-subtitle, .sidebar-hint, .section-kicker { -fx-text-fill: #778198; }
+
+.section-kicker {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.view-row {
+    -fx-background-color: #f4f6fb;
+    -fx-background-radius: 8;
+    -fx-padding: 10 12;
+    -fx-text-fill: #35415a;
+}
+
+.view-row-active {
+    -fx-background-color: #eaf1ff;
+    -fx-text-fill: #284d91;
+    -fx-font-weight: bold;
+}
+
+.content-panel {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-border-color: #e1e6f0;
+    -fx-border-radius: 12;
+    -fx-padding: 12;
+    -fx-spacing: 10;
+}
+
+.result-panel {
+    -fx-background-color: #edf4ff;
+    -fx-background-radius: 9;
+    -fx-border-color: #dbe7fb;
+    -fx-border-radius: 9;
+    -fx-padding: 2 8;
+}
+
+.result-display {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-font-size: 13px;
+    -fx-text-fill: #29456f;
+}
+
+.result-display .content {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 8 0;
+}
+
+.list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.list-cell:filled #cardPane {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 9;
+    -fx-border-color: #e3e7ef;
+    -fx-border-radius: 9;
+    -fx-border-width: 1;
+}
+
+.list-cell:filled:selected #cardPane {
+    -fx-background-color: #edf4ff;
+    -fx-border-color: #9bb5e8;
+}
+
+.list-cell:filled:hover #cardPane { -fx-border-color: #b8c8e6; }
+
+.card-index {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #7d879b;
+}
+
+.card-name {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #172033;
+}
+
+.summary-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #526078;
+}
+
+.detail-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #657087;
+}
+
+.detail-key {
+    -fx-font-weight: bold;
+    -fx-text-fill: #445069;
+}
+
+.lesson-overdue {
+    -fx-text-fill: #a33d3d;
+    -fx-font-weight: bold;
+}
+
+#tags {
+    -fx-hgap: 6;
+    -fx-vgap: 4;
+}
+
+#tags .label {
+    -fx-background-color: #e9e3fb;
+    -fx-background-radius: 10;
+    -fx-padding: 2 8;
+    -fx-font-size: 11px;
+    -fx-text-fill: #5a4093;
+}
+
+.command-area {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dfe4ef transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 10 16;
+}
+
+#commandTextField {
+    -fx-background-color: #fbfcff;
+    -fx-background-radius: 9;
+    -fx-border-color: #cfd7e6;
+    -fx-border-radius: 9;
+    -fx-padding: 10 14;
+    -fx-font-size: 14px;
+    -fx-text-fill: #20283a;
+    -fx-prompt-text-fill: #8992a6;
+}
+
+#commandTextField:focused { -fx-border-color: #6f8fd8; }
+
+#commandTextField.error {
+    -fx-border-color: #c85b5b;
+    -fx-background-color: #fff7f7;
+}
+
+.status-bar {
+    -fx-background-color: #f0f2f7;
+    -fx-padding: 3 16;
+}
+
+.status-bar .label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #727c91;
+}
+
+.scroll-bar { -fx-background-color: transparent; }
+
+.scroll-bar .thumb {
+    -fx-background-color: #c9d1df;
+    -fx-background-radius: 6;
+    -fx-background-insets: 3;
+}
+
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow { -fx-shape: " "; }
+.tooltip-text { -fx-text-fill: #ffffff; }
