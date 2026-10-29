@@ -74,9 +74,10 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 
 ### Viewing help: `help`
 
-Shows the command formats and important rules in the result panel and a help window. The help text is bundled with
-TutorContacts, so `help` remains available without internet access and when the data file cannot be loaded. It does not
-write to the data file. The help window also has a button to copy the online User Guide link.
+Opens a help window that shows the command formats and important rules, and the result panel confirms that it opened.
+The help content is bundled with TutorContacts, so `help` remains available without internet access and when the data
+file cannot be loaded. It does not write to the data file. The help window also has a button to copy the online User
+Guide link.
 
 Format: `help`
 
@@ -295,7 +296,7 @@ Complete lifecycle example:
 
 ### Deleting a student: `delete`
 
-Permanently deletes the specified student from TutorContacts. The result panel confirms the deleted student's details.
+Permanently deletes the specified student from TutorContacts. The result panel names the deleted student.
 
 Format: `delete INDEX`
 

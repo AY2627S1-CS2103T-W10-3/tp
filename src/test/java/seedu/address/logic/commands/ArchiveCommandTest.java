@@ -33,7 +33,7 @@ public class ArchiveCommandTest {
         expectedModel.setPerson(target, target.withArchived(true));
 
         String expectedMessage = String.format(ArchiveCommand.MESSAGE_ARCHIVE_PERSON_SUCCESS,
-                Messages.format(target));
+                target.getName().fullName);
 
         assertCommandSuccess(new ArchiveCommand(INDEX_FIRST_PERSON), model, expectedMessage, expectedModel);
         Person archived = model.getAddressBook().getPersonList().stream()

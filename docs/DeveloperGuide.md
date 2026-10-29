@@ -174,7 +174,7 @@ same tokens are still read as prefixes.
 
 Validation follows a fixed order: token structure, required `n/`, repeated prefixes, guardian-name dependency, then individual field values. Duplicate-prefix errors list the repeated tokens in a stable order. Names and addresses have surrounding whitespace removed and internal whitespace collapsed before validation. Subjects have surrounding whitespace removed and repeated ordinary spaces collapsed, so a tab or other control character inside a subject still reaches `Subject` validation and is rejected. `Person#isSamePerson` compares names after the same whitespace normalization and case folding; phone, email, and guardian details do not determine whether two students are duplicates. An invalid command fails before `AddCommand` can update the model or save data.
 
-`HelpCommand` keeps the command formats in bundled text so help is available without a network connection. `LogicManager` returns the help result without saving the address book, which also allows help when the existing data file cannot be loaded. `HelpWindow` displays the same text directly in a scrollable JavaFX control.
+`HelpWindow` bundles the command formats and important rules in its FXML layout, so help is available without a network connection. `HelpCommand` only asks the UI to open the window and confirms this in the result panel. `LogicManager` returns the help result without saving the address book, which also allows help when the existing data file cannot be loaded.
 
 ### Edit workflow
 
@@ -217,7 +217,7 @@ The `add` command accepts the feature-specific prefixes `gn/`, `gp/`, and `ge/`.
 
 `JsonAdaptedPerson` stores guardian name, phone, and email as separate nullable JSON properties. All three properties may be absent when loading older files. If a saved file contains a guardian phone or email without a guardian name, loading fails rather than creating an invalid domain object.
 
-`PersonCard` displays all three guardian fields. Missing guardian values are shown as `Not provided` only in the UI and command feedback; that display text is never written to the data file. Existing commands that replace a `Person`, such as `edit`, must carry the unchanged guardian value forward.
+`PersonCard` displays all three guardian fields. Missing guardian values are shown as `Not provided` only in the UI; that display text is never written to the data file. Existing commands that replace a `Person`, such as `edit`, must carry the unchanged guardian value forward.
 
 ### Subject and education level
 
@@ -225,7 +225,7 @@ TutorContacts represents tutoring context using immutable `Subject` and `Educati
 
 The `add` command accepts `s/` for a subject and `l/` for an education level. `ParserUtil` trims both values before validation. Subjects must be non-blank, contain no control characters, and contain at most 100 characters. Education levels accept `P1`–`P6`, `S1`–`S5`, or `JC1`–`JC2` case-insensitively and are normalized to uppercase.
 
-`JsonAdaptedPerson` stores the two values as separate nullable JSON properties, so valid data files created before these fields were introduced remain loadable. `PersonCard` and command feedback display `Not provided` for an absent value without writing that placeholder to storage. Commands that replace a `Person`, such as `edit`, preserve both values unchanged.
+`JsonAdaptedPerson` stores the two values as separate nullable JSON properties, so valid data files created before these fields were introduced remain loadable. `PersonCard` displays `Not provided` for an absent value without writing that placeholder to storage. Commands that replace a `Person`, such as `edit`, preserve both values unchanged.
 
 ### Learning focus and next action
 
@@ -240,7 +240,7 @@ empty prefix records a clear request. `EditPersonDescriptor` keeps a separate ed
 field so `EditCommand` can distinguish those two cases.
 
 `JsonAdaptedPerson` stores both values as nullable JSON properties. Missing properties load as empty optionals, which
-keeps valid older data files compatible. `PersonCard` and command feedback display `Not provided` for absent values.
+keeps valid older data files compatible. `PersonCard` displays `Not provided` for absent values.
 
 ### Archive lifecycle
 
@@ -934,7 +934,7 @@ testers are expected to do more *exploratory* testing.
 1. Adding a student with every MVP field
 
    1. Test case: `add n/Alex Tan p/81234567 e/alex@example.com a/21 Dover Road s/H2 Mathematics l/jc1 gn/Mary Tan gp/91234567 ge/mary@example.com t/active`<br>
-      Expected: The student is added. The card and result panel show all supplied details, and the education level is displayed as `JC1`.
+      Expected: The student is added. The card shows all supplied details, the result panel names the added student, and the education level is displayed as `JC1`.
 
    1. Test case: `add n/Ben Lee`<br>
       Expected: The student is added. Optional fields are displayed as `Not provided`.

@@ -39,7 +39,7 @@ public class UnarchiveCommandTest {
         expectedModel.setPerson(target, target.withArchived(false));
 
         String expectedMessage = String.format(UnarchiveCommand.MESSAGE_UNARCHIVE_PERSON_SUCCESS,
-                Messages.format(target));
+                target.getName().fullName);
 
         assertCommandSuccess(new UnarchiveCommand(INDEX_FIRST_PERSON), model, expectedMessage, expectedModel);
         Person restored = model.getAddressBook().getPersonList().stream()

@@ -40,6 +40,7 @@ import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.EditCommand;
+import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.AddCommandParser;
@@ -104,7 +105,7 @@ public class LogicManagerTest {
         expectedModel.addPerson(expectedPerson);
 
         assertCommandSuccess(addCommand,
-                String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(expectedPerson)), expectedModel);
+                String.format(AddCommand.MESSAGE_SUCCESS, expectedPerson.getName().fullName), expectedModel);
     }
 
     @Test
@@ -118,7 +119,7 @@ public class LogicManagerTest {
         expectedModel.addPerson(expectedPerson);
 
         assertCommandSuccess(addCommand,
-                String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(expectedPerson)), expectedModel);
+                String.format(AddCommand.MESSAGE_SUCCESS, expectedPerson.getName().fullName), expectedModel);
     }
 
     @Test
@@ -126,9 +127,10 @@ public class LogicManagerTest {
         Path dataFile = temporaryFolder.resolve("addressBook.json");
         Files.writeString(dataFile, "invalid json");
 
-        String feedback = logic.execute("help").getFeedbackToUser();
+        CommandResult result = logic.execute("help");
 
-        assertTrue(feedback.contains("add n/NAME"));
+        assertTrue(result.isShowHelp());
+        assertEquals(HelpCommand.SHOWING_HELP_MESSAGE, result.getFeedbackToUser());
         assertEquals("invalid json", Files.readString(dataFile));
     }
 
