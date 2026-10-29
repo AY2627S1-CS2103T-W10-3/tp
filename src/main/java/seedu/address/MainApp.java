@@ -13,6 +13,7 @@ import seedu.address.commons.exceptions.DataLoadingException;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.Logic;
 import seedu.address.logic.LogicManager;
+import seedu.address.logic.Messages;
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -42,6 +43,7 @@ public class MainApp extends Application {
     protected Logic logic;
     protected Storage storage;
     protected Model model;
+    private Optional<String> startupWarning = Optional.empty();
 
     @Override
     public void init() throws Exception {
@@ -57,7 +59,7 @@ public class MainApp extends Application {
 
         logic = new LogicManager(model, storage);
 
-        ui = new UiManager(logic, storage.getAddressBookFilePath());
+        ui = new UiManager(logic, storage.getAddressBookFilePath(), startupWarning);
     }
 
     /**
@@ -80,6 +82,8 @@ public class MainApp extends Application {
         } catch (DataLoadingException e) {
             logger.warning("Data file at " + storage.getAddressBookFilePath() + " could not be loaded."
                     + " Will be starting with an empty AddressBook.");
+            startupWarning = Optional.of(
+                    String.format(Messages.MESSAGE_DATA_LOAD_FAILED, storage.getAddressBookFilePath()));
             initialData = new AddressBook();
         }
 

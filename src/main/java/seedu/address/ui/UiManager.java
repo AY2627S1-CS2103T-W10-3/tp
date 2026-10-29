@@ -1,6 +1,7 @@
 package seedu.address.ui;
 
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
@@ -22,18 +23,22 @@ public class UiManager implements Ui {
 
     private static final Logger logger = LogsCenter.getLogger(UiManager.class);
     private static final String ICON_APPLICATION = "/images/tutor_contacts.png";
+    private static final String DATA_LOAD_WARNING_TITLE = "Data file not loaded";
+    private static final String DATA_LOAD_WARNING_HEADER = "Student data could not be loaded";
 
     private Logic logic;
     private Path dataFilePath;
+    private Optional<String> startupWarning;
     private MainWindow mainWindow;
 
     /**
-     * Creates a {@code UiManager} with the given {@code Logic} and the data file path
-     * to show in the status bar.
+     * Creates a {@code UiManager} with the given {@code Logic}, the data file path
+     * to show in the status bar, and a warning to show in the result panel when the window opens, if any.
      */
-    public UiManager(Logic logic, Path dataFilePath) {
+    public UiManager(Logic logic, Path dataFilePath, Optional<String> startupWarning) {
         this.logic = logic;
         this.dataFilePath = dataFilePath;
+        this.startupWarning = startupWarning;
     }
 
     @Override
@@ -47,11 +52,21 @@ public class UiManager implements Ui {
             mainWindow = new MainWindow(primaryStage, logic, dataFilePath);
             mainWindow.show(); //This should be called before creating other UI parts
             mainWindow.fillInnerParts();
+            startupWarning.ifPresent(this::showStartupWarning);
 
         } catch (Throwable e) {
             logger.severe(StringUtil.getDetails(e));
             showFatalErrorDialogAndShutdown("Fatal error during initializing", e);
         }
+    }
+
+    /**
+     * Shows {@code warning} in a dialog, because the result panel is too short to show all of it,
+     * and keeps it in the result panel after the dialog is closed.
+     */
+    private void showStartupWarning(String warning) {
+        mainWindow.showFeedback(warning);
+        showAlertDialogAndWait(AlertType.WARNING, DATA_LOAD_WARNING_TITLE, DATA_LOAD_WARNING_HEADER, warning);
     }
 
     private Image getImage(String imagePath) {

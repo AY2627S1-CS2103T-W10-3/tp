@@ -248,6 +248,13 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
+     * Shows {@code feedback} in the result panel without running a command.
+     */
+    void showFeedback(String feedback) {
+        resultDisplay.setFeedbackToUser(feedback);
+    }
+
+    /**
      * Closes the application.
      */
     @FXML
