@@ -1,25 +1,171 @@
-#copyButton {
-    -fx-text-fill: white;
+.root {
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-background-color: #f8f7fc;
+    -fx-focus-color: #829bd6;
+    -fx-faint-focus-color: rgba(130, 155, 214, 0.16);
 }
 
-#helpMessage {
-    -fx-control-inner-background: #292929;
-    -fx-text-fill: white;
-    -fx-font-family: monospace;
+.help-shell { -fx-background-color: #f8f7fc; }
+
+.help-header {
+    -fx-background-color: #fdfcff;
+    -fx-border-color: transparent transparent #e4e0ed transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 12 20;
 }
 
-#copyButton {
-    -fx-background-color: dimgray;
+.help-title {
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #252330;
 }
 
-#copyButton:hover {
-    -fx-background-color: gray;
+.help-subtitle, .sidebar-note { -fx-text-fill: #817d8b; }
+
+.help-sidebar {
+    -fx-background-color: linear-gradient(to bottom, #f8f6ff, #fbfaff);
+    -fx-border-color: transparent #e4e0ed transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 18 14;
 }
 
-#copyButton:armed {
-    -fx-background-color: darkgray;
+.help-nav-button {
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-color: transparent;
+    -fx-background-radius: 8;
+    -fx-padding: 10 12;
+    -fx-text-fill: #4a4755;
 }
 
-#helpMessageContainer {
-    -fx-background-color: derive(#1d1d1d, 20%);
+.help-nav-button:hover { -fx-background-color: #f0edf7; }
+
+.help-nav-button-active {
+    -fx-background-color: #edf2ff;
+    -fx-font-weight: bold;
+    -fx-text-fill: #36578f;
 }
+
+.sidebar-note-title {
+    -fx-font-weight: bold;
+    -fx-text-fill: #55505f;
+}
+
+.sidebar-note { -fx-font-size: 12px; }
+
+.secondary-button {
+    -fx-background-color: #fdfcff;
+    -fx-background-radius: 7;
+    -fx-border-color: #dcd7e6;
+    -fx-border-radius: 7;
+    -fx-padding: 8 12;
+    -fx-text-fill: #4a4755;
+}
+
+.secondary-button:hover { -fx-background-color: #f1eef7; }
+.help-content { -fx-background-color: #f8f7fc; }
+
+.help-scroll, .help-scroll > .viewport {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.help-scroll { -fx-padding: 0; }
+.help-page { -fx-padding: 24 28 32 28; }
+
+.page-title {
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #252330;
+}
+
+.page-intro {
+    -fx-font-size: 15px;
+    -fx-line-spacing: 2px;
+    -fx-text-fill: #625e70;
+}
+
+.help-card {
+    -fx-background-color: #fdfcff;
+    -fx-background-radius: 10;
+    -fx-border-color: #e5e1ec;
+    -fx-border-radius: 10;
+    -fx-padding: 15 17;
+}
+
+.blue-card { -fx-border-color: #dce5f7; }
+.green-card { -fx-border-color: #d9eee5; }
+.warm-card { -fx-border-color: #f1dfd1; }
+.purple-card { -fx-border-color: #e7def4; }
+.danger-card { -fx-border-color: #efcece; }
+
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #334d79;
+}
+
+.green-card .section-title { -fx-text-fill: #267258; }
+.warm-card .section-title { -fx-text-fill: #9a552f; }
+.purple-card .section-title { -fx-text-fill: #684e92; }
+.danger-card .section-title { -fx-text-fill: #963e3e; }
+
+.command-format {
+    -fx-background-color: #f1f0f8;
+    -fx-background-radius: 6;
+    -fx-font-family: "Menlo";
+    -fx-font-size: 13px;
+    -fx-padding: 7 9;
+    -fx-text-fill: #24477c;
+}
+
+.example-text {
+    -fx-font-family: "Menlo";
+    -fx-font-size: 12px;
+    -fx-text-fill: #5e5a69;
+}
+
+.body-text {
+    -fx-line-spacing: 2px;
+    -fx-text-fill: #625e70;
+}
+
+.field-guide { -fx-background-color: #faf9fe; }
+
+.field-group-title {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #777282;
+}
+
+.field-item {
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 6;
+    -fx-border-color: #e5e1ec;
+    -fx-border-radius: 6;
+    -fx-padding: 5 8;
+}
+
+.field-item .label { -fx-text-fill: #625e70; }
+
+.prefix-chip {
+    -fx-font-family: "Menlo";
+    -fx-font-weight: bold;
+    -fx-text-fill: #4b5f9b;
+}
+
+.scroll-bar { -fx-background-color: transparent; }
+
+.scroll-bar .thumb {
+    -fx-background-color: #c9d1df;
+    -fx-background-radius: 6;
+    -fx-background-insets: 3;
+}
+
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow { -fx-shape: " "; }
