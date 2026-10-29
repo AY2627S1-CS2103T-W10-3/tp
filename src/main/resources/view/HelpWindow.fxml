@@ -67,7 +67,7 @@
                 </VBox>
                 <VBox spacing="8" styleClass="help-card">
                   <Label text="Important behaviour" styleClass="section-title" />
-                  <Label text="• Use the number shown beside a student when a command asks for an INDEX.&#10;• Commands act on the student list currently shown on screen.&#10;• list returns to the complete list of current students.&#10;• Archived students stay saved but are hidden from the main list.&#10;• clear permanently deletes every student record."
+                  <Label text="• Use the number shown beside a student when a command asks for an INDEX.&#10;• Commands act on the student list currently shown on screen.&#10;• list returns to the complete list of current students.&#10;• Archived students stay saved but are hidden from the main list.&#10;• clear permanently deletes every student record, including archived students."
                          wrapText="true" styleClass="body-text" />
                 </VBox>
                 <VBox spacing="8" styleClass="help-card, warm-card">
@@ -142,7 +142,7 @@
                 <VBox spacing="7" styleClass="help-card, danger-card">
                   <Label text="Clear all records" styleClass="section-title" />
                   <Label text="clear" styleClass="command-format" />
-                  <Label text="Permanently delete every student record. This does not merely clear a search or filter."
+                  <Label text="Permanently delete every student record, including archived students. This cannot be undone and does not merely clear a search or filter."
                          wrapText="true" styleClass="body-text" />
                 </VBox>
               </VBox>

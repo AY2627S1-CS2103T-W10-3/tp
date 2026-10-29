@@ -34,7 +34,8 @@ table below to jump to the task you need.
 
 1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar TutorContacts.jar`.<br>
    The TutorContacts window appears in a few seconds. On the first run it contains sample students so that you can try
-   commands safely. [The main window](#the-main-window) explains each part of the window.
+   commands safely. [The main window](#the-main-window) explains each part of the window.<br>
+   ![TutorContacts main window showing the views sidebar, student list, selected student's details, result panel, and command box](images/Ui.png)
 
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
@@ -121,6 +122,8 @@ Format: `help`
 * The **Help** menu and the `F1` key open the same window.
 * `help` takes no parameters. Extra text, such as `help me`, is rejected.
 
+![TutorContacts offline Help window with command categories on the left and overview content on the right](images/HelpWindow.png)
+
 
 ### Adding a student: `add`
 
@@ -134,7 +137,7 @@ Only `n/` is required. Every other prefix is optional. Prefixes may appear in an
 
 | Prefix | Meaning and validation |
 |--------|------------------------|
-| `n/` | Student name. Required; letters, digits, and spaces; cannot be blank. |
+| `n/` | Student name. Required; starts with a letter or digit; may contain letters (including accented letters), digits, spaces, hyphens (`-`), apostrophes (`'`), full stops (`.`), and slashes (`/`). `s/o`, `d/o`, `a/l`, and `a/p` in a name stay part of the name, for example `n/Raj s/o Kumar`. |
 | `p/` | Student phone. Optional; digits only, at least 3 digits. |
 | `e/` | Student email. Optional; a valid email address. |
 | `a/` | Address. Optional; nonblank text. |
@@ -156,7 +159,8 @@ other control characters, blank values, and values longer than 200 characters ar
 is displayed as `Not provided`.
 
 Leading and trailing whitespace around field values is ignored. Repeated whitespace inside names, guardian names,
-subjects, and addresses is stored as one space. Whitespace within phone numbers, email addresses, education levels, and
+and addresses is stored as one space. Repeated spaces inside subjects are stored as one space, but a tab, line break,
+or other control character inside a subject is rejected. Whitespace within phone numbers, email addresses, education levels, and
 tags is not accepted. Text before the first prefix and unknown prefix-like tokens such as `x/value` are rejected.
 If a subject or address contains a separate one- or two-character token followed by `/`, enclose the complete value in
 double quotes. For example, `add n/Alex s/"A l/Mathematics" a/"Block n/7"` stores the values without the quotes.
@@ -172,6 +176,7 @@ A guardian name may be supplied without guardian contact information.
 Examples:
 * Name only: `add n/Alex Tan`
 * Prefix-like text in values: `add n/Alice s/A Level/Mathematics a/"Block n/7"`
+* Names with hyphens, apostrophes, accents, or `s/o`: `add n/Jean-Luc O'Brien`, `add n/José Tan`, `add n/Raj s/o Kumar s/Mathematics`
 * All tutoring and guardian details, in a different prefix order: `add l/jc1 gn/Mary Tan s/H2 Mathematics p/98765432 ge/mary@example.com gp/81234567 e/alex@example.com n/Alex Tan`
 * Learning context: `add n/Alex Tan lf/Quadratic graphs na/Complete worksheet 4`
 * Two students may share contacts: `add n/Ben Tan p/81234567 gn/Mary Tan gp/91234567` followed by `add n/Chloe Tan p/81234567 gn/Mary Tan gp/91234567`
@@ -431,9 +436,16 @@ Examples:
 
 ### Clearing all entries: `clear`
 
-Clears all student records from TutorContacts.
+Permanently deletes every student record from TutorContacts, including archived students.
 
 Format: `clear`
+
+<div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
+`clear` takes effect immediately without asking for confirmation, and it cannot be undone. Archived students are
+deleted as well. To keep a former student's record, use `archive INDEX` instead, and use `delete INDEX` to remove a
+single student. Back up the data file described in [Editing the data file](#editing-the-data-file) first if you may
+need the records later.
+</div>
 
 `clear` takes no parameters. Extra text, such as `clear 3`, is rejected and no records are changed.
 
