@@ -111,6 +111,10 @@ public class EditCommandParserTest {
         assertParseFailure(parser, "1" + INVALID_EDUCATION_LEVEL_DESC, EducationLevel.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, "1" + INVALID_TAG_DESC, Tag.MESSAGE_CONSTRAINTS); // invalid tag
 
+        // phone numbers longer than 15 digits
+        assertParseFailure(parser, "2 p/" + "9".repeat(50), Phone.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, "2 gn/Jane Doe gp/" + "9".repeat(16), Phone.MESSAGE_CONSTRAINTS);
+
         // invalid phone followed by valid email
         assertParseFailure(parser, "1" + INVALID_PHONE_DESC + EMAIL_DESC_AMY, Phone.MESSAGE_CONSTRAINTS);
 
