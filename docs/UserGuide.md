@@ -329,6 +329,8 @@ Format: `schedule INDEX at/YYYY-MM-DD HH:mm`
   30 October 2099.
 * The lesson must be in the future. A time in the current minute or earlier is rejected.
 * If the student already has a lesson, the new lesson replaces it. The result panel shows the previous lesson time.
+  If the new time is the same as the current lesson, nothing changes and the result panel says that the student
+  already has that lesson.
 * Dates that do not exist, such as `2099-02-30`, and times outside `00:00`–`23:59` are rejected.
 * Extra spaces around the value and between the date and time are ignored.
 * The student card and the details panel show the lesson under **Next lesson**, for example `2099-10-30 16:00`, or

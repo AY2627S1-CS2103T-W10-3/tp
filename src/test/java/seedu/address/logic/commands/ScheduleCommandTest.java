@@ -71,6 +71,19 @@ public class ScheduleCommandTest {
     }
 
     @Test
+    public void execute_sameLesson_reportsUnchangedLesson() {
+        Person student = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        model.setPerson(student, student.withLesson(Optional.of(FUTURE_LESSON)));
+        ScheduleCommand command = new ScheduleCommand(INDEX_FIRST_PERSON, FUTURE_LESSON, CLOCK);
+
+        String expectedMessage = String.format(ScheduleCommand.MESSAGE_SAME_LESSON,
+                student.getName().fullName, FUTURE_LESSON);
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+    }
+
+    @Test
     public void execute_lessonAtStartOfNextMinute_success() {
         Lesson nextMinute = new Lesson("2026-10-22 16:01");
         Person student = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
