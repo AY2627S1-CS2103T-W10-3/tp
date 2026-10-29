@@ -27,6 +27,7 @@ public class HelpCommandTest {
         assertTrue(help.contains("[gn/GUARDIAN_NAME]"));
         assertTrue(help.contains("[lf/LEARNING_FOCUS]"));
         assertTrue(help.contains("[na/NEXT_ACTION]"));
+        assertTrue(help.contains("[t/TAG]..."));
         assertTrue(help.contains("edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] "
                 + "[gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] "
                 + "[s/SUBJECT] [l/EDUCATION_LEVEL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]..."));
@@ -44,6 +45,7 @@ public class HelpCommandTest {
         assertTrue(help.contains("help\n"));
         assertTrue(help.contains("exit\n"));
         assertTrue(help.contains("Guardian phone or email requires gn/"));
+        assertTrue(help.contains("Every add prefix except t/ may appear at most once."));
         assertTrue(help.contains("partial-name matching with OR"));
         assertTrue(help.contains("Displayed indices belong to the current result list"));
         assertTrue(help.contains("An empty optional edit prefix clears that field"));

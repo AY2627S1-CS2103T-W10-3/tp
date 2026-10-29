@@ -19,7 +19,7 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 
 1. Copy the file to the folder you want to use as the _home folder_ for TutorContacts.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar addressbook.jar`.<br>
+1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar TutorContacts.jar`.<br>
    A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data.<br>
    ![Ui](images/Ui.png)
 
@@ -56,10 +56,10 @@ TutorContacts is an **offline desktop application for private tutors to manage s
   For example, in `add n/NAME`, replace `NAME` with a value such as `John Doe`.
 
 * Items in square brackets are optional.<br>
-  For example, `n/NAME [t/TAG]` can be used as `n/John Doe t/friend` or as `n/John Doe`.
+  For example, `n/NAME [t/TAG]…​` can be used as `n/John Doe t/friend t/online` or as `n/John Doe`.
 
 * The prefixes in `add` can be in any order, with whitespace between fields.<br>
-  For example, `add p/81234567 n/Alex Tan` is accepted. Each `add` prefix can appear only once.
+  For example, `add p/81234567 n/Alex Tan` is accepted. Every `add` prefix except `t/` can appear only once.
 
 * Prefixes contain one or two lower-case characters followed by `/`. If a field value contains separate text that
   looks like a prefix, wrap the complete value in double quotes.<br>
@@ -87,16 +87,16 @@ Format: `help`
 
 Adds a student to TutorContacts. Only the student name is required; the remaining fields are optional.
 
-Format: `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]`
+Format: `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
-Only `n/` is required. Every other prefix is optional; each supported prefix can be supplied once, in any order.
+Only `n/` is required. Every other prefix is optional. Prefixes may appear in any order, and `t/` may repeat.
 </div>
 
 | Prefix | Meaning and validation |
 |--------|------------------------|
-| `n/` | Student name. Required; letters, digits, and spaces; cannot be blank. |
-| `p/` | Student phone. Optional; digits only, at least 3 digits. |
+| `n/` | Student name. Required; starts with a letter or digit; may contain letters (including accented letters), digits, spaces, hyphens (`-`), apostrophes (`'`), full stops (`.`), and slashes (`/`). `s/o`, `d/o`, `a/l`, and `a/p` in a name stay part of the name, for example `n/Raj s/o Kumar`. |
+| `p/` | Student phone. Optional; digits only, 3 to 15 digits. |
 | `e/` | Student email. Optional; a valid email address. |
 | `a/` | Address. Optional; nonblank text. |
 | `s/` | Tutoring subject. Optional; nonblank text of at most 100 characters, without control characters. |
@@ -106,7 +106,7 @@ Only `n/` is required. Every other prefix is optional; each supported prefix can
 | `ge/` | Guardian email. Optional; uses the student-email rules and requires `gn/`. |
 | `lf/` | Current learning focus. Optional; 1–200 characters without control characters. |
 | `na/` | Next action. Optional; 1–200 characters without control characters. |
-| `t/` | One optional tag; letters and digits only. |
+| `t/` | Optional tag; letters and digits only. Repeat `t/` to add more than one tag. |
 
 Subject and education level may be supplied independently. Education levels are case-insensitive when entered and are
 displayed in uppercase. If either field is omitted, the student card displays `Not provided` for that field.
@@ -117,7 +117,8 @@ other control characters, blank values, and values longer than 200 characters ar
 is displayed as `Not provided`.
 
 Leading and trailing whitespace around field values is ignored. Repeated whitespace inside names, guardian names,
-subjects, and addresses is stored as one space. Whitespace within phone numbers, email addresses, education levels, and
+and addresses is stored as one space. Repeated spaces inside subjects are stored as one space, but a tab, line break,
+or other control character inside a subject is rejected. Whitespace within phone numbers, email addresses, education levels, and
 tags is not accepted. Text before the first prefix and unknown prefix-like tokens such as `x/value` are rejected.
 If a subject or address contains a separate one- or two-character token followed by `/`, enclose the complete value in
 double quotes. For example, `add n/Alex s/"A l/Mathematics" a/"Block n/7"` stores the values without the quotes.
@@ -133,11 +134,13 @@ A guardian name may be supplied without guardian contact information.
 Examples:
 * Name only: `add n/Alex Tan`
 * Prefix-like text in values: `add n/Alice s/A Level/Mathematics a/"Block n/7"`
+* Names with hyphens, apostrophes, accents, or `s/o`: `add n/Jean-Luc O'Brien`, `add n/José Tan`, `add n/Raj s/o Kumar s/Mathematics`
 * All tutoring and guardian details, in a different prefix order: `add l/jc1 gn/Mary Tan s/H2 Mathematics p/98765432 ge/mary@example.com gp/81234567 e/alex@example.com n/Alex Tan`
 * Learning context: `add n/Alex Tan lf/Quadratic graphs na/Complete worksheet 4`
 * Two students may share contacts: `add n/Ben Tan p/81234567 gn/Mary Tan gp/91234567` followed by `add n/Chloe Tan p/81234567 gn/Mary Tan gp/91234567`
 * Invalid, because `gn/` is missing: `add n/Sam Lee gp/81234567`
-* Invalid, because a prefix repeats: `add n/Sam Lee p/81234567 p/92345678`
+* Multiple tags: `add n/Sam Lee t/mathematics t/online`
+* Invalid, because a single-valued prefix repeats: `add n/Sam Lee p/81234567 p/92345678`
 * Invalid, because the education level is unsupported: `add n/Sam Lee l/University`
 * Invalid, because the subject is empty: `add n/Eva Lim s/ l/P6`
 * Invalid, because a learning focus supplied to `add` cannot be empty: `add n/Eva Lim lf/`
@@ -386,9 +389,16 @@ Examples:
 
 ### Clearing all entries: `clear`
 
-Clears all student records from TutorContacts.
+Permanently deletes every student record from TutorContacts, including archived students.
 
 Format: `clear`
+
+<div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
+`clear` takes effect immediately without asking for confirmation, and it cannot be undone. Archived students are
+deleted as well. To keep a former student's record, use `archive INDEX` instead, and use `delete INDEX` to remove a
+single student. Back up the data file described in [Editing the data file](#editing-the-data-file) first if you may
+need the records later.
+</div>
 
 `clear` takes no parameters. Extra text, such as `clear 3`, is rejected and no records are changed.
 
@@ -404,15 +414,20 @@ Example: `exit`
 
 ### Saving the data
 
-TutorContacts automatically saves data changes. You do not need to save manually. The `help` command can be used even
-when the data file cannot be read or written, and does not change that file.
+TutorContacts automatically saves data changes. You do not need to save manually. Commands that do not change any
+student, such as `list`, `find`, `upcoming`, `help`, and `exit`, do not write the data file. `help` can be used even
+when the data file cannot be read or written.
 
 ### Editing the data file
 
-TutorContacts data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+TutorContacts data is saved automatically as a JSON file `[JAR file location]/data/tutorcontacts.json`. Advanced users are welcome to update data directly by editing that data file.
+
+For compatibility, TutorContacts continues using `data/addressbook.json` when that legacy file exists and
+`data/tutorcontacts.json` does not. If both files exist, TutorContacts uses `data/tutorcontacts.json` and leaves the
+legacy file unchanged.
 
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
-If your changes make the data file invalid, TutorContacts starts with an empty student list at the next run and shows a warning that names the file. The invalid file remains on disk when you use `help`; a data-changing command can replace it. We recommend backing up the file before editing it.<br>
+If your changes make the data file invalid, TutorContacts starts with an empty student list at the next run and shows a warning that names the file. The invalid file remains on disk until you use a command that changes data, such as `add` or `edit`, which replaces it. We recommend backing up the file before editing it.<br>
 Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a value does not satisfy its validation rules. Edit the data file only if you are confident that you can update it correctly.
 </div>
 
@@ -421,7 +436,7 @@ Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a v
 ## FAQ
 
 **Q**: How do I transfer my data to another computer?<br>
-**A**: Install TutorContacts on the other computer, close it, and replace its `data/addressbook.json` file with the file from your previous TutorContacts home folder.
+**A**: Install TutorContacts on the other computer, close it, and replace its `data/tutorcontacts.json` file with the file from your previous TutorContacts home folder.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -438,7 +453,7 @@ Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a v
 
 Action | Format, Examples
 --------|------------------
-**Add** | `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]` <br> e.g., `add n/James Ho lf/Fractions na/Complete worksheet 2`
+**Add** | `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​` <br> e.g., `add n/James Ho lf/Fractions na/Complete worksheet 2 t/mathematics t/online`
 **Archive** | `archive INDEX`<br> e.g., `archive 1`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`

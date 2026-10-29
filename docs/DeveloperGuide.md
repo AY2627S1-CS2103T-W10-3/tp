@@ -105,7 +105,7 @@ How the `Logic` component works:
 1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteCommand`) which is executed by the `LogicManager`.
 1. Before executing the command, `LogicManager` takes a snapshot of the address book. The command can then communicate with the `Model` when it is executed (e.g. to delete a person).<br>
    Note that although this is shown as a single step in the diagram above for simplicity, the code can require several interactions between the command object and the `Model` to complete the operation.
-1. `LogicManager` saves the updated address book after the command succeeds. If saving fails, it restores the in-memory snapshot before reporting the save failure, so the UI returns to the state before the command. The data file may already have been partially written, so the previously saved data is not guaranteed to be preserved.
+1. If the command changed the address book, `LogicManager` saves it after the command succeeds. Commands that leave the address book unchanged, such as `list` or `exit`, do not write the data file, so a data file that could not be loaded stays on disk until the user changes data. If saving fails, it restores the in-memory snapshot before reporting the save failure, so the UI returns to the state before the command. The data file may already have been partially written, so the previously saved data is not guaranteed to be preserved.
 1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
@@ -147,6 +147,10 @@ The `Storage` component,
 * is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonAddressBookStorage` and `JsonUserPrefsStorage` (one class per data file).
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
 
+New installations store student data in `data/tutorcontacts.json`. At startup, `MainApp` uses the legacy
+`data/addressbook.json` only when the new file is absent. If both files exist, the new file takes precedence and the
+legacy file is left unchanged.
+
 ### Common classes
 
 Classes used by multiple components are in the `seedu.address.commons` package.
@@ -163,9 +167,12 @@ This section describes some noteworthy details on how certain features are imple
 after whitespace. It is shared by `add`, `edit`, and `filter`, rejects unsupported tokens, and stores the preamble and
 field values in an `ArgumentMultimap`. Text inside a pair of double quotes is treated as one field value, so a subject
 or address can contain text such as `l/` or `n/` without being split into another field. The enclosing quotes are not
-stored. Longer slash-terminated words such as `Level/` are ordinary text rather than CLI prefixes.
+stored. Longer slash-terminated words such as `Level/` are ordinary text rather than CLI prefixes. Inside an `n/` or `gn/`
+value, the whole-word relationship markers `s/o`, `d/o`, `a/l`, and `a/p` are also ordinary text, so names such as
+`Raj s/o Kumar` are not split at the `s/` subject prefix or rejected as an unsupported `d/` prefix. Outside a name, the
+same tokens are still read as prefixes.
 
-Validation follows a fixed order: token structure, required `n/`, repeated prefixes, guardian-name dependency, then individual field values. Duplicate-prefix errors list the repeated tokens in a stable order. Names, subjects, and addresses have surrounding whitespace removed and internal whitespace collapsed before validation. `Person#isSamePerson` compares names after the same whitespace normalization and case folding; phone, email, and guardian details do not determine whether two students are duplicates. An invalid command fails before `AddCommand` can update the model or save data.
+Validation follows a fixed order: token structure, required `n/`, repeated prefixes, guardian-name dependency, then individual field values. Duplicate-prefix errors list the repeated tokens in a stable order. Names and addresses have surrounding whitespace removed and internal whitespace collapsed before validation. Subjects have surrounding whitespace removed and repeated ordinary spaces collapsed, so a tab or other control character inside a subject still reaches `Subject` validation and is rejected. `Person#isSamePerson` compares names after the same whitespace normalization and case folding; phone, email, and guardian details do not determine whether two students are duplicates. An invalid command fails before `AddCommand` can update the model or save data.
 
 `HelpCommand` keeps the command formats in bundled text so help is available without a network connection. `LogicManager` returns the help result without saving the address book, which also allows help when the existing data file cannot be loaded. `HelpWindow` displays the same text directly in a scrollable JavaFX control.
 
@@ -892,7 +899,7 @@ testers are expected to do more *exploratory* testing.
 
    1. Download the JAR file and copy it into an empty folder.
 
-   1. Open a terminal in that folder and run `java -jar addressbook.jar`.<br>
+   1. Open a terminal in that folder and run `java -jar TutorContacts.jar`.<br>
       Expected: The GUI opens with a set of sample students. The window size may not be optimal.
 
 1. Saving window preferences
@@ -1017,7 +1024,7 @@ testers are expected to do more *exploratory* testing.
       Expected: The restored student's card shows the same lesson.
 
    1. Close TutorContacts and launch it again from the same folder.<br>
-      Expected: The lesson is restored from `data/addressbook.json`.
+      Expected: The lesson is restored from `data/tutorcontacts.json`.
 
 1. Listing upcoming lessons
 
@@ -1039,7 +1046,7 @@ testers are expected to do more *exploratory* testing.
 
 1. Marking overdue lessons
 
-   1. Close TutorContacts. In `data/addressbook.json`, change one student's `"lesson" : null` to
+   1. Close TutorContacts. In `data/tutorcontacts.json`, change one student's `"lesson" : null` to
       `"lesson" : "2020-01-01 09:00"`, then launch TutorContacts.<br>
       Expected: The student's card shows `Lesson: 2020-01-01 09:00 (overdue)` in red, and `upcoming` does not list
       the student.
@@ -1067,22 +1074,25 @@ testers are expected to do more *exploratory* testing.
 1. Saving and loading student records
 
    1. Add a student containing contact, guardian, subject, and education-level details. Close TutorContacts and launch the same JAR again from the same folder.<br>
-      Expected: The student and every recorded field are restored from `data/addressbook.json`.
+      Expected: The student and every recorded field are restored from `data/tutorcontacts.json`.
 
 1. Dealing with a missing data file
 
-   1. Close TutorContacts and move `data/addressbook.json` to a backup location. Relaunch TutorContacts.<br>
+   1. Close TutorContacts and ensure that both `data/tutorcontacts.json` and `data/addressbook.json` are absent (move them to a backup location if they exist). Relaunch TutorContacts.<br>
       Expected: TutorContacts starts with its sample student data. Executing a data-changing command creates a new data file.
 
 1. Dealing with a corrupted data file
 
-   1. Close TutorContacts, back up `data/addressbook.json`, and replace its contents with invalid JSON. Relaunch TutorContacts.<br>
+   1. Close TutorContacts, back up `data/tutorcontacts.json`, and replace its contents with invalid JSON. Relaunch TutorContacts.<br>
       Expected: TutorContacts starts with an empty student list rather than loading invalid records. A warning dialog
-      names `data/addressbook.json` and advises backing it up or repairing it. After it is closed, the same warning
+      names `data/tutorcontacts.json` and advises backing it up or repairing it. After it is closed, the same warning
       remains in the result panel.
 
-   1. Enter `help`, close TutorContacts, and inspect the corrupted file.<br>
+   1. Enter `help`, `list`, and `exit`, then inspect the corrupted file.<br>
       Expected: Help remains available, and the corrupted file has not been overwritten.
+
+   1. Relaunch TutorContacts, enter `add n/Alex Tan`, close TutorContacts, and inspect the data file.<br>
+      Expected: The corrupted contents are replaced by valid data containing only Alex Tan.
 
 ### Learning context and archive lifecycle
 

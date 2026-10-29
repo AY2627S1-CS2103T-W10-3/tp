@@ -2,6 +2,7 @@ package seedu.address.logic;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
@@ -129,6 +130,39 @@ public class LogicManagerTest {
 
         assertTrue(feedback.contains("add n/NAME"));
         assertEquals("invalid json", Files.readString(dataFile));
+    }
+
+    @Test
+    public void execute_commandsWithoutChangesWhenDataFileIsUnreadable_doNotChangeFile() throws Exception {
+        Path dataFile = temporaryFolder.resolve("addressBook.json");
+        Files.writeString(dataFile, "invalid json");
+
+        logic.execute("list");
+        logic.execute("list archived");
+        logic.execute("find alex");
+        logic.execute("filter l/jc1");
+        logic.execute("upcoming");
+        logic.execute("clear");
+        logic.execute("exit");
+
+        assertEquals("invalid json", Files.readString(dataFile));
+    }
+
+    @Test
+    public void execute_changeWhenDataFileIsUnreadable_savesChange() throws Exception {
+        Path dataFile = temporaryFolder.resolve("addressBook.json");
+        Files.writeString(dataFile, "invalid json");
+
+        logic.execute("add n/Alice Tan");
+
+        assertEquals(1, new JsonAddressBookStorage(dataFile).readAddressBook().orElseThrow().getPersonList().size());
+    }
+
+    @Test
+    public void execute_commandWithoutChanges_doesNotCreateDataFile() throws Exception {
+        logic.execute("list");
+
+        assertFalse(Files.exists(temporaryFolder.resolve("addressBook.json")));
     }
 
     @Test

@@ -58,7 +58,7 @@ public class AddCommandParser implements Parser<AddCommand> {
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS,
                 PREFIX_GUARDIAN_NAME, PREFIX_GUARDIAN_PHONE, PREFIX_GUARDIAN_EMAIL, PREFIX_SUBJECT,
-                PREFIX_EDUCATION_LEVEL, PREFIX_LEARNING_FOCUS, PREFIX_NEXT_ACTION, PREFIX_TAG);
+                PREFIX_EDUCATION_LEVEL, PREFIX_LEARNING_FOCUS, PREFIX_NEXT_ACTION);
         Optional<String> guardianNameValue = argMultimap.getValue(PREFIX_GUARDIAN_NAME);
         Optional<String> guardianPhoneValue = argMultimap.getValue(PREFIX_GUARDIAN_PHONE);
         Optional<String> guardianEmailValue = argMultimap.getValue(PREFIX_GUARDIAN_EMAIL);
@@ -83,7 +83,7 @@ public class AddCommandParser implements Parser<AddCommand> {
         Optional<String> subjectValue = argMultimap.getValue(PREFIX_SUBJECT);
         Optional<String> educationLevelValue = argMultimap.getValue(PREFIX_EDUCATION_LEVEL);
         Optional<Subject> subject = subjectValue.isPresent()
-                ? Optional.of(ParserUtil.parseSubject(normalizeFreeText(subjectValue.get()))) : Optional.empty();
+                ? Optional.of(ParserUtil.parseSubject(subjectValue.get())) : Optional.empty();
         Optional<EducationLevel> educationLevel = educationLevelValue.isPresent()
                 ? Optional.of(ParserUtil.parseEducationLevel(educationLevelValue.get())) : Optional.empty();
         Optional<String> learningFocusValue = argMultimap.getValue(PREFIX_LEARNING_FOCUS);
