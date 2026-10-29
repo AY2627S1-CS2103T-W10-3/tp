@@ -147,6 +147,10 @@ The `Storage` component,
 * is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonAddressBookStorage` and `JsonUserPrefsStorage` (one class per data file).
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
 
+New installations store student data in `data/tutorcontacts.json`. At startup, `MainApp` uses the legacy
+`data/addressbook.json` only when the new file is absent. If both files exist, the new file takes precedence and the
+legacy file is left unchanged.
+
 ### Common classes
 
 Classes used by multiple components are in the `seedu.address.commons` package.
@@ -1017,7 +1021,7 @@ testers are expected to do more *exploratory* testing.
       Expected: The restored student's card shows the same lesson.
 
    1. Close TutorContacts and launch it again from the same folder.<br>
-      Expected: The lesson is restored from `data/addressbook.json`.
+      Expected: The lesson is restored from `data/tutorcontacts.json`.
 
 1. Listing upcoming lessons
 
@@ -1039,7 +1043,7 @@ testers are expected to do more *exploratory* testing.
 
 1. Marking overdue lessons
 
-   1. Close TutorContacts. In `data/addressbook.json`, change one student's `"lesson" : null` to
+   1. Close TutorContacts. In `data/tutorcontacts.json`, change one student's `"lesson" : null` to
       `"lesson" : "2020-01-01 09:00"`, then launch TutorContacts.<br>
       Expected: The student's card shows `Lesson: 2020-01-01 09:00 (overdue)` in red, and `upcoming` does not list
       the student.
@@ -1067,16 +1071,16 @@ testers are expected to do more *exploratory* testing.
 1. Saving and loading student records
 
    1. Add a student containing contact, guardian, subject, and education-level details. Close TutorContacts and launch the same JAR again from the same folder.<br>
-      Expected: The student and every recorded field are restored from `data/addressbook.json`.
+      Expected: The student and every recorded field are restored from `data/tutorcontacts.json`.
 
 1. Dealing with a missing data file
 
-   1. Close TutorContacts and move `data/addressbook.json` to a backup location. Relaunch TutorContacts.<br>
+   1. Close TutorContacts and ensure that both `data/tutorcontacts.json` and `data/addressbook.json` are absent (move them to a backup location if they exist). Relaunch TutorContacts.<br>
       Expected: TutorContacts starts with its sample student data. Executing a data-changing command creates a new data file.
 
 1. Dealing with a corrupted data file
 
-   1. Close TutorContacts, back up `data/addressbook.json`, and replace its contents with invalid JSON. Relaunch TutorContacts.<br>
+   1. Close TutorContacts, back up `data/tutorcontacts.json`, and replace its contents with invalid JSON. Relaunch TutorContacts.<br>
       Expected: TutorContacts starts with an empty student list rather than loading invalid records.
 
    1. Enter `help`, close TutorContacts, and inspect the corrupted file.<br>

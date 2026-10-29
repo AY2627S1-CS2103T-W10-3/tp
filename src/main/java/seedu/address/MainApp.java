@@ -1,6 +1,7 @@
 package seedu.address;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -36,12 +37,28 @@ public class MainApp extends Application {
 
     private static final Logger logger = LogsCenter.getLogger(MainApp.class);
     private static final Path USER_PREFS_FILE_PATH = Paths.get("preferences.json");
-    private static final Path ADDRESS_BOOK_FILE_PATH = Paths.get("data", "addressbook.json");
+    private static final String ADDRESS_BOOK_FILE_NAME = "tutorcontacts.json";
+    private static final String LEGACY_ADDRESS_BOOK_FILE_NAME = "addressbook.json";
+    private static final Path DATA_DIRECTORY = Paths.get("data");
+    private static final Path ADDRESS_BOOK_FILE_PATH = resolveAddressBookFilePath(DATA_DIRECTORY);
 
     protected Ui ui;
     protected Logic logic;
     protected Storage storage;
     protected Model model;
+
+    /**
+     * Returns the TutorContacts data path, unless only the legacy AddressBook data file exists.
+     * When both files exist, the TutorContacts data file takes precedence and the legacy file is left untouched.
+     */
+    static Path resolveAddressBookFilePath(Path dataDirectory) {
+        Path addressBookFilePath = dataDirectory.resolve(ADDRESS_BOOK_FILE_NAME);
+        Path legacyAddressBookFilePath = dataDirectory.resolve(LEGACY_ADDRESS_BOOK_FILE_NAME);
+        if (Files.exists(addressBookFilePath) || !Files.exists(legacyAddressBookFilePath)) {
+            return addressBookFilePath;
+        }
+        return legacyAddressBookFilePath;
+    }
 
     @Override
     public void init() throws Exception {
