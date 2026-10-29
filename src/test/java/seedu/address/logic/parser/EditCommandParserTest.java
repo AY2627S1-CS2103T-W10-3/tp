@@ -179,6 +179,15 @@ public class EditCommandParserTest {
     }
 
     @Test
+    public void parse_setClearAndOmittedFields_preservesEachOperation() {
+        String userInput = "1 p/91234567 e/ s/H2 Mathematics";
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withPhone("91234567").withoutEmail().withSubject("H2 Mathematics").build();
+
+        assertParseSuccess(parser, userInput, new EditCommand(INDEX_FIRST_PERSON, descriptor));
+    }
+
+    @Test
     public void parse_oneFieldSpecified_success() {
         // name
         Index targetIndex = INDEX_THIRD_PERSON;

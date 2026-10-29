@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditCommand;
@@ -65,86 +66,28 @@ public class EditCommandParser implements Parser<EditCommand> {
             editPersonDescriptor.setName(ParserUtil.parseName(
                     normalizeFreeText(argMultimap.getValue(PREFIX_NAME).get())));
         }
-        if (argMultimap.getValue(PREFIX_PHONE).isPresent()) {
-            String value = argMultimap.getValue(PREFIX_PHONE).get();
-            if (value.isEmpty()) {
-                editPersonDescriptor.clearPhone();
-            } else {
-                editPersonDescriptor.setPhone(ParserUtil.parsePhone(value));
-            }
-        }
-        if (argMultimap.getValue(PREFIX_EMAIL).isPresent()) {
-            String value = argMultimap.getValue(PREFIX_EMAIL).get();
-            if (value.isEmpty()) {
-                editPersonDescriptor.clearEmail();
-            } else {
-                editPersonDescriptor.setEmail(ParserUtil.parseEmail(value));
-            }
-        }
-        if (argMultimap.getValue(PREFIX_ADDRESS).isPresent()) {
-            String value = argMultimap.getValue(PREFIX_ADDRESS).get();
-            if (value.isEmpty()) {
-                editPersonDescriptor.clearAddress();
-            } else {
-                editPersonDescriptor.setAddress(ParserUtil.parseAddress(normalizeFreeText(value)));
-            }
-        }
-        if (argMultimap.getValue(PREFIX_GUARDIAN_NAME).isPresent()) {
-            String value = argMultimap.getValue(PREFIX_GUARDIAN_NAME).get();
-            if (value.isEmpty()) {
-                editPersonDescriptor.clearGuardianName();
-            } else {
-                editPersonDescriptor.setGuardianName(ParserUtil.parseName(normalizeFreeText(value)));
-            }
-        }
-        if (argMultimap.getValue(PREFIX_GUARDIAN_PHONE).isPresent()) {
-            String value = argMultimap.getValue(PREFIX_GUARDIAN_PHONE).get();
-            if (value.isEmpty()) {
-                editPersonDescriptor.clearGuardianPhone();
-            } else {
-                editPersonDescriptor.setGuardianPhone(ParserUtil.parsePhone(value));
-            }
-        }
-        if (argMultimap.getValue(PREFIX_GUARDIAN_EMAIL).isPresent()) {
-            String value = argMultimap.getValue(PREFIX_GUARDIAN_EMAIL).get();
-            if (value.isEmpty()) {
-                editPersonDescriptor.clearGuardianEmail();
-            } else {
-                editPersonDescriptor.setGuardianEmail(ParserUtil.parseEmail(value));
-            }
-        }
-        if (argMultimap.getValue(PREFIX_SUBJECT).isPresent()) {
-            String value = argMultimap.getValue(PREFIX_SUBJECT).get();
-            if (value.isEmpty()) {
-                editPersonDescriptor.clearSubject();
-            } else {
-                editPersonDescriptor.setSubject(ParserUtil.parseSubject(value));
-            }
-        }
-        if (argMultimap.getValue(PREFIX_EDUCATION_LEVEL).isPresent()) {
-            String value = argMultimap.getValue(PREFIX_EDUCATION_LEVEL).get();
-            if (value.isEmpty()) {
-                editPersonDescriptor.clearEducationLevel();
-            } else {
-                editPersonDescriptor.setEducationLevel(ParserUtil.parseEducationLevel(value));
-            }
-        }
-        if (argMultimap.getValue(PREFIX_LEARNING_FOCUS).isPresent()) {
-            String value = argMultimap.getValue(PREFIX_LEARNING_FOCUS).get();
-            if (value.isEmpty()) {
-                editPersonDescriptor.clearLearningFocus();
-            } else {
-                editPersonDescriptor.setLearningFocus(ParserUtil.parseLearningFocus(value));
-            }
-        }
-        if (argMultimap.getValue(PREFIX_NEXT_ACTION).isPresent()) {
-            String value = argMultimap.getValue(PREFIX_NEXT_ACTION).get();
-            if (value.isEmpty()) {
-                editPersonDescriptor.clearNextAction();
-            } else {
-                editPersonDescriptor.setNextAction(ParserUtil.parseNextAction(value));
-            }
-        }
+        parseClearableField(argMultimap, PREFIX_PHONE, ParserUtil::parsePhone,
+                editPersonDescriptor::setPhone, editPersonDescriptor::clearPhone);
+        parseClearableField(argMultimap, PREFIX_EMAIL, ParserUtil::parseEmail,
+                editPersonDescriptor::setEmail, editPersonDescriptor::clearEmail);
+        parseClearableField(argMultimap, PREFIX_ADDRESS,
+                value -> ParserUtil.parseAddress(normalizeFreeText(value)),
+                editPersonDescriptor::setAddress, editPersonDescriptor::clearAddress);
+        parseClearableField(argMultimap, PREFIX_GUARDIAN_NAME,
+                value -> ParserUtil.parseName(normalizeFreeText(value)),
+                editPersonDescriptor::setGuardianName, editPersonDescriptor::clearGuardianName);
+        parseClearableField(argMultimap, PREFIX_GUARDIAN_PHONE, ParserUtil::parsePhone,
+                editPersonDescriptor::setGuardianPhone, editPersonDescriptor::clearGuardianPhone);
+        parseClearableField(argMultimap, PREFIX_GUARDIAN_EMAIL, ParserUtil::parseEmail,
+                editPersonDescriptor::setGuardianEmail, editPersonDescriptor::clearGuardianEmail);
+        parseClearableField(argMultimap, PREFIX_SUBJECT, ParserUtil::parseSubject,
+                editPersonDescriptor::setSubject, editPersonDescriptor::clearSubject);
+        parseClearableField(argMultimap, PREFIX_EDUCATION_LEVEL, ParserUtil::parseEducationLevel,
+                editPersonDescriptor::setEducationLevel, editPersonDescriptor::clearEducationLevel);
+        parseClearableField(argMultimap, PREFIX_LEARNING_FOCUS, ParserUtil::parseLearningFocus,
+                editPersonDescriptor::setLearningFocus, editPersonDescriptor::clearLearningFocus);
+        parseClearableField(argMultimap, PREFIX_NEXT_ACTION, ParserUtil::parseNextAction,
+                editPersonDescriptor::setNextAction, editPersonDescriptor::clearNextAction);
         parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editPersonDescriptor::setTags);
 
         if (!editPersonDescriptor.isAnyFieldEdited()) {
@@ -156,6 +99,30 @@ public class EditCommandParser implements Parser<EditCommand> {
 
     private static String normalizeFreeText(String value) {
         return value.strip().replaceAll("\\s+", " ");
+    }
+
+    /**
+     * Parses a clearable field when {@code prefix} is present. An empty value invokes {@code clearField}; otherwise,
+     * the parsed value is passed to {@code setField}. An absent prefix leaves the descriptor unchanged.
+     */
+    private static <T> void parseClearableField(ArgumentMultimap argMultimap, Prefix prefix,
+                                                ValueParser<T> valueParser, Consumer<T> setField,
+                                                Runnable clearField) throws ParseException {
+        Optional<String> value = argMultimap.getValue(prefix);
+        if (value.isEmpty()) {
+            return;
+        }
+        if (value.get().isEmpty()) {
+            clearField.run();
+            return;
+        }
+        setField.accept(valueParser.parse(value.get()));
+    }
+
+    /** Parses one non-empty edit-field value while preserving its {@link ParseException}. */
+    @FunctionalInterface
+    private interface ValueParser<T> {
+        T parse(String value) throws ParseException;
     }
 
     /**
