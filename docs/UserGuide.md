@@ -441,7 +441,7 @@ For compatibility, TutorContacts continues using `data/addressbook.json` when th
 legacy file unchanged.
 
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
-If your changes make the data file invalid, TutorContacts starts with an empty student list at the next run. The invalid file remains on disk until you use a command that changes data, such as `add` or `edit`, which replaces it. We recommend backing up the file before editing it.<br>
+If your changes make the data file invalid, TutorContacts starts with an empty student list at the next run and shows a warning that names the file. The invalid file remains on disk until you use a command that changes data, such as `add` or `edit`, which replaces it. We recommend backing up the file before editing it.<br>
 Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a value does not satisfy its validation rules. Edit the data file only if you are confident that you can update it correctly.
 </div>
 

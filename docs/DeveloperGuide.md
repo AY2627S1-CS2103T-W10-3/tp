@@ -1121,7 +1121,9 @@ testers are expected to do more *exploratory* testing.
 1. Dealing with a corrupted data file
 
    1. Close TutorContacts, back up `data/tutorcontacts.json`, and replace its contents with invalid JSON. Relaunch TutorContacts.<br>
-      Expected: TutorContacts starts with an empty student list rather than loading invalid records.
+      Expected: TutorContacts starts with an empty student list rather than loading invalid records. A warning dialog
+      names `data/tutorcontacts.json` and advises backing it up or repairing it. After it is closed, the same warning
+      remains in the result panel.
 
    1. Enter `help`, `list`, and `exit`, then inspect the corrupted file.<br>
       Expected: Help remains available, and the corrupted file has not been overwritten.
