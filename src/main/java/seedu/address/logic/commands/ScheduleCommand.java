@@ -81,6 +81,7 @@ public class ScheduleCommand extends Command {
             throw new CommandException(MESSAGE_LESSON_NOT_IN_FUTURE);
         }
 
+        List<Person> shownBefore = List.copyOf(lastShownList);
         Person student = lastShownList.get(targetIndex.getZeroBased());
         Optional<Lesson> previousLesson = student.getLesson();
         Person scheduledStudent = student.withLesson(Optional.of(lesson));
@@ -89,11 +90,11 @@ public class ScheduleCommand extends Command {
         logger.fine("Scheduled lesson " + lesson + " for " + student.getName());
 
         String studentName = student.getName().fullName;
-        if (previousLesson.isPresent()) {
-            return new CommandResult(String.format(MESSAGE_RESCHEDULE_SUCCESS, studentName, lesson,
-                    previousLesson.get()));
-        }
-        return new CommandResult(String.format(MESSAGE_SCHEDULE_SUCCESS, studentName, lesson));
+        String feedback = previousLesson.isPresent()
+                ? String.format(MESSAGE_RESCHEDULE_SUCCESS, studentName, lesson, previousLesson.get())
+                : String.format(MESSAGE_SCHEDULE_SUCCESS, studentName, lesson);
+        return new CommandResult(withListUpdateNotice(feedback, shownBefore, targetIndex.getZeroBased(),
+                scheduledStudent, model.getFilteredPersonList()));
     }
 
     @Override

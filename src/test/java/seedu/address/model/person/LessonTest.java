@@ -38,6 +38,10 @@ public class LessonTest {
         assertFalse(Lesson.isValidLesson("2026-1-30 16:00"));
         assertFalse(Lesson.isValidLesson("2026-10-30 6:00"));
         assertFalse(Lesson.isValidLesson("2026-10-30 16:00:00"));
+        assertFalse(Lesson.isValidLesson("+12345-01-01 10:00")); // signed five-digit year
+        assertFalse(Lesson.isValidLesson("12345-01-01 10:00")); // five-digit year
+        assertFalse(Lesson.isValidLesson("+2099-01-01 10:00")); // signed year
+        assertFalse(Lesson.isValidLesson("-2099-01-01 10:00")); // negative year
 
         // non-existent dates and times
         assertFalse(Lesson.isValidLesson("2026-02-29 10:00"));

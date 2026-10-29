@@ -24,6 +24,8 @@ public class Messages {
     public static final String MESSAGE_DATA_LOAD_FAILED = "Warning: The data file %1$s could not be loaded, so "
             + "TutorContacts started with no students. Back up or repair that file before adding or changing "
             + "students, because the first change replaces it.";
+    public static final String MESSAGE_DISPLAYED_LIST_UPDATED =
+            "The displayed list has been updated, so check the indices before your next command.";
     public static final String NOT_PROVIDED = "Not provided";
     public static final String NOT_SCHEDULED = "Not scheduled";
 

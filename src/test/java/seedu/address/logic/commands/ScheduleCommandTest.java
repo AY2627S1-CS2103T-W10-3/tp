@@ -157,6 +157,39 @@ public class ScheduleCommandTest {
     }
 
     @Test
+    public void execute_rescheduleReordersUpcomingList_addsListUpdateNotice() throws Exception {
+        showUpcomingFirstThenSecond();
+        Person first = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Lesson laterLesson = new Lesson("2026-12-01 10:00");
+
+        CommandResult result = new ScheduleCommand(INDEX_FIRST_PERSON, laterLesson, CLOCK).execute(model);
+
+        assertEquals(String.format(ScheduleCommand.MESSAGE_RESCHEDULE_SUCCESS, first.getName().fullName,
+                laterLesson, FUTURE_LESSON) + ". " + Messages.MESSAGE_DISPLAYED_LIST_UPDATED,
+                result.getFeedbackToUser());
+        assertEquals(first.getName(), model.getFilteredPersonList().get(INDEX_SECOND_PERSON.getZeroBased()).getName());
+    }
+
+    @Test
+    public void execute_rescheduleKeepsUpcomingOrder_noListUpdateNotice() throws Exception {
+        showUpcomingFirstThenSecond();
+        Person first = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Lesson stillSoonest = new Lesson("2026-10-31 10:00");
+
+        CommandResult result = new ScheduleCommand(INDEX_FIRST_PERSON, stillSoonest, CLOCK).execute(model);
+
+        assertEquals(String.format(ScheduleCommand.MESSAGE_RESCHEDULE_SUCCESS, first.getName().fullName,
+                stillSoonest, FUTURE_LESSON), result.getFeedbackToUser());
+    }
+
+    /** Schedules the first two typical students and shows the upcoming list, in which they keep that order. */
+    private void showUpcomingFirstThenSecond() throws Exception {
+        new ScheduleCommand(INDEX_FIRST_PERSON, FUTURE_LESSON, CLOCK).execute(model);
+        new ScheduleCommand(INDEX_SECOND_PERSON, OTHER_FUTURE_LESSON, CLOCK).execute(model);
+        new UpcomingCommand(CLOCK).execute(model);
+    }
+
+    @Test
     public void execute_archiveThenRestoreScheduledStudent_keepsLesson() throws Exception {
         new ScheduleCommand(INDEX_FIRST_PERSON, FUTURE_LESSON, CLOCK).execute(model);
         Person scheduledStudent = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
