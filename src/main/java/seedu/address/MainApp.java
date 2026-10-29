@@ -87,8 +87,16 @@ public class MainApp extends Application {
     private Model initModelManager(Storage storage, ReadOnlyUserPrefs userPrefs) {
         logger.info("Using data file : " + storage.getAddressBookFilePath());
 
+        InitialData initialData = loadInitialData(storage);
+        startupWarning = initialData.warning();
+        return new ModelManager(initialData.addressBook(), userPrefs);
+    }
+
+    /** Loads the initial student data and any warning that must be shown when the UI starts. */
+    static InitialData loadInitialData(Storage storage) {
         Optional<ReadOnlyAddressBook> addressBookOptional;
         ReadOnlyAddressBook initialData;
+        Optional<String> warning = Optional.empty();
         try {
             addressBookOptional = storage.readAddressBook();
             if (addressBookOptional.isEmpty()) {
@@ -99,13 +107,16 @@ public class MainApp extends Application {
         } catch (DataLoadingException e) {
             logger.warning("Data file at " + storage.getAddressBookFilePath() + " could not be loaded."
                     + " Will be starting with an empty AddressBook.");
-            startupWarning = Optional.of(
+            warning = Optional.of(
                     String.format(Messages.MESSAGE_DATA_LOAD_FAILED, storage.getAddressBookFilePath()));
             initialData = new AddressBook();
         }
 
-        return new ModelManager(initialData, userPrefs);
+        return new InitialData(initialData, warning);
     }
+
+    /** Student data and optional feedback produced while loading the application. */
+    record InitialData(ReadOnlyAddressBook addressBook, Optional<String> warning) {}
 
     /**
      * Returns a {@code UserPrefs} using the file at {@code storage}'s user prefs file path,

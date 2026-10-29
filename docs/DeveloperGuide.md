@@ -75,7 +75,9 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/AY2
 
 ![Structure of the UI Component](images/UiClassDiagram.png)
 
-The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `PersonListPanel`, and `StatusBarFooter`. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
+The UI consists of a `MainWindow` and its parts: `CommandBox`, `ResultDisplay`, `PersonListPanel` with its `PersonCard`s, `PersonDetailsPanel`, and `StatusBarFooter`, plus a separate `HelpWindow`. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
+
+`MainWindow` also holds the sidebar with the Active Students, Upcoming Lessons, and Archived Students buttons. Each button runs `list`, `upcoming`, or `list archived` through the same method as a typed command, so the feedback and displayed indices are the same, and the highlighted button follows the view shown by the last command. `PersonDetailsPanel` shows the read-only details of the student selected in `PersonListPanel`, which keeps that student selected when the displayed list changes. `PersonCard` and `PersonDetailsPanel` format a student through the shared `StudentDisplayFormatter`, so missing values and overdue lessons look the same in both.
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103T-W10-3/tp/tree/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103T-W10-3/tp/tree/master/src/main/java/seedu/address/ui/MainWindow.java).
 

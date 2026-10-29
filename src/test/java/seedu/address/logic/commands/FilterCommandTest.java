@@ -1,8 +1,11 @@
 package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_PERSONS_LISTED_OVERVIEW;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
 import java.util.List;
 import java.util.Optional;
@@ -114,6 +117,42 @@ public class FilterCommandTest {
 
         assertCommandSuccess(new ListCommand(), model, ListCommand.MESSAGE_SUCCESS, expectedModel);
         assertEquals(List.of(ALICE, BOB, CARLA, DORA), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_fromArchivedView_filtersActiveStudents() {
+        model.setPerson(ALICE, ALICE.withArchived(true));
+        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS, ResultViewScope.ARCHIVED);
+        PersonMatchesFiltersPredicate predicate = predicate("H2 Mathematics", null);
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.updateFilteredPersonList(predicate);
+
+        assertCommandSuccess(new FilterCommand(predicate), model,
+                String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 1), expectedModel);
+        assertEquals(ResultViewScope.ACTIVE, model.getResultViewScope());
+        assertEquals(List.of(BOB), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void equals() {
+        PersonMatchesFiltersPredicate firstPredicate = predicate("H2 Mathematics", null);
+        PersonMatchesFiltersPredicate samePredicate = predicate("h2 mathematics", null);
+        PersonMatchesFiltersPredicate differentPredicate = predicate(null, "JC1");
+        FilterCommand command = new FilterCommand(firstPredicate);
+
+        assertTrue(command.equals(command));
+        assertTrue(command.equals(new FilterCommand(samePredicate)));
+        assertFalse(command.equals(new FilterCommand(differentPredicate)));
+        assertFalse(command.equals(null));
+        assertFalse(command.equals(new ListCommand()));
+    }
+
+    @Test
+    public void toStringMethod() {
+        PersonMatchesFiltersPredicate predicate = predicate("H2 Mathematics", "JC1");
+
+        assertEquals(FilterCommand.class.getCanonicalName() + "{predicate=" + predicate + "}",
+                new FilterCommand(predicate).toString());
     }
 
     private static PersonMatchesFiltersPredicate predicate(String subject, String educationLevel) {
