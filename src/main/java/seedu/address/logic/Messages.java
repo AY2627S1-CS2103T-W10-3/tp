@@ -21,6 +21,8 @@ public class Messages {
     public static final String MESSAGE_DUPLICATE_ARCHIVED_PERSON =
             "An archived student with this name already exists. "
                     + "Use `list archived`, then `unarchive INDEX` to restore them.";
+    public static final String MESSAGE_DISPLAYED_LIST_UPDATED =
+            "The displayed list has been updated, so check the indices before your next command.";
     public static final String NOT_PROVIDED = "Not provided";
     public static final String NOT_SCHEDULED = "Not scheduled";
 

@@ -40,7 +40,7 @@ table below to jump to the task you need.
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
 
-   * `list` : Lists all students.
+   * `list` : Lists all active students.
 
    * `filter s/Mathematics l/JC1` : Shows JC1 Mathematics students.
 
@@ -138,7 +138,7 @@ Only `n/` is required. Every other prefix is optional. Prefixes may appear in an
 | Prefix | Meaning and validation |
 |--------|------------------------|
 | `n/` | Student name. Required; starts with a letter or digit; may contain letters (including accented letters), digits, spaces, hyphens (`-`), apostrophes (`'`), full stops (`.`), and slashes (`/`). `s/o`, `d/o`, `a/l`, and `a/p` in a name stay part of the name, for example `n/Raj s/o Kumar`. |
-| `p/` | Student phone. Optional; digits only, at least 3 digits. |
+| `p/` | Student phone. Optional; digits only, 3 to 15 digits. |
 | `e/` | Student email. Optional; a valid email address. |
 | `a/` | Address. Optional; nonblank text. |
 | `s/` | Tutoring subject. Optional; nonblank text of at most 100 characters, without control characters. |
@@ -191,7 +191,7 @@ Examples:
 
 Rejected `add` commands leave the displayed records and saved data unchanged.
 
-### Listing all students: `list`
+### Listing active students: `list`
 
 Shows all active student records in their saved order. Archived students are excluded. If there are no records,
 TutorContacts shows guidance for adding one. If records exist only in the archive, it suggests `list archived` instead.
@@ -265,7 +265,7 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 
 * Matching is case-insensitive and partial; for example, `han` matches `Hans` and `Johanna`.
 * Keyword order does not matter; each supplied keyword is matched independently.
-* The search considers only names.
+* The search considers only the names of active students; archived students are not searched.
 * Students matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
 * Each matching student appears once in the same order as the complete active list, even if several or repeated
   keywords match that student.
@@ -373,11 +373,11 @@ Format: `schedule INDEX at/YYYY-MM-DD HH:mm`
 * If the student already has a lesson, the new lesson replaces it. The result panel shows the previous lesson time.
 * Dates that do not exist, such as `2099-02-30`, and times outside `00:00`–`23:59` are rejected.
 * Extra spaces around the value and between the date and time are ignored.
-* The student card shows the lesson as `Lesson: 2099-10-30 16:00`, or `Lesson: Not scheduled` when the student has no
-  lesson.
-* Once the lesson time is reached, the card marks the lesson in red as `Lesson: 2099-10-30 16:00 (overdue)`. The
-  lesson is kept, so you can reschedule it with `schedule` or clear it with `unschedule`. The marker is updated each
-  time you enter a command.
+* The student card and the details panel show the lesson under **Next lesson**, for example `2099-10-30 16:00`, or
+  `Not scheduled` when the student has no lesson.
+* Once the lesson time is reached, the lesson is shown in bold red as `2099-10-30 16:00 (overdue)`. The lesson is
+  kept, so you can reschedule it with `schedule` or clear it with `unschedule`. The marker is updated each time you
+  enter a command.
 * Archiving a student keeps their lesson. The lesson is shown again when the student is restored with `unarchive`.
 
 Examples:
@@ -425,13 +425,17 @@ Format: `upcoming`
   index in the upcoming list.
 * `upcoming` takes no parameters. Extra text, such as `upcoming 3`, is rejected.
 * The list shows the lessons that were upcoming when you ran `upcoming`. If a lesson's time passes while the list is
-  showing, that student stays in the list and is marked overdue. Run `upcoming` again to update the list.
+  showing, that student stays in the list and is marked overdue. Run `upcoming` again, or click **Upcoming Lessons**
+  in the sidebar, to update the list.
+* The list does update after your own commands. Rescheduling a student moves them to their new place in the order,
+  and `unschedule` removes them from the list. When this moves other students or removes one, the result panel says
+  that the displayed list has been updated, so check the indices before your next command.
 * If no lessons are upcoming, the result panel suggests `schedule` instead.
 
 Examples:
 * With the sample data, `schedule 1 at/2099-11-02 09:30`, then `schedule 2 at/2099-10-30 16:00`, then `upcoming`
   lists `Bernice Yu` first and `Alex Yeoh` second, because Bernice's lesson is sooner.
-* `upcoming` followed by `unschedule 1` clears the soonest upcoming lesson.
+* `upcoming` followed by `unschedule 1` clears the soonest upcoming lesson and removes that student from the list.
 * Invalid, because `upcoming` takes no parameters: `upcoming 3`
 
 ### Clearing all entries: `clear`
@@ -461,8 +465,9 @@ Example: `exit`
 
 ### Saving the data
 
-TutorContacts automatically saves data changes. You do not need to save manually. The `help` command can be used even
-when the data file cannot be read or written, and does not change that file.
+TutorContacts automatically saves data changes. You do not need to save manually. Commands that do not change any
+student, such as `list`, `find`, `upcoming`, `help`, and `exit`, do not write the data file. `help` can be used even
+when the data file cannot be read or written.
 
 ### Editing the data file
 
@@ -473,7 +478,7 @@ For compatibility, TutorContacts continues using `data/addressbook.json` when th
 legacy file unchanged.
 
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
-If your changes make the data file invalid, TutorContacts starts with an empty student list at the next run. The invalid file remains on disk when you use `help`; a data-changing command can replace it. We recommend backing up the file before editing it.<br>
+If your changes make the data file invalid, TutorContacts starts with an empty student list at the next run. The invalid file remains on disk until you use a command that changes data, such as `add` or `edit`, which replaces it. We recommend backing up the file before editing it.<br>
 Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a value does not satisfy its validation rules. Edit the data file only if you are confident that you can update it correctly.
 </div>
 

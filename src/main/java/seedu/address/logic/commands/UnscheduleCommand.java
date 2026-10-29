@@ -61,6 +61,7 @@ public class UnscheduleCommand extends Command {
             throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
         }
 
+        List<Person> shownBefore = List.copyOf(lastShownList);
         Person student = lastShownList.get(targetIndex.getZeroBased());
         String studentName = student.getName().fullName;
         Optional<Lesson> previousLesson = student.getLesson();
@@ -72,7 +73,9 @@ public class UnscheduleCommand extends Command {
         model.setPerson(student, unscheduledStudent);
         assert unscheduledStudent.getLesson().isEmpty();
         logger.fine("Cleared lesson " + previousLesson.get() + " for " + student.getName());
-        return new CommandResult(String.format(MESSAGE_UNSCHEDULE_SUCCESS, studentName, previousLesson.get()));
+        String feedback = String.format(MESSAGE_UNSCHEDULE_SUCCESS, studentName, previousLesson.get());
+        return new CommandResult(withListUpdateNotice(feedback, shownBefore, targetIndex.getZeroBased(),
+                unscheduledStudent, model.getFilteredPersonList()));
     }
 
     @Override
