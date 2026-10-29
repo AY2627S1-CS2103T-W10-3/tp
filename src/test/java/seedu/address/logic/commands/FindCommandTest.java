@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_PERSONS_LISTED_OVERVIEW;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 import static seedu.address.testutil.TypicalPersons.BENSON;
 import static seedu.address.testutil.TypicalPersons.CARL;
 import static seedu.address.testutil.TypicalPersons.DANIEL;
@@ -113,6 +114,20 @@ public class FindCommandTest {
         assertCommandSuccess(new FindCommand(predicate), model,
                 FindCommand.MESSAGE_NO_MATCHES, expectedModel);
         assertEquals(List.of(), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_fromArchivedView_searchesActiveStudents() {
+        model.setPerson(CARL, CARL.withArchived(true));
+        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS, ResultViewScope.ARCHIVED);
+        NameContainsKeywordsPredicate predicate = preparePredicate("Benson");
+        expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.updateFilteredPersonList(predicate);
+
+        assertCommandSuccess(new FindCommand(predicate), model,
+                String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 1), expectedModel);
+        assertEquals(ResultViewScope.ACTIVE, model.getResultViewScope());
+        assertEquals(List.of(BENSON), model.getFilteredPersonList());
     }
 
     @Test
