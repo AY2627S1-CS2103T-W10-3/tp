@@ -42,7 +42,7 @@ public class UnarchiveCommandTest {
         expectedModel.setPerson(target, target.withArchived(false));
 
         String expectedMessage = String.format(UnarchiveCommand.MESSAGE_UNARCHIVE_PERSON_SUCCESS,
-                Messages.format(target));
+                target.getName().fullName);
 
         assertCommandSuccess(new UnarchiveCommand(INDEX_FIRST_PERSON), model, expectedMessage, expectedModel);
         Person restored = model.getAddressBook().getPersonList().stream()
@@ -60,7 +60,7 @@ public class UnarchiveCommandTest {
         expectedModel.setPerson(target, target.withArchived(false));
 
         assertCommandSuccess(new UnarchiveCommand(INDEX_SECOND_PERSON), model,
-                String.format(UnarchiveCommand.MESSAGE_UNARCHIVE_PERSON_SUCCESS, Messages.format(target)),
+                String.format(UnarchiveCommand.MESSAGE_UNARCHIVE_PERSON_SUCCESS, target.getName().fullName),
                 expectedModel);
         assertEquals(target.withArchived(false), findStoredPerson(target));
         assertTrue(findStoredPerson(ALICE).isArchived());

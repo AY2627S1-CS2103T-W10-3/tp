@@ -44,7 +44,7 @@ public class ArchiveCommand extends Command {
 
         Person student = displayedStudents.get(targetIndex.getZeroBased());
         model.setPerson(student, student.withArchived(true));
-        return new CommandResult(String.format(MESSAGE_ARCHIVE_PERSON_SUCCESS, Messages.format(student)));
+        return new CommandResult(String.format(MESSAGE_ARCHIVE_PERSON_SUCCESS, student.getName().fullName));
     }
 
     @Override

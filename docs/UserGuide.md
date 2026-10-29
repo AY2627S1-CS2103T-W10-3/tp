@@ -110,7 +110,7 @@ Fields that were never recorded are shown as `Not provided`, and a student witho
 
 ### Viewing help: `help`
 
-Opens the offline Help window and lists the command formats in the result panel.
+Opens the offline Help window, and the result panel confirms that it opened.
 
 Format: `help`
 
@@ -351,7 +351,7 @@ Complete lifecycle example:
 
 ### Deleting a student: `delete`
 
-Permanently deletes the specified student from TutorContacts. The result panel confirms the deleted student's details.
+Permanently deletes the specified student from TutorContacts. The result panel names the deleted student.
 
 <div markdown="span" class="alert alert-danger">:warning: **Permanent:**
 A deleted student cannot be recovered. To hide a former student while keeping their record, use

@@ -118,7 +118,7 @@ public class EditCommand extends Command {
         // The current result view is kept, so the edited student leaves it if they no longer match its query.
         List<Person> shownBefore = List.copyOf(lastShownList);
         model.setPerson(personToEdit, editedPerson);
-        String feedback = String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        String feedback = String.format(MESSAGE_EDIT_PERSON_SUCCESS, editedPerson.getName().fullName);
         return new CommandResult(withListUpdateNotice(feedback, shownBefore, index.getZeroBased(), editedPerson,
                 model.getFilteredPersonList()));
     }

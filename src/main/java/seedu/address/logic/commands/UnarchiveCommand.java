@@ -44,7 +44,7 @@ public class UnarchiveCommand extends Command {
 
         Person student = displayedStudents.get(targetIndex.getZeroBased());
         model.setPerson(student, student.withArchived(false));
-        return new CommandResult(String.format(MESSAGE_UNARCHIVE_PERSON_SUCCESS, Messages.format(student)));
+        return new CommandResult(String.format(MESSAGE_UNARCHIVE_PERSON_SUCCESS, student.getName().fullName));
     }
 
     @Override

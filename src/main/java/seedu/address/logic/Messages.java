@@ -5,7 +5,6 @@ import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import seedu.address.logic.parser.Prefix;
-import seedu.address.model.person.Person;
 
 /**
  * Container for user visible messages.
@@ -39,41 +38,6 @@ public class Messages {
         Stream.of(duplicatePrefixes).map(Prefix::toString).forEach(duplicateFields::add);
 
         return MESSAGE_DUPLICATE_FIELDS + String.join(" ", duplicateFields);
-    }
-
-    /**
-     * Formats the {@code person} for display to the user.
-     */
-    public static String format(Person person) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(person.getName())
-                .append("; Phone: ")
-                .append(person.getPhone().map(phone -> phone.value).orElse(NOT_PROVIDED))
-                .append("; Email: ")
-                .append(person.getEmail().map(email -> email.value).orElse(NOT_PROVIDED))
-                .append("; Address: ")
-                .append(person.getAddress().map(address -> address.value).orElse(NOT_PROVIDED))
-                .append("; Subject: ")
-                .append(person.getSubject().map(subject -> subject.getValue()).orElse(NOT_PROVIDED))
-                .append("; Education level: ")
-                .append(person.getEducationLevel().map(level -> level.getValue()).orElse(NOT_PROVIDED))
-                .append("; Learning focus: ")
-                .append(person.getLearningFocus().map(focus -> focus.getValue()).orElse(NOT_PROVIDED))
-                .append("; Next action: ")
-                .append(person.getNextAction().map(action -> action.getValue()).orElse(NOT_PROVIDED))
-                .append("; Lesson: ")
-                .append(person.getLesson().map(lesson -> lesson.getValue()).orElse(NOT_SCHEDULED))
-                .append("; Guardian: ")
-                .append(person.getGuardian().map(guardian -> guardian.getName().fullName).orElse(NOT_PROVIDED))
-                .append("; Guardian phone: ")
-                .append(person.getGuardian().flatMap(guardian -> guardian.getPhone())
-                        .map(phone -> phone.value).orElse(NOT_PROVIDED))
-                .append("; Guardian email: ")
-                .append(person.getGuardian().flatMap(guardian -> guardian.getEmail())
-                        .map(email -> email.value).orElse(NOT_PROVIDED))
-                .append("; Tags: ");
-        person.getTags().forEach(builder::append);
-        return builder.toString();
     }
 
 }
