@@ -174,7 +174,8 @@ complete saved data. `upcoming` orders its results by lesson time; the other vie
 
 `edit`, `archive`, `schedule`, and `unschedule` are active-only commands. If the archived view is showing, run `list`
 before using one of them. `unarchive` works only in the archived view. `delete` works in either view and permanently
-removes the displayed record. A new `list`, `find`, `filter`, or `upcoming` command replaces the previous result view.
+removes the displayed record. A new `list`, `find`, `filter`, or `upcoming` command replaces the previous result view;
+`edit` keeps it.
 Run `list` whenever you want to restore the complete active-student view in saved order.
 
 ### Editing a student: `edit`
@@ -196,8 +197,13 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUC
   normalized student name are rejected without changing displayed or saved data.
 * Enclose a free-text value in double quotes if it contains separate prefix-like text, for example
   `a/"Block n/7"` or `s/"English l/Literature"`.
-* After a successful edit the full student list is shown again, so a `find` or `filter` view is cleared. For example,
-  `find Bernice` followed by `edit 1 p/91234567` ends with every student displayed rather than only the search results.
+* After a successful edit, the current result view stays on screen, so you can make several updates within the same
+  `find`, `filter`, or `upcoming` results. For example, `filter s/Mathematics` followed by `edit 1 lf/Differentiation`
+  still shows only Mathematics students.
+* If the edited student no longer matches the current view, for example after `filter s/Mathematics` followed by
+  `edit 1 s/English`, the student leaves the view. If this, or a changed name in the upcoming list, moves other
+  students, the result panel says that the displayed list has been updated, so check the indices before the next
+  command. Run `list` to see every active student again.
 * `edit` works only on the active student list. If `list archived` is showing, run `list` first to return to an active
   view.
 

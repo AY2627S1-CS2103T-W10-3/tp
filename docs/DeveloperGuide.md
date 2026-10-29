@@ -195,8 +195,16 @@ the email while preserving all omitted fields.
 shown in the current result view. `createEditedPerson` combines supplied values and clear requests with the selected
 student's existing values, then constructs one complete replacement `Person`. Normal model validation and
 `Person#isSamePerson` duplicate detection are therefore applied to the final record rather than to isolated fields.
-After replacing the record, `EditCommand` calls `Model#updateFilteredPersonList` with `PREDICATE_SHOW_ALL_PERSONS`, so
-the view returns to the full student list and any active `find` or `filter` result is cleared.
+After replacing the record, `EditCommand` keeps the current result view, so a tutor can make several updates within
+the same `find`, `filter`, or `upcoming` results. The `FilteredList` tests the edited student against the current
+predicate, so a student who no longer matches leaves the view, and the `SortedList` re-sorts the upcoming view after a
+name change. `EditCommand` uses `Command#withListUpdateNotice`, described under
+[Upcoming lessons and overdue markers](#upcoming-lessons-and-overdue-markers), to tell the user when other students
+may now have different indices.
+
+An alternative is to return to the complete active list after every edit, which keeps indices predictable but forces
+the tutor to repeat the query before the next update. Keeping the view was chosen because editing several students in
+one filtered group is a common tutoring workflow, and the list-update notice covers the cases where indices change.
 
 Guardian fields require additional dependency handling. Clearing the guardian name clears the entire `Guardian`,
 including its phone and email. Supplying a guardian phone or email is rejected when no guardian name remains. Clearing
@@ -353,8 +361,9 @@ The sequence diagram below shows how `upcoming` is executed.
 
 <img src="images/UpcomingSequenceDiagram.png" width="800" />
 
-Index-based commands such as `schedule`, `unschedule`, `archive`, and `delete` read `Model#getFilteredPersonList`, which
-returns the sorted list, so an index always refers to the student shown at that position.
+Index-based commands such as `edit`, `schedule`, `unschedule`, `archive`, and `delete` read
+`Model#getFilteredPersonList`, which returns the sorted list, so an index always refers to the student shown at that
+position.
 
 `schedule` and `unschedule` replace the student through `Model#setPerson`. The `FilteredList` tests the new student
 against the predicate that `upcoming` created, which keeps the time at which `upcoming` ran, and the `SortedList`
@@ -961,6 +970,11 @@ testers are expected to do more *exploratory* testing.
 
    1. Test case: Run `find` for a student, then run `edit 1 na/Review corrections`.<br>
       Expected: The first student in the search results is updated, rather than the first student in the full list.
+      The search results remain displayed.
+
+   1. Test case: Run `filter s/Mathematics` with at least two Mathematics students, then run `edit 1 s/English`.<br>
+      Expected: The first student's subject is updated and the student leaves the filtered view. The result panel says
+      that the displayed list has been updated.
 
 1. Clearing optional fields
 
