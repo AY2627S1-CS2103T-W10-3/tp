@@ -19,7 +19,7 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 
 1. Copy the file to the folder you want to use as the _home folder_ for TutorContacts.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar addressbook.jar`.<br>
+1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar TutorContacts.jar`.<br>
    A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data.<br>
    ![Ui](images/Ui.png)
 
