@@ -88,12 +88,11 @@ public class EditCommandTest {
     }
 
     @Test
-    public void execute_noFieldSpecifiedUnfilteredList_success() {
+    public void execute_noFieldSpecifiedUnfilteredList_noChanges() {
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, new EditPersonDescriptor());
         Person editedPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
 
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS,
-                editedPerson.getName().fullName);
+        String expectedMessage = String.format(EditCommand.MESSAGE_NO_CHANGES, editedPerson.getName());
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
 
@@ -217,16 +216,16 @@ public class EditCommandTest {
     }
 
     @Test
-    public void execute_editExistingGuardianPhone_preservesOtherGuardianFields() {
+    public void execute_editGuardianPhone_preservesOtherGuardianFields() {
         Person person = new PersonBuilder().withName("Guardian Student")
                 .withGuardian("Existing Guardian", "81111111", "existing@example.com").build();
         AddressBook addressBook = new AddressBook();
         addressBook.addPerson(person);
         Model guardianModel = new ModelManager(addressBook, new UserPrefs());
         Person editedPerson = new PersonBuilder(person)
-                .withGuardian("Existing Guardian", VALID_GUARDIAN_PHONE_AMY, "existing@example.com").build();
+                .withGuardian("Existing Guardian", "82222222", "existing@example.com").build();
         EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
-                .withGuardianPhone(VALID_GUARDIAN_PHONE_AMY).build();
+                .withGuardianPhone("82222222").build();
         Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
         expectedModel.setPerson(person, editedPerson);
         String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS,
@@ -304,7 +303,18 @@ public class EditCommandTest {
     }
 
     @Test
-    public void execute_clearAlreadyAbsentField_success() {
+    public void execute_sameValue_noChanges() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        EditCommand command = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withPhone(original.getPhone().orElseThrow().value).build());
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+
+        assertCommandSuccess(command, model,
+                String.format(EditCommand.MESSAGE_NO_CHANGES, original.getName()), expectedModel);
+    }
+
+    @Test
+    public void execute_clearAlreadyAbsentField_noChanges() {
         Person original = new PersonBuilder().withName("Name Only").withoutPhone().build();
         AddressBook addressBook = new AddressBook();
         addressBook.addPerson(original);
@@ -313,7 +323,7 @@ public class EditCommandTest {
 
         assertCommandSuccess(new EditCommand(INDEX_FIRST_PERSON,
                         new EditPersonDescriptorBuilder().withoutPhone().build()), actualModel,
-                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, original.getName().fullName), expectedModel);
+                String.format(EditCommand.MESSAGE_NO_CHANGES, original.getName()), expectedModel);
     }
 
     @Test

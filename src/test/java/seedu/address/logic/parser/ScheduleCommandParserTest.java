@@ -55,6 +55,7 @@ public class ScheduleCommandParserTest {
         assertParseFailure(parser, " 1 at/30-10-2026 16:00", Lesson.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, " 1 at/2026-02-30 16:00", Lesson.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, " 1 at/2026-10-30 24:00", Lesson.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, " 1 at/+12345-01-01 10:00", Lesson.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, " 1 at/2026-10-30 4pm", Lesson.MESSAGE_CONSTRAINTS);
     }
 
