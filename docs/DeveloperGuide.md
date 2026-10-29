@@ -265,7 +265,9 @@ checks run before index checks so a command that violates both rules reports a d
 TutorContacts represents a student's next lesson as an immutable `Lesson` value object wrapping a `LocalDateTime` with
 minute precision. `Person` stores it as `Optional<Lesson>`, so a student has either one scheduled lesson or none.
 Lesson times are parsed with the strict pattern `uuuu-MM-dd HH:mm`, so dates that do not exist, such as `2099-02-30`,
-are rejected instead of being adjusted to a nearby date.
+are rejected instead of being adjusted to a nearby date. Because that pattern also accepts signed years of any length,
+such as `+12345`, `Lesson#isValidLesson` first checks that the value has exactly the documented shape, with a
+four-digit year.
 
 `schedule INDEX at/YYYY-MM-DD HH:mm` is parsed by `ScheduleCommandParser`, which uses the shared
 `CommandArgumentTokenizer` for the `at/` prefix and `ParserUtil#parseLesson` to validate the format. Whether the lesson
