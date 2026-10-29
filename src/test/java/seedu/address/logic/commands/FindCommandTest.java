@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
+import seedu.address.model.ResultViewScope;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
 
@@ -84,6 +85,17 @@ public class FindCommandTest {
 
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
         assertEquals(List.of(BENSON, DANIEL), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_fromArchivedView_showsActiveMatchesOnly() {
+        model.setPerson(CARL, CARL.withArchived(true));
+        model.updateFilteredPersonList(person -> true, ResultViewScope.ARCHIVED);
+
+        new FindCommand(preparePredicate("arl ell")).execute(model);
+
+        assertEquals(ResultViewScope.ACTIVE, model.getResultViewScope());
+        assertEquals(List.of(ELLE), model.getFilteredPersonList());
     }
 
     @Test
