@@ -118,7 +118,7 @@ public class EditCommandParser implements Parser<EditCommand> {
             if (value.isEmpty()) {
                 editPersonDescriptor.clearSubject();
             } else {
-                editPersonDescriptor.setSubject(ParserUtil.parseSubject(normalizeFreeText(value)));
+                editPersonDescriptor.setSubject(ParserUtil.parseSubject(value));
             }
         }
         if (argMultimap.getValue(PREFIX_EDUCATION_LEVEL).isPresent()) {

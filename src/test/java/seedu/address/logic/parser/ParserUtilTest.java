@@ -166,6 +166,18 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseSubject_controlCharacterInsideValue_throwsParseException() {
+        assertThrows(ParseException.class, Subject.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseSubject("Math\tPhysics"));
+        assertThrows(ParseException.class, Subject.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseSubject("Math\nPhysics"));
+        assertThrows(ParseException.class, Subject.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseSubject("Math\u0007"));
+    }
+
+    @Test
+    public void parseSubject_repeatedSpaces_collapsesSpaces() throws Exception {
+        assertEquals(new Subject(VALID_SUBJECT), ParserUtil.parseSubject("H2   Mathematics"));
+    }
+
+    @Test
     public void parseEducationLevel_invalidValue_throwsParseException() {
         assertThrows(ParseException.class, () -> ParserUtil.parseEducationLevel(INVALID_EDUCATION_LEVEL));
     }
