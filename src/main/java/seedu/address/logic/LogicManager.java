@@ -50,8 +50,9 @@ public class LogicManager implements Logic {
         AddressBook addressBookSnapshot = new AddressBook(model.getAddressBook());
         commandResult = command.execute(model);
 
-        // Help is useful even when the saved data file is corrupt or cannot be written.
-        if (commandResult.isShowHelp()) {
+        // Only commands that change the records are saved, so a data file that could not be loaded is kept
+        // until the user changes data. This also keeps help usable when the file is corrupt or read-only.
+        if (model.getAddressBook().equals(addressBookSnapshot)) {
             return commandResult;
         }
 
