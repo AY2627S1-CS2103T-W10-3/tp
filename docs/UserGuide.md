@@ -65,10 +65,9 @@ TutorContacts is an **offline desktop application for private tutors to manage s
   looks like a prefix, wrap the complete value in double quotes.<br>
   For example, use `a/"Block n/7"`. The quotes are not stored. Longer words such as `Level/` do not need quotes.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `exit`, and `clear`, are ignored.<br>
-  For example, `help 123` is interpreted as `help`.
+* Commands that take no parameters, namely `help`, `exit`, `clear`, and `upcoming`, reject any extra text.<br>
+  For example, `help 123`, `clear 3`, and `upcoming 3` are rejected without changing any data.
   `list` accepts only no argument or the exact argument `archived`; for example, `list 1` is rejected.
-  `upcoming` accepts no arguments; for example, `upcoming 3` is rejected.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </div>
@@ -80,6 +79,8 @@ TutorContacts, so `help` remains available without internet access and when the 
 write to the data file. The help window also has a button to copy the online User Guide link.
 
 Format: `help`
+
+`help` takes no parameters. Extra text, such as `help me`, is rejected.
 
 
 ### Adding a student: `add`
@@ -389,11 +390,15 @@ Clears all student records from TutorContacts.
 
 Format: `clear`
 
+`clear` takes no parameters. Extra text, such as `clear 3`, is rejected and no records are changed.
+
 ### Exiting the program: `exit`
 
 Exits the program.
 
 Format: `exit`
+
+`exit` takes no parameters. Extra text, such as `exit now`, is rejected.
 
 Example: `exit`
 

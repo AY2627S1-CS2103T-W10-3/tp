@@ -9,7 +9,8 @@ public class HelpCommand extends Command {
 
     public static final String COMMAND_WORD = "help";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Shows program usage instructions.\n"
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Shows program usage instructions. "
+            + "Takes no parameters.\n"
             + "Example: " + COMMAND_WORD;
 
     /** Command formats and essential validation rules are bundled with the application for offline use. */

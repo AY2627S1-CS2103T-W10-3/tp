@@ -11,6 +11,8 @@ import seedu.address.model.Model;
 public class ClearCommand extends Command {
 
     public static final String COMMAND_WORD = "clear";
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Deletes all student records. Takes no parameters.\n"
+            + "Example: " + COMMAND_WORD;
     public static final String MESSAGE_SUCCESS = "TutorContacts has been cleared!";
 
 

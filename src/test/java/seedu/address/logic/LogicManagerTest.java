@@ -3,6 +3,7 @@ package seedu.address.logic;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
@@ -35,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.AddCommand;
+import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.ListCommand;
@@ -148,6 +150,22 @@ public class LogicManagerTest {
         assertThrows(ParseException.class, guardianError, () -> logic.execute(missingGuardianName));
 
         assertEquals(displayedBefore, List.copyOf(logic.getFilteredPersonList()));
+        assertArrayEquals(savedBefore, Files.readAllBytes(dataFile));
+    }
+
+    @Test
+    public void execute_clearWithExtraText_preservesDisplayedAndSavedRecords() throws Exception {
+        logic.execute("add n/Alice Tan");
+        logic.execute("archive 1");
+        logic.execute("add n/Bob Lee");
+        Path dataFile = temporaryFolder.resolve("addressBook.json");
+        byte[] savedBefore = Files.readAllBytes(dataFile);
+        List<Person> displayedBefore = List.copyOf(logic.getFilteredPersonList());
+
+        assertParseException("clear 3", String.format(MESSAGE_INVALID_COMMAND_FORMAT, ClearCommand.MESSAGE_USAGE));
+
+        assertEquals(displayedBefore, List.copyOf(logic.getFilteredPersonList()));
+        assertEquals(2, model.getAddressBook().getPersonList().size());
         assertArrayEquals(savedBefore, Files.readAllBytes(dataFile));
     }
 
