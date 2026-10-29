@@ -3,7 +3,6 @@ package seedu.address.ui;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.address.ui.MainWindow.NavigationSelection.ACTIVE;
 import static seedu.address.ui.MainWindow.NavigationSelection.ARCHIVED;
-import static seedu.address.ui.MainWindow.NavigationSelection.NONE;
 import static seedu.address.ui.MainWindow.NavigationSelection.UNCHANGED;
 import static seedu.address.ui.MainWindow.NavigationSelection.UPCOMING;
 
@@ -20,9 +19,11 @@ public class MainWindowTest {
     }
 
     @Test
-    public void navigationSelectionFor_queryCommands_clearsSelection() {
-        assertEquals(NONE, MainWindow.navigationSelectionFor("find Alex"));
-        assertEquals(NONE, MainWindow.navigationSelectionFor("filter s/Mathematics"));
+    public void navigationSelectionFor_queryCommands_selectsActiveStudents() {
+        assertEquals(ACTIVE, MainWindow.navigationSelectionFor("find Alex"));
+        assertEquals(ACTIVE, MainWindow.navigationSelectionFor("  find   Alex Bernice "));
+        assertEquals(ACTIVE, MainWindow.navigationSelectionFor("filter s/Mathematics"));
+        assertEquals(ACTIVE, MainWindow.navigationSelectionFor("filter l/JC1 s/English"));
     }
 
     @Test
