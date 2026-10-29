@@ -206,9 +206,8 @@ public class MainWindow extends UiPart<Stage> {
         if (normalizedCommand.equals("upcoming")) {
             return NavigationSelection.UPCOMING;
         }
-        // find, filter, and edit all show active students, so Active Students stays selected.
-        if (hasCommandWord(normalizedCommand, "find") || hasCommandWord(normalizedCommand, "filter")
-                || hasCommandWord(normalizedCommand, "edit")) {
+        // find and filter show active students only, so Active Students stays selected.
+        if (hasCommandWord(normalizedCommand, "find") || hasCommandWord(normalizedCommand, "filter")) {
             return NavigationSelection.ACTIVE;
         }
         return NavigationSelection.UNCHANGED;
