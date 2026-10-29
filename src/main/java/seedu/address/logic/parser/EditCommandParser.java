@@ -31,6 +31,9 @@ import seedu.address.model.tag.Tag;
  */
 public class EditCommandParser implements Parser<EditCommand> {
 
+    public static final String MESSAGE_CONFLICTING_TAG_EDIT =
+            "An empty t/ clears all tags and cannot be combined with other t/ values.";
+
     /**
      * Parses the given {@code String} of arguments in the context of the EditCommand
      * and returns an EditCommand object for execution.
@@ -166,7 +169,10 @@ public class EditCommandParser implements Parser<EditCommand> {
         if (tags.isEmpty()) {
             return Optional.empty();
         }
-        Collection<String> tagSet = tags.size() == 1 && tags.contains("") ? Collections.emptySet() : tags;
+        if (tags.contains("") && tags.size() > 1) {
+            throw new ParseException(MESSAGE_CONFLICTING_TAG_EDIT);
+        }
+        Collection<String> tagSet = tags.contains("") ? Collections.emptySet() : tags;
         return Optional.of(ParserUtil.parseTags(tagSet));
     }
 
