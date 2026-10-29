@@ -28,6 +28,9 @@ public class MainWindowFxmlTest {
         assertTrue(fxml.contains("onAction=\"#handleUpcomingLessons\""));
         assertTrue(fxml.contains("onAction=\"#handleArchivedStudents\""));
         assertTrue(fxml.contains("fx:id=\"personDetailsPanelPlaceholder\""));
+        assertTrue(fxml.contains("minWidth=\"820\" minHeight=\"450\""));
+        assertTrue(fxml.contains("styleClass=\"sidebar\" minWidth=\"190\" prefWidth=\"230\""));
+        assertTrue(fxml.contains("fx:id=\"personDetailsPanelPlaceholder\" minWidth=\"260\""));
         assertTrue(countOccurrences(fxml, "styleClass=\"view-icon\"") == 3);
         assertFalse(fxml.contains("text=\"VIEWS\""));
         assertFalse(fxml.contains("DarkTheme.css"));
