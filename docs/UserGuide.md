@@ -81,6 +81,8 @@ write to the data file. The help window also has a button to copy the online Use
 
 Format: `help`
 
+`help` takes no parameters. Extra text, such as `help me`, is rejected.
+
 
 ### Adding a student: `add`
 
@@ -389,11 +391,15 @@ Clears all student records from TutorContacts.
 
 Format: `clear`
 
+`clear` takes no parameters. Extra text, such as `clear 3`, is rejected and no records are changed.
+
 ### Exiting the program: `exit`
 
 Exits the program.
 
 Format: `exit`
+
+`exit` takes no parameters. Extra text, such as `exit now`, is rejected.
 
 Example: `exit`
 
