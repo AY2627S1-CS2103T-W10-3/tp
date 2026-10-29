@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.testutil.Assert;
 import seedu.address.testutil.PersonBuilder;
 
 public class NameContainsKeywordsPredicateTest {
@@ -35,6 +37,28 @@ public class NameContainsKeywordsPredicateTest {
 
         // different person -> returns false
         assertFalse(firstPredicate.equals(secondPredicate));
+    }
+
+    @Test
+    public void hashCode_equalPredicates_sameHashCode() {
+        assertEquals(new NameContainsKeywordsPredicate(List.of("Alice", "Bob")).hashCode(),
+                new NameContainsKeywordsPredicate(new ArrayList<>(List.of("Alice", "Bob"))).hashCode());
+    }
+
+    @Test
+    public void constructor_keywordsChangedLater_searchUnchanged() {
+        List<String> keywords = new ArrayList<>(List.of("Alice"));
+        NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(keywords);
+
+        keywords.set(0, "Bob");
+
+        assertTrue(predicate.test(new PersonBuilder().withName("Alice Pauline").build()));
+        assertFalse(predicate.test(new PersonBuilder().withName("Bob Choo").build()));
+    }
+
+    @Test
+    public void constructor_nullKeywords_throwsNullPointerException() {
+        Assert.assertThrows(NullPointerException.class, () -> new NameContainsKeywordsPredicate(null));
     }
 
     @Test

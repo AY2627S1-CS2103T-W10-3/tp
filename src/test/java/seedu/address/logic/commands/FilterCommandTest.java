@@ -148,6 +148,12 @@ public class FilterCommandTest {
     }
 
     @Test
+    public void hashCode_equalCommands_sameHashCode() {
+        assertEquals(new FilterCommand(predicate("H2 Mathematics", "JC1")).hashCode(),
+                new FilterCommand(predicate("h2 mathematics", "jc1")).hashCode());
+    }
+
+    @Test
     public void toStringMethod() {
         PersonMatchesFiltersPredicate predicate = predicate("H2 Mathematics", "JC1");
 

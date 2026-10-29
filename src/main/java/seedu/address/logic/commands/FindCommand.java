@@ -2,6 +2,8 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Objects;
+
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
@@ -36,7 +38,7 @@ public class FindCommand extends Command {
      * Such keywords are still matched, because names may contain markers such as {@code s/o}.
      */
     public FindCommand(NameContainsKeywordsPredicate predicate, boolean hasPrefixLikeKeyword) {
-        this.predicate = predicate;
+        this.predicate = requireNonNull(predicate);
         this.hasPrefixLikeKeyword = hasPrefixLikeKeyword;
     }
 
@@ -64,6 +66,11 @@ public class FindCommand extends Command {
 
         return predicate.equals(otherFindCommand.predicate)
                 && hasPrefixLikeKeyword == otherFindCommand.hasPrefixLikeKeyword;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(predicate, hasPrefixLikeKeyword);
     }
 
     @Override

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_PERSONS_LISTED_OVERVIEW;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
+import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.BENSON;
 import static seedu.address.testutil.TypicalPersons.CARL;
 import static seedu.address.testutil.TypicalPersons.DANIEL;
@@ -151,6 +152,17 @@ public class FindCommandTest {
         assertCommandSuccess(new FindCommand(predicate, true), model,
                 String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 1), expectedModel);
         assertEquals(List.of(raj), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void hashCode_equalCommands_sameHashCode() {
+        assertEquals(new FindCommand(preparePredicate("Alice Bob"), true).hashCode(),
+                new FindCommand(preparePredicate("Alice Bob"), true).hashCode());
+    }
+
+    @Test
+    public void constructor_nullPredicate_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> new FindCommand(null));
     }
 
     @Test
