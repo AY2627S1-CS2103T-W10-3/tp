@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <fx:root type="javafx.stage.Stage" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-         title="TutorContacts" minWidth="1050" minHeight="600" onCloseRequest="#handleExit">
+         title="TutorContacts" minWidth="820" minHeight="450" onCloseRequest="#handleExit">
   <icons>
     <Image url="@/images/tutor_contacts.png" />
   </icons>
@@ -38,7 +38,7 @@
         </MenuBar>
 
         <HBox styleClass="workspace" VBox.vgrow="ALWAYS">
-          <VBox styleClass="sidebar" minWidth="230" prefWidth="230" maxWidth="230">
+          <VBox styleClass="sidebar" minWidth="190" prefWidth="230" maxWidth="230">
             <HBox alignment="CENTER_LEFT" spacing="10">
               <ImageView fitHeight="36" fitWidth="36" preserveRatio="true">
                 <image><Image url="@/images/tutor_contacts.png" /></image>
@@ -79,7 +79,7 @@
             </VBox>
           </VBox>
 
-          <StackPane fx:id="personDetailsPanelPlaceholder" minWidth="340" prefWidth="360"
+          <StackPane fx:id="personDetailsPanelPlaceholder" minWidth="260" prefWidth="360"
                      maxWidth="390" styleClass="details-panel-container" />
         </HBox>
 

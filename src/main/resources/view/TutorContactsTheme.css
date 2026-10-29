@@ -54,7 +54,7 @@
     -fx-background-radius: 12;
     -fx-border-color: #eadfd8;
     -fx-border-radius: 12;
-    -fx-padding: 20 16;
+    -fx-padding: 20 12;
     -fx-spacing: 16;
 }
 
@@ -70,7 +70,7 @@
     -fx-background-color: transparent;
     -fx-background-radius: 8;
     -fx-border-color: transparent;
-    -fx-padding: 10 12;
+    -fx-padding: 10 8;
     -fx-text-fill: #4a4755;
 }
 
