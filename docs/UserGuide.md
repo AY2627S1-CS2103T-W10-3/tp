@@ -96,7 +96,7 @@ Only `n/` is required. Every other prefix is optional. Prefixes may appear in an
 | Prefix | Meaning and validation |
 |--------|------------------------|
 | `n/` | Student name. Required; letters, digits, and spaces; cannot be blank. |
-| `p/` | Student phone. Optional; digits only, at least 3 digits. |
+| `p/` | Student phone. Optional; digits only, 3 to 15 digits. |
 | `e/` | Student email. Optional; a valid email address. |
 | `a/` | Address. Optional; nonblank text. |
 | `s/` | Tutoring subject. Optional; nonblank text of at most 100 characters, without control characters. |
