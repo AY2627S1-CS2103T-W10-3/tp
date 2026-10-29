@@ -1,6 +1,8 @@
 package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
 
@@ -13,6 +15,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.Messages;
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -49,7 +52,7 @@ public class QueryResultViewTest {
     }
 
     @Test
-    public void execute_editAfterFind_targetsDisplayedIndex() throws Exception {
+    public void execute_editAfterFind_targetsDisplayedIndexAndKeepsQuery() throws Exception {
         new FindCommand(new NameContainsKeywordsPredicate(List.of("ali")))
                 .execute(model);
         assertEquals(List.of(ALICE), model.getFilteredPersonList());
@@ -59,7 +62,47 @@ public class QueryResultViewTest {
 
         Person editedAlice = new PersonBuilder(ALICE).withPhone("91234567").build();
         assertEquals(List.of(BOB, editedAlice, CARLA), model.getAddressBook().getPersonList());
-        assertEquals(List.of(BOB, editedAlice, CARLA), model.getFilteredPersonList());
+        assertEquals(List.of(editedAlice), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_editAfterFilterStudentStillMatches_keepsQueryWithoutNotice() throws Exception {
+        new FilterCommand(new PersonMatchesFiltersPredicate(Optional.of(new Subject("Mathematics")),
+                Optional.empty())).execute(model);
+        assertEquals(List.of(ALICE, CARLA), model.getFilteredPersonList());
+
+        CommandResult result = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withLearningFocus("Differentiation").build()).execute(model);
+
+        Person editedAlice = new PersonBuilder(ALICE).withLearningFocus("Differentiation").build();
+        assertEquals(List.of(editedAlice, CARLA), model.getFilteredPersonList());
+        assertFalse(result.getFeedbackToUser().contains(Messages.MESSAGE_DISPLAYED_LIST_UPDATED));
+    }
+
+    @Test
+    public void execute_unchangedEditAfterFilter_keepsQuery() throws Exception {
+        new FilterCommand(new PersonMatchesFiltersPredicate(Optional.of(new Subject("Mathematics")),
+                Optional.empty())).execute(model);
+
+        CommandResult result = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withSubject("Mathematics").build()).execute(model);
+
+        assertEquals(String.format(EditCommand.MESSAGE_NO_CHANGES, ALICE.getName()), result.getFeedbackToUser());
+        assertEquals(List.of(ALICE, CARLA), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_editAfterFilterStudentNoLongerMatches_removesStudentWithNotice() throws Exception {
+        new FilterCommand(new PersonMatchesFiltersPredicate(Optional.of(new Subject("Mathematics")),
+                Optional.empty())).execute(model);
+
+        CommandResult result = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withSubject("English").build()).execute(model);
+
+        Person editedAlice = new PersonBuilder(ALICE).withSubject("English").build();
+        assertEquals(List.of(BOB, editedAlice, CARLA), model.getAddressBook().getPersonList());
+        assertEquals(List.of(CARLA), model.getFilteredPersonList());
+        assertTrue(result.getFeedbackToUser().endsWith(Messages.MESSAGE_DISPLAYED_LIST_UPDATED));
     }
 
     @Test
@@ -132,7 +175,7 @@ public class QueryResultViewTest {
     }
 
     @Test
-    public void execute_editAfterUpcoming_targetsDisplayedIndexAndRestoresFullView() throws Exception {
+    public void execute_editAfterUpcoming_targetsDisplayedIndexAndKeepsUpcomingView() throws Exception {
         Person scheduledBob = BOB.withLesson(Optional.of(LATER_LESSON));
         Person scheduledAlice = ALICE.withLesson(Optional.of(FUTURE_LESSON));
         model.setPerson(BOB, scheduledBob);
@@ -145,7 +188,24 @@ public class QueryResultViewTest {
 
         Person editedAlice = new PersonBuilder(scheduledAlice).withPhone("91234567").build();
         assertEquals(List.of(scheduledBob, editedAlice, CARLA), model.getAddressBook().getPersonList());
-        assertEquals(List.of(scheduledBob, editedAlice, CARLA), model.getFilteredPersonList());
+        assertEquals(List.of(editedAlice, scheduledBob), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_renameAfterUpcoming_reordersSameTimeLessonsWithNotice() throws Exception {
+        Person scheduledBob = BOB.withLesson(Optional.of(FUTURE_LESSON));
+        Person scheduledAlice = ALICE.withLesson(Optional.of(FUTURE_LESSON));
+        model.setPerson(BOB, scheduledBob);
+        model.setPerson(ALICE, scheduledAlice);
+        new UpcomingCommand(CLOCK).execute(model);
+        assertEquals(List.of(scheduledAlice, scheduledBob), model.getFilteredPersonList());
+
+        CommandResult result = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withName("Zara").build()).execute(model);
+
+        Person renamedAlice = new PersonBuilder(scheduledAlice).withName("Zara").build();
+        assertEquals(List.of(scheduledBob, renamedAlice), model.getFilteredPersonList());
+        assertTrue(result.getFeedbackToUser().endsWith(Messages.MESSAGE_DISPLAYED_LIST_UPDATED));
     }
 
     @Test

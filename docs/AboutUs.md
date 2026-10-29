@@ -14,7 +14,8 @@ We are a team based in the [School of Computing, National University of Singapor
 [[github](https://github.com/JiayiZhai)]
 
 * Role: Developer
-* Responsibilities: Implementing assigned features and reviewing pull requests
+* Responsibilities: Learning-context and archive lifecycle features, command validation, documentation, and pull
+  request reviews
 
 ### Wang Yanrong
 

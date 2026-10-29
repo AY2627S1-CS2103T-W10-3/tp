@@ -11,6 +11,8 @@ title: Developer Guide
 
 * TutorContacts is based on the [AddressBook-Level3](https://github.com/se-edu/addressbook-level3) project created by the [SE-EDU initiative](https://se-education.org/).
 * TutorContacts uses [JavaFX](https://openjfx.io/), [Jackson](https://github.com/FasterXML/jackson), and [JUnit 5](https://junit.org/junit5/).
+* TutorContacts diagrams are authored in [PlantUML](https://plantuml.com/). Product screenshots and team profile
+  images are supplied by the project team.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -195,8 +197,16 @@ the email while preserving all omitted fields.
 shown in the current result view. `createEditedPerson` combines supplied values and clear requests with the selected
 student's existing values, then constructs one complete replacement `Person`. Normal model validation and
 `Person#isSamePerson` duplicate detection are therefore applied to the final record rather than to isolated fields.
-After replacing the record, `EditCommand` calls `Model#updateFilteredPersonList` with `PREDICATE_SHOW_ALL_PERSONS`, so
-the view returns to the full student list and any active `find` or `filter` result is cleared.
+After replacing the record, `EditCommand` keeps the current result view, so a tutor can make several updates within
+the same `find`, `filter`, or `upcoming` results. The `FilteredList` tests the edited student against the current
+predicate, so a student who no longer matches leaves the view, and the `SortedList` re-sorts the upcoming view after a
+name change. `EditCommand` uses `Command#withListUpdateNotice`, described under
+[Upcoming lessons and overdue markers](#upcoming-lessons-and-overdue-markers), to tell the user when other students
+may now have different indices.
+
+An alternative is to return to the complete active list after every edit, which keeps indices predictable but forces
+the tutor to repeat the query before the next update. Keeping the view was chosen because editing several students in
+one filtered group is a common tutoring workflow, and the list-update notice covers the cases where indices change.
 
 Guardian fields require additional dependency handling. Clearing the guardian name clears the entire `Guardian`,
 including its phone and email. Supplying a guardian phone or email is rejected when no guardian name remains. Clearing
@@ -248,17 +258,24 @@ keeps valid older data files compatible. `PersonCard` displays `Not provided` fo
 an older JSON record also loads as active. `Person#withArchived` creates a replacement record that changes only this
 state, so contact, guardian, tutoring, learning-context, lesson, and tag data remain unchanged.
 
-`ModelManager` stores a `ResultViewScope` independently from its `FilteredList<Person>`. `list`, `find`, and `filter`
-establish an `ACTIVE` scope and automatically combine their query predicate with `!Person#isArchived`.
+`ModelManager` stores a `ResultViewScope` independently from its `FilteredList<Person>`. `list`, `find`, `filter`, and
+`upcoming` establish an `ACTIVE` scope and automatically combine their query predicate with `!Person#isArchived`.
 `list archived` establishes an `ARCHIVED` scope and uses `Person#isArchived`. The explicit scope is required because
 an empty result list cannot indicate whether the user selected an active or archived view.
+
+`JsonAdaptedPerson` persists the archive state. A missing `archived` property loads as active for compatibility with
+older valid data files, while a stored `true` value keeps the student archived after a restart.
 
 `archive INDEX` resolves the index against the current active result view, replaces the selected record with an
 archived copy, and leaves its saved-list position unchanged. `unarchive INDEX` performs the inverse transition from
 the archived view. `delete INDEX` continues to remove the displayed record permanently from either scope. Wrong-view
 checks run before index checks so a command that violates both rules reports a deterministic error.
 
-![Archive lifecycle diagram](images/ArchiveLifecycleDiagram.png)
+The sequence diagram below shows how `archive 1` is parsed and executed. It gives lower-level detail within the Logic
+component while treating Model as a black box. `unarchive INDEX` follows the same interaction with the inverse archive
+state and requires the archived result view.
+
+<img src="images/ArchiveSequenceDiagram.png" width="800" />
 
 ### Lesson scheduling
 
@@ -319,7 +336,9 @@ its lesson-time comparator. `PersonListPanel` derives each visible one-based ind
 
 Partial-name matching converts both names and keywords using `Locale.ROOT` and applies substring matching. Multiple
 keywords use OR. Because each `Person` is evaluated once by one predicate, repeated or overlapping keywords cannot
-duplicate a result. Subject and education-level filters use exact normalized matching and combine two supplied fields
+duplicate a result. `FindCommandParser` still matches a keyword that starts with a command prefix, such as `n/alex`,
+because names may contain markers such as `s/o`; it only marks the command so that an empty result suggests plain
+keywords and `filter`. Subject and education-level filters use exact normalized matching and combine two supplied fields
 with AND; an absent field cannot satisfy a supplied criterion.
 
 Index-based commands obtain their target from `Model#getFilteredPersonList`, so edit, delete, archive, schedule, and
@@ -353,8 +372,9 @@ The sequence diagram below shows how `upcoming` is executed.
 
 <img src="images/UpcomingSequenceDiagram.png" width="800" />
 
-Index-based commands such as `schedule`, `unschedule`, `archive`, and `delete` read `Model#getFilteredPersonList`, which
-returns the sorted list, so an index always refers to the student shown at that position.
+Index-based commands such as `edit`, `schedule`, `unschedule`, `archive`, and `delete` read
+`Model#getFilteredPersonList`, which returns the sorted list, so an index always refers to the student shown at that
+position.
 
 `schedule` and `unschedule` replace the student through `Model#setPerson`. The `FilteredList` tests the new student
 against the predicate that `upcoming` created, which keeps the time at which `upcoming` ran, and the `SortedList`
@@ -961,6 +981,11 @@ testers are expected to do more *exploratory* testing.
 
    1. Test case: Run `find` for a student, then run `edit 1 na/Review corrections`.<br>
       Expected: The first student in the search results is updated, rather than the first student in the full list.
+      The search results remain displayed.
+
+   1. Test case: Run `filter s/Mathematics` with at least two Mathematics students, then run `edit 1 s/English`.<br>
+      Expected: The first student's subject is updated and the student leaves the filtered view. The result panel says
+      that the displayed list has been updated.
 
 1. Clearing optional fields
 
@@ -1008,6 +1033,9 @@ testers are expected to do more *exploratory* testing.
 
    1. Test case: `schedule 1 at/2099-11-02 09:30`<br>
       Expected: The lesson is replaced. The result panel shows the new time and the previous time.
+
+   1. Test case: `schedule 1 at/2099-11-02 09:30` again<br>
+      Expected: The lesson is unchanged. The result panel says that the student already has a lesson at that time.
 
    1. Test case: `schedule 1 at/2020-01-01 10:00`<br>
       Expected: The lesson is unchanged. The result panel reports that the lesson must be in the future.
@@ -1107,7 +1135,9 @@ testers are expected to do more *exploratory* testing.
 1. Dealing with a corrupted data file
 
    1. Close TutorContacts, back up `data/tutorcontacts.json`, and replace its contents with invalid JSON. Relaunch TutorContacts.<br>
-      Expected: TutorContacts starts with an empty student list rather than loading invalid records.
+      Expected: TutorContacts starts with an empty student list rather than loading invalid records. A warning dialog
+      names `data/tutorcontacts.json` and advises backing it up or repairing it. After it is closed, the same warning
+      remains in the result panel.
 
    1. Enter `help`, `list`, and `exit`, then inspect the corrupted file.<br>
       Expected: Help remains available, and the corrupted file has not been overwritten.
@@ -1128,10 +1158,23 @@ testers are expected to do more *exploratory* testing.
    1. Test case: `edit 1 lf/`<br>
       Expected: The learning focus is cleared and displayed as `Not provided`; all omitted fields remain unchanged.
 
+   1. Test case: `edit 1 lf/ na/`<br>
+      Expected: Both learning-context values are cleared and displayed as `Not provided`.
+
+   1. Test case: `add n/Blank Focus lf/`<br>
+      Expected: The command is rejected because `add` cannot create an explicitly blank learning focus.
+
+   1. Test case: Paste a learning-focus or next-action value longer than 200 characters.<br>
+      Expected: The command is rejected and the displayed and saved records remain unchanged.
+
 1. Archiving and restoring a complete record
 
    1. Test case: Run `list`, `archive 1`, and then `list`.<br>
       Expected: The first displayed student is archived and no longer appears in the active list.
+
+   1. Test case: Search for the archived student's name using `find`, then run any matching `filter` and `upcoming`
+      queries.<br>
+      Expected: The archived student does not appear in any active result view.
 
    1. Test case: Run `list archived`.<br>
       Expected: The archived student appears at a consecutive displayed index with every recorded field unchanged.
@@ -1139,8 +1182,15 @@ testers are expected to do more *exploratory* testing.
    1. Test case: Run `unarchive 1`, then `list`.<br>
       Expected: The student returns to the active list in saved order with every field unchanged.
 
+   1. Test case: Archive a student with a future lesson, restore the student, and run `upcoming`.<br>
+      Expected: The restored student appears in lesson-time order with the same lesson.
+
+   1. Test case: Schedule a lesson a few minutes ahead, archive the student, and wait until the lesson time passes.
+      Then run `list archived`, `unarchive 1`, and `list`.<br>
+      Expected: The lesson is retained and displayed as overdue.
+
    1. Test case: Archive a student, close TutorContacts, reopen the same JAR, and run `list archived`.<br>
       Expected: The archived state and all record fields persist across restart.
 
-   1. Test case: Run `delete 1` while viewing archived students.<br>
+   1. Test case: Archive a student, run `list archived`, then run `delete 1`.<br>
       Expected: The displayed archived student is permanently deleted.

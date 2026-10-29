@@ -18,8 +18,11 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
+import seedu.address.model.ResultViewScope;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.Person;
+import seedu.address.testutil.PersonBuilder;
 
 /**
  * Contains integration tests (interaction with the Model) for {@code FindCommand}.
@@ -53,6 +56,9 @@ public class FindCommandTest {
 
         // different person -> returns false
         assertFalse(findFirstCommand.equals(findSecondCommand));
+
+        // different prefix hint -> returns false
+        assertFalse(findFirstCommand.equals(new FindCommand(firstPredicate, true)));
     }
 
     @Test
@@ -87,6 +93,17 @@ public class FindCommandTest {
     }
 
     @Test
+    public void execute_fromArchivedView_showsActiveMatchesOnly() {
+        model.setPerson(CARL, CARL.withArchived(true));
+        model.updateFilteredPersonList(person -> true, ResultViewScope.ARCHIVED);
+
+        new FindCommand(preparePredicate("arl ell")).execute(model);
+
+        assertEquals(ResultViewScope.ACTIVE, model.getResultViewScope());
+        assertEquals(List.of(ELLE), model.getFilteredPersonList());
+    }
+
+    @Test
     public void execute_matchingArchivedStudent_excludesArchivedStudent() {
         model.setPerson(CARL, CARL.withArchived(true));
         NameContainsKeywordsPredicate predicate = preparePredicate(CARL.getName().fullName);
@@ -99,10 +116,34 @@ public class FindCommandTest {
     }
 
     @Test
+    public void execute_prefixLikeKeywordWithoutMatch_showsHint() {
+        NameContainsKeywordsPredicate predicate = preparePredicate("n/alice");
+        expectedModel.updateFilteredPersonList(predicate);
+
+        assertCommandSuccess(new FindCommand(predicate, true), model,
+                FindCommand.MESSAGE_NO_MATCHES_PREFIX_HINT, expectedModel);
+        assertEquals(List.of(), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_prefixLikeKeywordMatchingName_listsStudent() {
+        Person raj = new PersonBuilder().withName("Raj s/o Kumar").build();
+        model.addPerson(raj);
+        expectedModel.addPerson(raj);
+        NameContainsKeywordsPredicate predicate = preparePredicate("s/o");
+        expectedModel.updateFilteredPersonList(predicate);
+
+        assertCommandSuccess(new FindCommand(predicate, true), model,
+                String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 1), expectedModel);
+        assertEquals(List.of(raj), model.getFilteredPersonList());
+    }
+
+    @Test
     public void toStringMethod() {
         NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(List.of("keyword"));
         FindCommand findCommand = new FindCommand(predicate);
-        String expected = FindCommand.class.getCanonicalName() + "{predicate=" + predicate + "}";
+        String expected = FindCommand.class.getCanonicalName() + "{predicate=" + predicate
+                + ", hasPrefixLikeKeyword=false}";
         assertEquals(expected, findCommand.toString());
     }
 

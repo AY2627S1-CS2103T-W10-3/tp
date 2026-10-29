@@ -28,7 +28,8 @@ public class MainWindowTest {
 
     @Test
     public void navigationSelectionFor_editAndOtherCommands_returnsExpectedSelection() {
-        assertEquals(ACTIVE, MainWindow.navigationSelectionFor("edit 1 p/91234567"));
+        // edit keeps the current result view, including the upcoming view
+        assertEquals(UNCHANGED, MainWindow.navigationSelectionFor("edit 1 p/91234567"));
         assertEquals(UNCHANGED, MainWindow.navigationSelectionFor("schedule 1 at/2099-10-30 16:00"));
         assertEquals(UNCHANGED, MainWindow.navigationSelectionFor("archive 1"));
     }

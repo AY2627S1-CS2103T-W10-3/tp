@@ -76,11 +76,10 @@ opt name changed
 end
 EditCommand -> Model : setPerson(student, editedStudent)
 activate Model
-Model --> EditCommand
-deactivate Model
-
-EditCommand -> Model : updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS)
-activate Model
+note right of Model
+The current result view is kept. A student who
+no longer matches its query leaves the view.
+end note
 Model --> EditCommand
 deactivate Model
 

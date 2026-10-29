@@ -7,7 +7,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ResultViewScope;
 
 /**
- * Lists all students in the address book to the user.
+ * Lists all active students, or all archived students, in saved order.
  */
 public class ListCommand extends Command {
 
