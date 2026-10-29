@@ -105,7 +105,7 @@ How the `Logic` component works:
 1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteCommand`) which is executed by the `LogicManager`.
 1. Before executing the command, `LogicManager` takes a snapshot of the address book. The command can then communicate with the `Model` when it is executed (e.g. to delete a person).<br>
    Note that although this is shown as a single step in the diagram above for simplicity, the code can require several interactions between the command object and the `Model` to complete the operation.
-1. `LogicManager` saves the updated address book after the command succeeds. If saving fails, it restores the in-memory snapshot before reporting the save failure, so the UI returns to the state before the command. The data file may already have been partially written, so the previously saved data is not guaranteed to be preserved.
+1. If the command changed the address book, `LogicManager` saves it after the command succeeds. Commands that leave the address book unchanged, such as `list` or `exit`, do not write the data file, so a data file that could not be loaded stays on disk until the user changes data. If saving fails, it restores the in-memory snapshot before reporting the save failure, so the UI returns to the state before the command. The data file may already have been partially written, so the previously saved data is not guaranteed to be preserved.
 1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
@@ -1086,8 +1086,11 @@ testers are expected to do more *exploratory* testing.
    1. Close TutorContacts, back up `data/tutorcontacts.json`, and replace its contents with invalid JSON. Relaunch TutorContacts.<br>
       Expected: TutorContacts starts with an empty student list rather than loading invalid records.
 
-   1. Enter `help`, close TutorContacts, and inspect the corrupted file.<br>
+   1. Enter `help`, `list`, and `exit`, then inspect the corrupted file.<br>
       Expected: Help remains available, and the corrupted file has not been overwritten.
+
+   1. Relaunch TutorContacts, enter `add n/Alex Tan`, close TutorContacts, and inspect the data file.<br>
+      Expected: The corrupted contents are replaced by valid data containing only Alex Tan.
 
 ### Learning context and archive lifecycle
 

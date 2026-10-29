@@ -414,8 +414,9 @@ Example: `exit`
 
 ### Saving the data
 
-TutorContacts automatically saves data changes. You do not need to save manually. The `help` command can be used even
-when the data file cannot be read or written, and does not change that file.
+TutorContacts automatically saves data changes. You do not need to save manually. Commands that do not change any
+student, such as `list`, `find`, `upcoming`, `help`, and `exit`, do not write the data file. `help` can be used even
+when the data file cannot be read or written.
 
 ### Editing the data file
 
@@ -426,7 +427,7 @@ For compatibility, TutorContacts continues using `data/addressbook.json` when th
 legacy file unchanged.
 
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
-If your changes make the data file invalid, TutorContacts starts with an empty student list at the next run. The invalid file remains on disk when you use `help`; a data-changing command can replace it. We recommend backing up the file before editing it.<br>
+If your changes make the data file invalid, TutorContacts starts with an empty student list at the next run. The invalid file remains on disk until you use a command that changes data, such as `add` or `edit`, which replaces it. We recommend backing up the file before editing it.<br>
 Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a value does not satisfy its validation rules. Edit the data file only if you are confident that you can update it correctly.
 </div>
 
