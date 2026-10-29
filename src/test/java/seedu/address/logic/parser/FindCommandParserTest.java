@@ -35,4 +35,24 @@ public class FindCommandParserTest {
         assertParseSuccess(parser, "Ali Ali", expectedFindCommand);
     }
 
+    @Test
+    public void parse_prefixLikeKeyword_returnsFindCommandWithHint() {
+        assertParseSuccess(parser, "n/alex",
+                new FindCommand(new NameContainsKeywordsPredicate(List.of("n/alex")), true));
+
+        // prefix detection ignores case
+        assertParseSuccess(parser, "S/Mathematics",
+                new FindCommand(new NameContainsKeywordsPredicate(List.of("S/Mathematics")), true));
+
+        // one prefix-like keyword among plain keywords is enough
+        assertParseSuccess(parser, "alex gn/mary",
+                new FindCommand(new NameContainsKeywordsPredicate(List.of("alex", "gn/mary")), true));
+    }
+
+    @Test
+    public void parse_slashInsideKeyword_returnsFindCommandWithoutHint() {
+        assertParseSuccess(parser, "raj/kumar",
+                new FindCommand(new NameContainsKeywordsPredicate(List.of("raj/kumar")), false));
+    }
+
 }
