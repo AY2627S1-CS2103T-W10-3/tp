@@ -43,6 +43,7 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_SUBJECT_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EDUCATION_LEVEL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
@@ -85,11 +86,15 @@ public class AddCommandParserTest {
         // whitespace only preamble
         assertParseSuccess(parser, PREAMBLE_WHITESPACE + NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
                 + ADDRESS_DESC_BOB + TAG_DESC_FRIEND, new AddCommand(expectedPerson));
+    }
 
+    @Test
+    public void parse_multipleTags_success() {
+        Person expectedPerson = new PersonBuilder(BOB)
+                .withTags(VALID_TAG_HUSBAND, VALID_TAG_FRIEND).build();
 
-        // Each prefix has one value, including the optional tag prefix.
-        assertParseFailure(parser, NAME_DESC_BOB + TAG_DESC_HUSBAND + TAG_DESC_FRIEND,
-                Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_TAG));
+        assertParseSuccess(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
+                + ADDRESS_DESC_BOB + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, new AddCommand(expectedPerson));
     }
 
     @Test

@@ -88,10 +88,10 @@
                        wrapText="true" styleClass="page-intro" />
                 <VBox spacing="7" styleClass="help-card, blue-card">
                   <Label text="Add a student" styleClass="section-title" />
-                  <Label text="add n/NAME [optional fields]" styleClass="command-format" />
+                  <Label text="add n/NAME [optional fields] [t/TAG]..." styleClass="command-format" />
                   <Label text="Example: add n/Alex Tan s/H2 Mathematics l/JC1 lf/Quadratic graphs"
                          wrapText="true" styleClass="example-text" />
-                  <Label text="Only the name is required. Guardian phone or email requires a guardian name. Supported education levels are P1–P6, S1–S5, and JC1–JC2."
+                  <Label text="Only the name is required. Repeat t/ to add more than one tag. Guardian phone or email requires a guardian name. Supported education levels are P1–P6, S1–S5, and JC1–JC2."
                          wrapText="true" styleClass="body-text" />
                 </VBox>
                 <VBox spacing="7" styleClass="help-card">
