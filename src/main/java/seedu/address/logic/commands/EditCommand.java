@@ -69,6 +69,7 @@ public class EditCommand extends Command {
             + PREFIX_EMAIL + "johndoe@example.com";
 
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited student: %1$s";
+    public static final String MESSAGE_NO_CHANGES = "No changes made to %1$s.";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
     public static final String MESSAGE_DUPLICATE_PERSON = "This student already exists in TutorContacts.";
     public static final String MESSAGE_REQUIRES_ACTIVE_VIEW =
@@ -105,6 +106,10 @@ public class EditCommand extends Command {
 
         Person personToEdit = lastShownList.get(index.getZeroBased());
         Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
+
+        if (personToEdit.equals(editedPerson)) {
+            return new CommandResult(String.format(MESSAGE_NO_CHANGES, personToEdit.getName()));
+        }
 
         if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
             if (hasArchivedDuplicate(model, editedPerson)) {

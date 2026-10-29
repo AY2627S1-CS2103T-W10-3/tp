@@ -204,6 +204,8 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUC
   `edit 1 s/English`, the student leaves the view. If this, or a changed name in the upcoming list, moves other
   students, the result panel says that the displayed list has been updated, so check the indices before the next
   command. Run `list` to see every active student again.
+* If every supplied value already matches the student's current details, TutorContacts reports that no changes were
+  made.
 * `edit` works only on the active student list. If `list archived` is showing, run `list` first to return to an active
   view.
 

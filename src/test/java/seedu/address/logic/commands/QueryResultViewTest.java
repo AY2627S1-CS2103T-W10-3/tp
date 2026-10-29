@@ -80,6 +80,18 @@ public class QueryResultViewTest {
     }
 
     @Test
+    public void execute_unchangedEditAfterFilter_keepsQuery() throws Exception {
+        new FilterCommand(new PersonMatchesFiltersPredicate(Optional.of(new Subject("Mathematics")),
+                Optional.empty())).execute(model);
+
+        CommandResult result = new EditCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withSubject("Mathematics").build()).execute(model);
+
+        assertEquals(String.format(EditCommand.MESSAGE_NO_CHANGES, ALICE.getName()), result.getFeedbackToUser());
+        assertEquals(List.of(ALICE, CARLA), model.getFilteredPersonList());
+    }
+
+    @Test
     public void execute_editAfterFilterStudentNoLongerMatches_removesStudentWithNotice() throws Exception {
         new FilterCommand(new PersonMatchesFiltersPredicate(Optional.of(new Subject("Mathematics")),
                 Optional.empty())).execute(model);
