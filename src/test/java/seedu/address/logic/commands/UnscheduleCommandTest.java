@@ -48,6 +48,21 @@ public class UnscheduleCommandTest {
     }
 
     @Test
+    public void execute_upcomingView_addsListUpdateNotice() throws Exception {
+        Person student = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person other = model.getFilteredPersonList().get(INDEX_SECOND_PERSON.getZeroBased());
+        model.setPerson(student, student.withLesson(Optional.of(new Lesson("2099-10-30 16:00"))));
+        model.setPerson(other, other.withLesson(Optional.of(new Lesson("2099-11-02 09:30"))));
+        new UpcomingCommand().execute(model);
+
+        CommandResult result = new UnscheduleCommand(INDEX_FIRST_PERSON).execute(model);
+
+        assertEquals(String.format(UnscheduleCommand.MESSAGE_UNSCHEDULE_SUCCESS, student.getName().fullName,
+                "2099-10-30 16:00") + ". " + Messages.MESSAGE_DISPLAYED_LIST_UPDATED, result.getFeedbackToUser());
+        assertEquals(other.getName(), model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()).getName());
+    }
+
+    @Test
     public void execute_studentWithoutLesson_throwsCommandException() {
         Person student = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
 
