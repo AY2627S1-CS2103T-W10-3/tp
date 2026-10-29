@@ -112,9 +112,9 @@ Subject and education level may be supplied independently. Education levels are 
 displayed in uppercase. If either field is omitted, the student card displays `Not provided` for that field.
 
 Learning focus and next action may also be supplied independently. Ordinary spaces and punctuation are accepted.
-Leading and trailing whitespace is removed, and repeated ordinary spaces are stored as one space. Tabs, line breaks,
-other control characters, blank values, and values longer than 200 characters are rejected. An omitted learning field
-is displayed as `Not provided`.
+Leading and trailing whitespace is removed, and repeated ordinary spaces are stored as one space. Control characters
+within a value, including tabs and line breaks, are rejected, as are blank values and values longer than 200
+characters. An omitted learning field is displayed as `Not provided`.
 
 Leading and trailing whitespace around field values is ignored. Repeated whitespace inside names, guardian names,
 subjects, and addresses is stored as one space. Whitespace within phone numbers, email addresses, education levels, and
@@ -257,8 +257,9 @@ Moves a former student out of active workflows while preserving the complete rec
 
 Format: `archive INDEX`
 
-* `INDEX` refers to the student shown in the current active result view, including `list`, `find`, or `filter` results.
-* Archived students do not appear in active `list`, `find`, or `filter` results.
+* `INDEX` refers to the student shown in the current active result view, including `list`, `find`, `filter`, or
+  `upcoming` results.
+* Archived students do not appear in active `list`, `find`, `filter`, or `upcoming` results.
 * The command is rejected from the archived view. Run `list` first to return to an active view.
 * Archiving is reversible and is different from permanent `delete`.
 
@@ -280,6 +281,8 @@ Format: `unarchive INDEX`
 * Run `list archived` first; `INDEX` refers to that displayed archived list.
 * The command is rejected from an active view.
 * The restored student returns to the original saved-order position in active results.
+* A restored future lesson appears in `upcoming`. A restored lesson whose time has passed remains recorded and is
+  displayed as overdue.
 
 Example: `list archived` followed by `unarchive 1` restores the first archived student.
 

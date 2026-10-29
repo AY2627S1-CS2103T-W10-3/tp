@@ -11,6 +11,8 @@ title: Developer Guide
 
 * TutorContacts is based on the [AddressBook-Level3](https://github.com/se-edu/addressbook-level3) project created by the [SE-EDU initiative](https://se-education.org/).
 * TutorContacts uses [JavaFX](https://openjfx.io/), [Jackson](https://github.com/FasterXML/jackson), and [JUnit 5](https://junit.org/junit5/).
+* TutorContacts diagrams are authored in [PlantUML](https://plantuml.com/). Product screenshots and team profile
+  images are supplied by the project team.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -241,10 +243,13 @@ keeps valid older data files compatible. `PersonCard` and command feedback displ
 an older JSON record also loads as active. `Person#withArchived` creates a replacement record that changes only this
 state, so contact, guardian, tutoring, learning-context, lesson, and tag data remain unchanged.
 
-`ModelManager` stores a `ResultViewScope` independently from its `FilteredList<Person>`. `list`, `find`, and `filter`
-establish an `ACTIVE` scope and automatically combine their query predicate with `!Person#isArchived`.
+`ModelManager` stores a `ResultViewScope` independently from its `FilteredList<Person>`. `list`, `find`, `filter`, and
+`upcoming` establish an `ACTIVE` scope and automatically combine their query predicate with `!Person#isArchived`.
 `list archived` establishes an `ARCHIVED` scope and uses `Person#isArchived`. The explicit scope is required because
 an empty result list cannot indicate whether the user selected an active or archived view.
+
+`JsonAdaptedPerson` persists the archive state. A missing `archived` property loads as active for compatibility with
+older valid data files, while a stored `true` value keeps the student archived after a restart.
 
 `archive INDEX` resolves the index against the current active result view, replaces the selected record with an
 archived copy, and leaves its saved-list position unchanged. `unarchive INDEX` performs the inverse transition from
@@ -1099,10 +1104,23 @@ testers are expected to do more *exploratory* testing.
    1. Test case: `edit 1 lf/`<br>
       Expected: The learning focus is cleared and displayed as `Not provided`; all omitted fields remain unchanged.
 
+   1. Test case: `edit 1 lf/ na/`<br>
+      Expected: Both learning-context values are cleared and displayed as `Not provided`.
+
+   1. Test case: `add n/Blank Focus lf/`<br>
+      Expected: The command is rejected because `add` cannot create an explicitly blank learning focus.
+
+   1. Test case: Paste a learning-focus or next-action value longer than 200 characters.<br>
+      Expected: The command is rejected and the displayed and saved records remain unchanged.
+
 1. Archiving and restoring a complete record
 
    1. Test case: Run `list`, `archive 1`, and then `list`.<br>
       Expected: The first displayed student is archived and no longer appears in the active list.
+
+   1. Test case: Search for the archived student's name using `find`, then run any matching `filter` and `upcoming`
+      queries.<br>
+      Expected: The archived student does not appear in any active result view.
 
    1. Test case: Run `list archived`.<br>
       Expected: The archived student appears at a consecutive displayed index with every recorded field unchanged.
@@ -1110,8 +1128,15 @@ testers are expected to do more *exploratory* testing.
    1. Test case: Run `unarchive 1`, then `list`.<br>
       Expected: The student returns to the active list in saved order with every field unchanged.
 
+   1. Test case: Archive a student with a future lesson, restore the student, and run `upcoming`.<br>
+      Expected: The restored student appears in lesson-time order with the same lesson.
+
+   1. Test case: Schedule a lesson a few minutes ahead, archive the student, and wait until the lesson time passes.
+      Then run `list archived`, `unarchive 1`, and `list`.<br>
+      Expected: The lesson is retained and displayed as overdue.
+
    1. Test case: Archive a student, close TutorContacts, reopen the same JAR, and run `list archived`.<br>
       Expected: The archived state and all record fields persist across restart.
 
-   1. Test case: Run `delete 1` while viewing archived students.<br>
+   1. Test case: Archive a student, run `list archived`, then run `delete 1`.<br>
       Expected: The displayed archived student is permanently deleted.
