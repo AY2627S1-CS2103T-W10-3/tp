@@ -14,10 +14,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_SUBJECT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -135,45 +132,48 @@ public class EditCommand extends Command {
         assert personToEdit != null;
 
         Name updatedName = editPersonDescriptor.getName().orElse(personToEdit.getName());
-        Optional<Phone> updatedPhone = editPersonDescriptor.isPhoneEdited()
-                ? editPersonDescriptor.getPhone() : personToEdit.getPhone();
-        Optional<Email> updatedEmail = editPersonDescriptor.isEmailEdited()
-                ? editPersonDescriptor.getEmail() : personToEdit.getEmail();
-        Optional<Address> updatedAddress = editPersonDescriptor.isAddressEdited()
-                ? editPersonDescriptor.getAddress() : personToEdit.getAddress();
-        Optional<Name> updatedGuardianName = editPersonDescriptor.isGuardianNameEdited()
-                ? editPersonDescriptor.getGuardianName() : personToEdit.getGuardian().map(Guardian::getName);
-        Optional<Phone> updatedGuardianPhone = editPersonDescriptor.isGuardianNameEdited()
-                && updatedGuardianName.isEmpty() ? Optional.empty()
-                : editPersonDescriptor.isGuardianPhoneEdited()
-                        ? editPersonDescriptor.getGuardianPhone()
-                        : personToEdit.getGuardian().flatMap(Guardian::getPhone);
-        Optional<Email> updatedGuardianEmail = editPersonDescriptor.isGuardianNameEdited()
-                && updatedGuardianName.isEmpty() ? Optional.empty()
-                : editPersonDescriptor.isGuardianEmailEdited()
-                        ? editPersonDescriptor.getGuardianEmail()
-                        : personToEdit.getGuardian().flatMap(Guardian::getEmail);
-        boolean suppliesGuardianContactWithoutName = updatedGuardianName.isEmpty()
-                && (editPersonDescriptor.getGuardianPhone().isPresent()
-                || editPersonDescriptor.getGuardianEmail().isPresent());
-        if (suppliesGuardianContactWithoutName) {
-            throw new CommandException(MESSAGE_GUARDIAN_NAME_REQUIRED);
-        }
-        Optional<Guardian> updatedGuardian = updatedGuardianName.map(name ->
-                new Guardian(name, updatedGuardianPhone, updatedGuardianEmail));
-        Optional<Subject> updatedSubject = editPersonDescriptor.isSubjectEdited()
-                ? editPersonDescriptor.getSubject() : personToEdit.getSubject();
-        Optional<EducationLevel> updatedEducationLevel = editPersonDescriptor.isEducationLevelEdited()
-                ? editPersonDescriptor.getEducationLevel() : personToEdit.getEducationLevel();
-        Optional<LearningFocus> updatedLearningFocus = editPersonDescriptor.isLearningFocusEdited()
-                ? editPersonDescriptor.getLearningFocus() : personToEdit.getLearningFocus();
-        Optional<NextAction> updatedNextAction = editPersonDescriptor.isNextActionEdited()
-                ? editPersonDescriptor.getNextAction() : personToEdit.getNextAction();
+        Optional<Phone> updatedPhone = editPersonDescriptor.getPhone().applyTo(personToEdit.getPhone());
+        Optional<Email> updatedEmail = editPersonDescriptor.getEmail().applyTo(personToEdit.getEmail());
+        Optional<Address> updatedAddress = editPersonDescriptor.getAddress().applyTo(personToEdit.getAddress());
+        Optional<Guardian> updatedGuardian = createUpdatedGuardian(personToEdit, editPersonDescriptor);
+        Optional<Subject> updatedSubject = editPersonDescriptor.getSubject().applyTo(personToEdit.getSubject());
+        Optional<EducationLevel> updatedEducationLevel =
+                editPersonDescriptor.getEducationLevel().applyTo(personToEdit.getEducationLevel());
+        Optional<LearningFocus> updatedLearningFocus =
+                editPersonDescriptor.getLearningFocus().applyTo(personToEdit.getLearningFocus());
+        Optional<NextAction> updatedNextAction =
+                editPersonDescriptor.getNextAction().applyTo(personToEdit.getNextAction());
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
 
         return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress,
                 updatedGuardian, updatedSubject, updatedEducationLevel, updatedLearningFocus,
                 updatedNextAction, personToEdit.getLesson(), personToEdit.isArchived(), updatedTags);
+    }
+
+    /**
+     * Builds the updated guardian for the edited student. Guardian field updates are applied to the student's
+     * existing guardian. Clearing the guardian name also clears its phone and email, and supplying a guardian
+     * phone or email while no guardian name remains is rejected.
+     */
+    private static Optional<Guardian> createUpdatedGuardian(Person personToEdit, EditPersonDescriptor descriptor)
+            throws CommandException {
+        Optional<Guardian> existingGuardian = personToEdit.getGuardian();
+        Optional<Name> updatedName = descriptor.getGuardianName().applyTo(existingGuardian.map(Guardian::getName));
+
+        boolean suppliesContactWithoutName = updatedName.isEmpty()
+                && (descriptor.getGuardianPhone().value().isPresent()
+                        || descriptor.getGuardianEmail().value().isPresent());
+        if (suppliesContactWithoutName) {
+            throw new CommandException(MESSAGE_GUARDIAN_NAME_REQUIRED);
+        }
+
+        boolean guardianRemoved = descriptor.getGuardianName().isEdited() && updatedName.isEmpty();
+        Optional<Phone> updatedPhone = guardianRemoved ? Optional.empty()
+                : descriptor.getGuardianPhone().applyTo(existingGuardian.flatMap(Guardian::getPhone));
+        Optional<Email> updatedEmail = guardianRemoved ? Optional.empty()
+                : descriptor.getGuardianEmail().applyTo(existingGuardian.flatMap(Guardian::getEmail));
+
+        return updatedName.map(name -> new Guardian(name, updatedPhone, updatedEmail));
     }
 
     @Override
@@ -197,342 +197,5 @@ public class EditCommand extends Command {
                 .add("index", index)
                 .add("editPersonDescriptor", editPersonDescriptor)
                 .toString();
-    }
-
-    /**
-     * Stores the details to edit the person with. Each non-empty field value will replace the
-     * corresponding field value of the person.
-     */
-    public static class EditPersonDescriptor {
-        private Name name;
-        private Phone phone;
-        private boolean phoneEdited;
-        private Email email;
-        private boolean emailEdited;
-        private Address address;
-        private boolean addressEdited;
-        private Name guardianName;
-        private boolean guardianNameEdited;
-        private Phone guardianPhone;
-        private boolean guardianPhoneEdited;
-        private Email guardianEmail;
-        private boolean guardianEmailEdited;
-        private Subject subject;
-        private boolean subjectEdited;
-        private EducationLevel educationLevel;
-        private boolean educationLevelEdited;
-        private LearningFocus learningFocus;
-        private boolean learningFocusEdited;
-        private NextAction nextAction;
-        private boolean nextActionEdited;
-        private Set<Tag> tags;
-
-        public EditPersonDescriptor() {}
-
-        /**
-         * Copy constructor.
-         * A defensive copy of {@code tags} is used internally.
-         */
-        public EditPersonDescriptor(EditPersonDescriptor toCopy) {
-            name = toCopy.name;
-            phone = toCopy.phone;
-            phoneEdited = toCopy.phoneEdited;
-            email = toCopy.email;
-            emailEdited = toCopy.emailEdited;
-            address = toCopy.address;
-            addressEdited = toCopy.addressEdited;
-            guardianName = toCopy.guardianName;
-            guardianNameEdited = toCopy.guardianNameEdited;
-            guardianPhone = toCopy.guardianPhone;
-            guardianPhoneEdited = toCopy.guardianPhoneEdited;
-            guardianEmail = toCopy.guardianEmail;
-            guardianEmailEdited = toCopy.guardianEmailEdited;
-            subject = toCopy.subject;
-            subjectEdited = toCopy.subjectEdited;
-            educationLevel = toCopy.educationLevel;
-            educationLevelEdited = toCopy.educationLevelEdited;
-            learningFocus = toCopy.learningFocus;
-            learningFocusEdited = toCopy.learningFocusEdited;
-            nextAction = toCopy.nextAction;
-            nextActionEdited = toCopy.nextActionEdited;
-            tags = toCopy.tags == null ? null : new HashSet<>(toCopy.tags);
-        }
-
-        /**
-         * Returns true if at least one field is edited.
-         */
-        public boolean isAnyFieldEdited() {
-            return name != null || phoneEdited || emailEdited || addressEdited || guardianNameEdited
-                    || guardianPhoneEdited || guardianEmailEdited || subjectEdited || educationLevelEdited
-                    || learningFocusEdited || nextActionEdited || tags != null;
-        }
-
-        public void setName(Name name) {
-            this.name = name;
-        }
-
-        public Optional<Name> getName() {
-            return Optional.ofNullable(name);
-        }
-
-        public void setPhone(Phone phone) {
-            this.phone = phone;
-            phoneEdited = true;
-        }
-
-        /** Records a request to clear the phone. */
-        public void clearPhone() {
-            phone = null;
-            phoneEdited = true;
-        }
-
-        public boolean isPhoneEdited() {
-            return phoneEdited;
-        }
-
-        public Optional<Phone> getPhone() {
-            return Optional.ofNullable(phone);
-        }
-
-        public void setEmail(Email email) {
-            this.email = email;
-            emailEdited = true;
-        }
-
-        /** Records a request to clear the email. */
-        public void clearEmail() {
-            email = null;
-            emailEdited = true;
-        }
-
-        public boolean isEmailEdited() {
-            return emailEdited;
-        }
-
-        public Optional<Email> getEmail() {
-            return Optional.ofNullable(email);
-        }
-
-        public void setAddress(Address address) {
-            this.address = address;
-            addressEdited = true;
-        }
-
-        /** Records a request to clear the address. */
-        public void clearAddress() {
-            address = null;
-            addressEdited = true;
-        }
-
-        public boolean isAddressEdited() {
-            return addressEdited;
-        }
-
-        public Optional<Address> getAddress() {
-            return Optional.ofNullable(address);
-        }
-
-        public void setGuardianName(Name guardianName) {
-            this.guardianName = guardianName;
-            guardianNameEdited = true;
-        }
-
-        /** Records a request to clear the guardian and its contact details. */
-        public void clearGuardianName() {
-            guardianName = null;
-            guardianNameEdited = true;
-        }
-
-        public boolean isGuardianNameEdited() {
-            return guardianNameEdited;
-        }
-
-        public Optional<Name> getGuardianName() {
-            return Optional.ofNullable(guardianName);
-        }
-
-        public void setGuardianPhone(Phone guardianPhone) {
-            this.guardianPhone = guardianPhone;
-            guardianPhoneEdited = true;
-        }
-
-        /** Records a request to clear the guardian phone. */
-        public void clearGuardianPhone() {
-            guardianPhone = null;
-            guardianPhoneEdited = true;
-        }
-
-        public boolean isGuardianPhoneEdited() {
-            return guardianPhoneEdited;
-        }
-
-        public Optional<Phone> getGuardianPhone() {
-            return Optional.ofNullable(guardianPhone);
-        }
-
-        public void setGuardianEmail(Email guardianEmail) {
-            this.guardianEmail = guardianEmail;
-            guardianEmailEdited = true;
-        }
-
-        /** Records a request to clear the guardian email. */
-        public void clearGuardianEmail() {
-            guardianEmail = null;
-            guardianEmailEdited = true;
-        }
-
-        public boolean isGuardianEmailEdited() {
-            return guardianEmailEdited;
-        }
-
-        public Optional<Email> getGuardianEmail() {
-            return Optional.ofNullable(guardianEmail);
-        }
-
-        public void setSubject(Subject subject) {
-            this.subject = subject;
-            subjectEdited = true;
-        }
-
-        /** Records a request to clear the subject. */
-        public void clearSubject() {
-            subject = null;
-            subjectEdited = true;
-        }
-
-        public boolean isSubjectEdited() {
-            return subjectEdited;
-        }
-
-        public Optional<Subject> getSubject() {
-            return Optional.ofNullable(subject);
-        }
-
-        public void setEducationLevel(EducationLevel educationLevel) {
-            this.educationLevel = educationLevel;
-            educationLevelEdited = true;
-        }
-
-        /** Records a request to clear the education level. */
-        public void clearEducationLevel() {
-            educationLevel = null;
-            educationLevelEdited = true;
-        }
-
-        public boolean isEducationLevelEdited() {
-            return educationLevelEdited;
-        }
-
-        public Optional<EducationLevel> getEducationLevel() {
-            return Optional.ofNullable(educationLevel);
-        }
-
-        public void setLearningFocus(LearningFocus learningFocus) {
-            this.learningFocus = learningFocus;
-            learningFocusEdited = true;
-        }
-
-        /** Records a request to clear the learning focus. */
-        public void clearLearningFocus() {
-            learningFocus = null;
-            learningFocusEdited = true;
-        }
-
-        public boolean isLearningFocusEdited() {
-            return learningFocusEdited;
-        }
-
-        public Optional<LearningFocus> getLearningFocus() {
-            return Optional.ofNullable(learningFocus);
-        }
-
-        public void setNextAction(NextAction nextAction) {
-            this.nextAction = nextAction;
-            nextActionEdited = true;
-        }
-
-        /** Records a request to clear the next action. */
-        public void clearNextAction() {
-            nextAction = null;
-            nextActionEdited = true;
-        }
-
-        public boolean isNextActionEdited() {
-            return nextActionEdited;
-        }
-
-        public Optional<NextAction> getNextAction() {
-            return Optional.ofNullable(nextAction);
-        }
-
-        /**
-         * Sets {@code tags} to this object's {@code tags}.
-         * A defensive copy of {@code tags} is used internally.
-         */
-        public void setTags(Set<Tag> tags) {
-            this.tags = (tags != null) ? new HashSet<>(tags) : null;
-        }
-
-        /**
-         * Returns an unmodifiable tag set, which throws {@code UnsupportedOperationException}
-         * if modification is attempted.
-         * Returns {@code Optional#empty()} if {@code tags} is null.
-         */
-        public Optional<Set<Tag>> getTags() {
-            return (tags != null) ? Optional.of(Collections.unmodifiableSet(tags)) : Optional.empty();
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (other == this) {
-                return true;
-            }
-
-            // instanceof handles nulls
-            if (!(other instanceof EditPersonDescriptor otherEditPersonDescriptor)) {
-                return false;
-            }
-
-            return Objects.equals(name, otherEditPersonDescriptor.name)
-                    && Objects.equals(phone, otherEditPersonDescriptor.phone)
-                    && phoneEdited == otherEditPersonDescriptor.phoneEdited
-                    && Objects.equals(email, otherEditPersonDescriptor.email)
-                    && emailEdited == otherEditPersonDescriptor.emailEdited
-                    && Objects.equals(address, otherEditPersonDescriptor.address)
-                    && addressEdited == otherEditPersonDescriptor.addressEdited
-                    && Objects.equals(guardianName, otherEditPersonDescriptor.guardianName)
-                    && guardianNameEdited == otherEditPersonDescriptor.guardianNameEdited
-                    && Objects.equals(guardianPhone, otherEditPersonDescriptor.guardianPhone)
-                    && guardianPhoneEdited == otherEditPersonDescriptor.guardianPhoneEdited
-                    && Objects.equals(guardianEmail, otherEditPersonDescriptor.guardianEmail)
-                    && guardianEmailEdited == otherEditPersonDescriptor.guardianEmailEdited
-                    && Objects.equals(subject, otherEditPersonDescriptor.subject)
-                    && subjectEdited == otherEditPersonDescriptor.subjectEdited
-                    && Objects.equals(educationLevel, otherEditPersonDescriptor.educationLevel)
-                    && educationLevelEdited == otherEditPersonDescriptor.educationLevelEdited
-                    && Objects.equals(learningFocus, otherEditPersonDescriptor.learningFocus)
-                    && learningFocusEdited == otherEditPersonDescriptor.learningFocusEdited
-                    && Objects.equals(nextAction, otherEditPersonDescriptor.nextAction)
-                    && nextActionEdited == otherEditPersonDescriptor.nextActionEdited
-                    && Objects.equals(tags, otherEditPersonDescriptor.tags);
-        }
-
-        @Override
-        public String toString() {
-            return new ToStringBuilder(this)
-                    .add("name", name)
-                    .add("phone", phone)
-                    .add("email", email)
-                    .add("address", address)
-                    .add("guardianName", guardianName)
-                    .add("guardianPhone", guardianPhone)
-                    .add("guardianEmail", guardianEmail)
-                    .add("subject", subject)
-                    .add("educationLevel", educationLevel)
-                    .add("learningFocus", learningFocus)
-                    .add("nextAction", nextAction)
-                    .add("tags", tags)
-                    .toString();
-        }
     }
 }
