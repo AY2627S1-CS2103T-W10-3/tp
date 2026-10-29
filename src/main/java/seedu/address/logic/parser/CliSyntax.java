@@ -1,5 +1,7 @@
 package seedu.address.logic.parser;
 
+import java.util.List;
+
 /**
  * Contains Command Line Interface (CLI) syntax definitions common to multiple commands
  */
@@ -19,5 +21,9 @@ public class CliSyntax {
     public static final Prefix PREFIX_LEARNING_FOCUS = new Prefix("lf/");
     public static final Prefix PREFIX_NEXT_ACTION = new Prefix("na/");
     public static final Prefix PREFIX_LESSON = new Prefix("at/");
+
+    public static final List<Prefix> ALL_PREFIXES = List.of(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS,
+            PREFIX_TAG, PREFIX_GUARDIAN_NAME, PREFIX_GUARDIAN_PHONE, PREFIX_GUARDIAN_EMAIL, PREFIX_SUBJECT,
+            PREFIX_EDUCATION_LEVEL, PREFIX_LEARNING_FOCUS, PREFIX_NEXT_ACTION, PREFIX_LESSON);
 
 }

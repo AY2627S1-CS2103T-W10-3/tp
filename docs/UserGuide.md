@@ -229,6 +229,9 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 * Each matching student appears once in the same order as the complete active list, even if several or repeated
   keywords match that student.
 * If no student matches, TutorContacts displays `No students found.` and shows an empty result view.
+* `find` does not use prefixes such as `n/` or `s/`. A keyword such as `n/alex` is searched as plain text, because names
+  may contain markers such as `s/o`. If such a keyword finds no student, the result panel suggests plain keywords and
+  `filter` instead.
 
 Examples:
 * `find jo` returns `John Doe` and `Marjorie Tan`

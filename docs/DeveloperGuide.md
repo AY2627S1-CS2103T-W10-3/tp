@@ -319,7 +319,9 @@ its lesson-time comparator. `PersonListPanel` derives each visible one-based ind
 
 Partial-name matching converts both names and keywords using `Locale.ROOT` and applies substring matching. Multiple
 keywords use OR. Because each `Person` is evaluated once by one predicate, repeated or overlapping keywords cannot
-duplicate a result. Subject and education-level filters use exact normalized matching and combine two supplied fields
+duplicate a result. `FindCommandParser` still matches a keyword that starts with a command prefix, such as `n/alex`,
+because names may contain markers such as `s/o`; it only marks the command so that an empty result suggests plain
+keywords and `filter`. Subject and education-level filters use exact normalized matching and combine two supplied fields
 with AND; an absent field cannot satisfy a supplied criterion.
 
 Index-based commands obtain their target from `Model#getFilteredPersonList`, so edit, delete, archive, schedule, and
