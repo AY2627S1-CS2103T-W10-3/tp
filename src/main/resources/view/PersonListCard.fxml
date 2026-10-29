@@ -11,42 +11,28 @@
       xmlns:fx="http://javafx.com/fxml/1">
   <padding><Insets top="12" right="14" bottom="12" left="14" /></padding>
   <HBox alignment="BASELINE_LEFT" spacing="8">
-    <Label fx:id="id" styleClass="card-index" />
-    <Label fx:id="name" styleClass="card-name" />
-    <HBox fx:id="tags" alignment="BASELINE_LEFT" spacing="6" HBox.hgrow="ALWAYS" />
+    <Label fx:id="id" minWidth="38" prefWidth="38" maxWidth="38" styleClass="card-index" />
+    <Label fx:id="name" minWidth="0" maxWidth="Infinity" textOverrun="ELLIPSIS"
+           styleClass="card-name" HBox.hgrow="ALWAYS" />
+    <HBox fx:id="tags" alignment="BASELINE_LEFT" spacing="6" />
   </HBox>
-  <HBox alignment="CENTER_LEFT" spacing="18">
-    <Label fx:id="subject" minWidth="0" styleClass="summary-label" />
-    <Label fx:id="educationLevel" minWidth="0" styleClass="summary-label" />
-    <Label fx:id="lesson" minWidth="0" maxWidth="Infinity" styleClass="summary-label" HBox.hgrow="ALWAYS" />
-  </HBox>
-  <GridPane hgap="22" vgap="7">
+  <GridPane hgap="18" styleClass="summary-grid">
     <columnConstraints>
-      <ColumnConstraints percentWidth="33" hgrow="ALWAYS" />
-      <ColumnConstraints percentWidth="34" hgrow="ALWAYS" />
-      <ColumnConstraints percentWidth="33" hgrow="ALWAYS" />
+      <ColumnConstraints percentWidth="35" />
+      <ColumnConstraints percentWidth="32" />
+      <ColumnConstraints percentWidth="33" />
     </columnConstraints>
-    <HBox maxWidth="Infinity" spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
-      <Label text="Phone" minWidth="60" styleClass="detail-label, detail-key" />
-      <Label fx:id="phone" minWidth="0" maxWidth="Infinity" styleClass="detail-label" HBox.hgrow="ALWAYS" />
-    </HBox>
-    <HBox maxWidth="Infinity" spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
-      <Label text="Email" minWidth="60" styleClass="detail-label, detail-key" />
-      <Label fx:id="email" minWidth="0" maxWidth="Infinity" styleClass="detail-label" HBox.hgrow="ALWAYS" />
-    </HBox>
-    <HBox maxWidth="Infinity" spacing="6" GridPane.columnIndex="2" GridPane.rowIndex="0">
-      <Label text="Address" minWidth="60" styleClass="detail-label, detail-key" />
-      <Label fx:id="address" minWidth="0" maxWidth="Infinity" styleClass="detail-label" HBox.hgrow="ALWAYS" />
-    </HBox>
-    <Label fx:id="learningFocus" minWidth="0" maxWidth="Infinity" styleClass="detail-label"
-           GridPane.columnIndex="0" GridPane.rowIndex="1" />
-    <Label fx:id="nextAction" minWidth="0" maxWidth="Infinity" styleClass="detail-label"
-           GridPane.columnIndex="1" GridPane.rowIndex="1" />
-    <Label fx:id="guardianName" minWidth="0" maxWidth="Infinity" styleClass="detail-label"
-           GridPane.columnIndex="0" GridPane.rowIndex="2" />
-    <Label fx:id="guardianPhone" minWidth="0" maxWidth="Infinity" styleClass="detail-label"
-           GridPane.columnIndex="1" GridPane.rowIndex="2" />
-    <Label fx:id="guardianEmail" minWidth="0" maxWidth="Infinity" styleClass="detail-label"
-           GridPane.columnIndex="2" GridPane.rowIndex="2" />
+    <VBox minWidth="0" GridPane.columnIndex="0">
+      <Label text="Subject" styleClass="summary-key" />
+      <Label fx:id="subject" minWidth="0" maxWidth="Infinity" styleClass="summary-label" />
+    </VBox>
+    <VBox minWidth="0" GridPane.columnIndex="1">
+      <Label text="Education level" styleClass="summary-key" />
+      <Label fx:id="educationLevel" minWidth="0" maxWidth="Infinity" styleClass="summary-label" />
+    </VBox>
+    <VBox minWidth="0" GridPane.columnIndex="2">
+      <Label text="Next lesson" styleClass="summary-key" />
+      <Label fx:id="lesson" minWidth="0" maxWidth="Infinity" styleClass="summary-label" />
+    </VBox>
   </GridPane>
 </VBox>

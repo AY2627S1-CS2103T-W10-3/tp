@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCombination;
@@ -26,6 +27,10 @@ public class MainWindow extends UiPart<Stage> {
 
     private static final String FXML = "MainWindow.fxml";
 
+    enum NavigationSelection {
+        ALL, UPCOMING, ARCHIVED, NONE, UNCHANGED
+    }
+
     private final Logger logger = LogsCenter.getLogger(getClass());
 
     private Stage primaryStage;
@@ -34,8 +39,10 @@ public class MainWindow extends UiPart<Stage> {
 
     // Independent Ui parts residing in this Ui container
     private PersonListPanel personListPanel;
+    private PersonDetailsPanel personDetailsPanel;
     private ResultDisplay resultDisplay;
     private HelpWindow helpWindow;
+    private CommandBox commandBox;
 
     @FXML
     private StackPane commandBoxPlaceholder;
@@ -47,10 +54,22 @@ public class MainWindow extends UiPart<Stage> {
     private StackPane personListPanelPlaceholder;
 
     @FXML
+    private StackPane personDetailsPanelPlaceholder;
+
+    @FXML
     private StackPane resultDisplayPlaceholder;
 
     @FXML
     private StackPane statusbarPlaceholder;
+
+    @FXML
+    private Button allStudentsButton;
+
+    @FXML
+    private Button upcomingLessonsButton;
+
+    @FXML
+    private Button archivedStudentsButton;
 
     /**
      * Creates a {@code MainWindow} with the given {@code Stage}, {@code Logic},
@@ -117,14 +136,87 @@ public class MainWindow extends UiPart<Stage> {
         personListPanel = new PersonListPanel(logic.getFilteredPersonList(), logic.getPersonList());
         personListPanelPlaceholder.getChildren().add(personListPanel.getRoot());
 
+        personDetailsPanel = new PersonDetailsPanel(personListPanel.selectedPersonProperty());
+        personDetailsPanelPlaceholder.getChildren().add(personDetailsPanel.getRoot());
+
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
 
         StatusBarFooter statusBarFooter = new StatusBarFooter(dataFilePath);
         statusbarPlaceholder.getChildren().add(statusBarFooter.getRoot());
 
-        CommandBox commandBox = new CommandBox(this::executeCommand);
+        commandBox = new CommandBox(this::executeCommand);
         commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
+    }
+
+    @FXML
+    private void handleAllStudents() {
+        executeNavigationCommand("list");
+    }
+
+    @FXML
+    private void handleUpcomingLessons() {
+        executeNavigationCommand("upcoming");
+    }
+
+    @FXML
+    private void handleArchivedStudents() {
+        executeNavigationCommand("list archived");
+    }
+
+    private void executeNavigationCommand(String command) {
+        try {
+            executeCommand(command);
+        } catch (CommandException | ParseException e) {
+            logger.warning("Navigation command failed: " + command);
+        } finally {
+            commandBox.requestFocus();
+        }
+    }
+
+    private void selectNavigationButton(Button selectedButton) {
+        Button[] buttons = {allStudentsButton, upcomingLessonsButton, archivedStudentsButton};
+        for (Button button : buttons) {
+            button.getStyleClass().remove("view-row-active");
+        }
+        if (selectedButton != null) {
+            selectedButton.getStyleClass().add("view-row-active");
+        }
+    }
+
+    private void updateNavigationSelection(String commandText) {
+        switch (navigationSelectionFor(commandText)) {
+            case ALL -> selectNavigationButton(allStudentsButton);
+            case UPCOMING -> selectNavigationButton(upcomingLessonsButton);
+            case ARCHIVED -> selectNavigationButton(archivedStudentsButton);
+            case NONE -> selectNavigationButton(null);
+            case UNCHANGED -> { }
+            default -> throw new AssertionError("Unknown navigation selection");
+        }
+    }
+
+    static NavigationSelection navigationSelectionFor(String commandText) {
+        String normalizedCommand = commandText.strip().replaceAll("\\s+", " ");
+        if (normalizedCommand.equals("list")) {
+            return NavigationSelection.ALL;
+        }
+        if (normalizedCommand.equals("list archived")) {
+            return NavigationSelection.ARCHIVED;
+        }
+        if (normalizedCommand.equals("upcoming")) {
+            return NavigationSelection.UPCOMING;
+        }
+        if (hasCommandWord(normalizedCommand, "find") || hasCommandWord(normalizedCommand, "filter")) {
+            return NavigationSelection.NONE;
+        }
+        if (hasCommandWord(normalizedCommand, "edit")) {
+            return NavigationSelection.ALL;
+        }
+        return NavigationSelection.UNCHANGED;
+    }
+
+    private static boolean hasCommandWord(String commandText, String commandWord) {
+        return commandText.equals(commandWord) || commandText.startsWith(commandWord + " ");
     }
 
     /**
@@ -181,6 +273,7 @@ public class MainWindow extends UiPart<Stage> {
             CommandResult commandResult = logic.execute(commandText);
             logger.info("Result: " + commandResult.getFeedbackToUser());
             resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
+            updateNavigationSelection(commandText);
 
             if (commandResult.isShowHelp()) {
                 handleHelp();
@@ -198,6 +291,7 @@ public class MainWindow extends UiPart<Stage> {
         } finally {
             // Keeps time-dependent card details, such as overdue lessons, current after every command.
             personListPanel.refreshCards();
+            personDetailsPanel.refresh();
         }
     }
 }

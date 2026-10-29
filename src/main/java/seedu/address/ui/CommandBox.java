@@ -71,6 +71,11 @@ public class CommandBox extends UiPart<Region> {
         styleClass.add(ERROR_STYLE_CLASS);
     }
 
+    /** Returns keyboard focus to the command input. */
+    public void requestFocus() {
+        commandTextField.requestFocus();
+    }
+
     /**
      * Represents a function that can execute commands.
      */
