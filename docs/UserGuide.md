@@ -5,6 +5,19 @@ title: User Guide
 
 TutorContacts is an **offline desktop application for private tutors to manage student and guardian contact details, optimized for use through a Command Line Interface (CLI)** while retaining the benefits of a Graphical User Interface (GUI).
 
+New to TutorContacts? Start with [Quick start](#quick-start) and [The main window](#the-main-window), then use the
+table below to jump to the task you need.
+
+| I want to… | Use | Read |
+|------------|-----|------|
+| Record a new student | `add` | [Adding a student](#adding-a-student-add) |
+| Update or clear a student's details | `edit` | [Editing a student](#editing-a-student-edit) |
+| Find students by name, subject, or level | `find`, `filter` | [Locating students](#locating-students-by-name-find), [Filtering students](#filtering-students-by-tutoring-details-filter) |
+| Plan the next lesson | `schedule`, `unschedule`, `upcoming` | [Scheduling a lesson](#scheduling-a-lesson-schedule) |
+| Keep a former student without deleting them | `archive`, `list archived`, `unarchive` | [Archiving a student](#archiving-a-student-archive) |
+| Remove records permanently | `delete`, `clear` | [Deleting a student](#deleting-a-student-delete), [Clearing all entries](#clearing-all-entries-clear) |
+| See every command format | `help` | [Command summary](#command-summary) |
+
 * Table of Contents
 {:toc}
 
@@ -19,9 +32,9 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 
 1. Copy the file to the folder you want to use as the _home folder_ for TutorContacts.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar addressbook.jar`.<br>
-   A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data.<br>
-   ![Ui](images/Ui.png)
+1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar TutorContacts.jar`.<br>
+   The TutorContacts window appears in a few seconds. On the first run it contains sample students so that you can try
+   commands safely. [The main window](#the-main-window) explains each part of the window.
 
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
@@ -43,6 +56,28 @@ TutorContacts is an **offline desktop application for private tutors to manage s
    * `exit` : Exits the app.
 
 1. Refer to the [Features](#features) section below for details of each command.
+
+--------------------------------------------------------------------------------------------------------------------
+
+## The main window
+
+The window has five areas. You can do everything by typing commands; the mouse is optional.
+
+| Area | Where | What it does |
+|------|-------|--------------|
+| Command box | Bottom | Type a command and press Enter. The box keeps keyboard focus after each command, so you can type the next one immediately. |
+| Result panel | Top of the centre column | Shows the outcome of the last command, or the reason it was rejected. |
+| Student list | Centre | Shows the current result view. Each card shows the displayed index, name, tags, subject, education level, and next lesson. Index-based commands use the index shown here. |
+| Details panel | Right | Shows every detail of the selected student: contact, learning, schedule, and guardian information. Click another card, or focus the list and use the arrow keys, to view another student. If the selected student leaves the current view, the first student is selected. |
+| Views sidebar | Left | The three view buttons run `list` (active students), `upcoming` (upcoming lessons), and `list archived` (archived students). The highlighted button shows the current view. |
+
+The status bar below the command box shows where your data is saved. The **Help** menu, and the `F1` key, open the
+same Help window as the `help` command.
+
+<div markdown="span" class="alert alert-info">:information_source: **Note:**
+Fields that were never recorded are shown as `Not provided`, and a student without a lesson is shown as
+`Not scheduled`. A lesson whose time has passed is marked `(overdue)` in red.
+</div>
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -74,13 +109,17 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 
 ### Viewing help: `help`
 
-Shows the command formats and important rules in the result panel and a help window. The help text is bundled with
-TutorContacts, so `help` remains available without internet access and when the data file cannot be loaded. It does not
-write to the data file. The help window also has a button to copy the online User Guide link.
+Opens the offline Help window and lists the command formats in the result panel.
 
 Format: `help`
 
-`help` takes no parameters. Extra text, such as `help me`, is rejected.
+* The Help window groups the commands into **Overview**, **Student management**, **Search & filter**,
+  **Scheduling**, and **Archiving**. Click a group on the left to see its command formats, examples, and key rules.
+* **Copy User Guide URL** copies the link to this guide, which has the complete validation rules and more examples.
+* The help text is bundled with TutorContacts, so `help` works without internet access and even when the data file
+  cannot be loaded. It does not write to the data file.
+* The **Help** menu and the `F1` key open the same window.
+* `help` takes no parameters. Extra text, such as `help me`, is rejected.
 
 
 ### Adding a student: `add`
@@ -151,8 +190,9 @@ Rejected `add` commands leave the displayed records and saved data unchanged.
 
 Shows all active student records in their saved order. Archived students are excluded. If there are no records,
 TutorContacts shows guidance for adding one. If records exist only in the archive, it suggests `list archived` instead.
-Student cards show the student's recorded contact, tutoring, guardian, learning-context, and lesson details. Omitted
-details are shown as `Not provided`, and a student without a lesson is shown as `Not scheduled`.
+Each student card shows a summary: name, tags, subject, education level, and next lesson. The details panel shows the
+selected student's complete contact, learning, schedule, and guardian details. Omitted details are shown as
+`Not provided`, and a student without a lesson is shown as `Not scheduled`.
 
 After a command is submitted, the command box retains keyboard focus so you can type the next command immediately.
 Use the mouse or Tab to focus the list when you want to scroll it or use its normal list navigation keys.
@@ -228,8 +268,7 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 
 Examples:
 * `find jo` returns `John Doe` and `Marjorie Tan`
-* `find alex david` returns `Alex Yeoh`, `David Li`<br>
-  ![result for 'find alex david'](images/findAlexDavidResult.png)
+* `find alex david` returns `Alex Yeoh`, `David Li`
 
 ### Filtering students by tutoring details: `filter`
 
@@ -294,6 +333,11 @@ Complete lifecycle example:
 ### Deleting a student: `delete`
 
 Permanently deletes the specified student from TutorContacts. The result panel confirms the deleted student's details.
+
+<div markdown="span" class="alert alert-danger">:warning: **Permanent:**
+A deleted student cannot be recovered. To hide a former student while keeping their record, use
+[`archive`](#archiving-a-student-archive) instead.
+</div>
 
 Format: `delete INDEX`
 

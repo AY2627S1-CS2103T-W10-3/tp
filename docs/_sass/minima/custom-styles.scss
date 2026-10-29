@@ -32,3 +32,21 @@ h2, h3, h4, h5, h6 {
   }
 }
 
+
+// Keep long command formats inside the page on narrow screens and in the PDF.
+.post-content code {
+  overflow-wrap: anywhere;
+}
+
+// Keep callouts, table rows, and headings with their content when printing the User Guide.
+@media print {
+  .alert,
+  tr {
+    break-inside: avoid;
+  }
+
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}
