@@ -147,18 +147,20 @@ public class EditPersonDescriptorTest {
     public void toStringMethod() {
         EditPersonDescriptor editPersonDescriptor = new EditPersonDescriptor();
         String expected = EditPersonDescriptor.class.getCanonicalName() + "{name="
-                + editPersonDescriptor.getName().orElse(null) + ", phone="
-                + editPersonDescriptor.getPhone().value().orElse(null) + ", email="
-                + editPersonDescriptor.getEmail().value().orElse(null) + ", address="
-                + editPersonDescriptor.getAddress().value().orElse(null) + ", guardianName="
-                + editPersonDescriptor.getGuardianName().value().orElse(null) + ", guardianPhone="
-                + editPersonDescriptor.getGuardianPhone().value().orElse(null) + ", guardianEmail="
-                + editPersonDescriptor.getGuardianEmail().value().orElse(null) + ", subject="
-                + editPersonDescriptor.getSubject().value().orElse(null) + ", educationLevel="
-                + editPersonDescriptor.getEducationLevel().value().orElse(null) + ", learningFocus="
-                + editPersonDescriptor.getLearningFocus().value().orElse(null) + ", nextAction="
-                + editPersonDescriptor.getNextAction().value().orElse(null) + ", tags="
+                + editPersonDescriptor.getName().orElse(null) + ", phone=unchanged, email=unchanged, "
+                + "address=unchanged, guardianName=unchanged, guardianPhone=unchanged, "
+                + "guardianEmail=unchanged, subject=unchanged, educationLevel=unchanged, "
+                + "learningFocus=unchanged, nextAction=unchanged, tags="
                 + editPersonDescriptor.getTags().orElse(null) + "}";
         assertEquals(expected, editPersonDescriptor.toString());
+    }
+
+    @Test
+    public void toStringMethod_setAndClearFields_showsUpdateStates() {
+        EditPersonDescriptor editPersonDescriptor = new EditPersonDescriptorBuilder()
+                .withPhone(VALID_PHONE_BOB).withoutEmail().build();
+
+        assertTrue(editPersonDescriptor.toString().contains("phone=set(" + VALID_PHONE_BOB + ")"));
+        assertTrue(editPersonDescriptor.toString().contains("email=clear"));
     }
 }
