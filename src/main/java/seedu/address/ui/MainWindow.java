@@ -27,6 +27,10 @@ public class MainWindow extends UiPart<Stage> {
 
     private static final String FXML = "MainWindow.fxml";
 
+    enum NavigationSelection {
+        ALL, UPCOMING, ARCHIVED, NONE, UNCHANGED
+    }
+
     private final Logger logger = LogsCenter.getLogger(getClass());
 
     private Stage primaryStage;
@@ -147,23 +151,22 @@ public class MainWindow extends UiPart<Stage> {
 
     @FXML
     private void handleAllStudents() {
-        executeNavigationCommand("list", allStudentsButton);
+        executeNavigationCommand("list");
     }
 
     @FXML
     private void handleUpcomingLessons() {
-        executeNavigationCommand("upcoming", upcomingLessonsButton);
+        executeNavigationCommand("upcoming");
     }
 
     @FXML
     private void handleArchivedStudents() {
-        executeNavigationCommand("list archived", archivedStudentsButton);
+        executeNavigationCommand("list archived");
     }
 
-    private void executeNavigationCommand(String command, Button selectedButton) {
+    private void executeNavigationCommand(String command) {
         try {
             executeCommand(command);
-            selectNavigationButton(selectedButton);
         } catch (CommandException | ParseException e) {
             logger.warning("Navigation command failed: " + command);
         } finally {
@@ -176,7 +179,44 @@ public class MainWindow extends UiPart<Stage> {
         for (Button button : buttons) {
             button.getStyleClass().remove("view-row-active");
         }
-        selectedButton.getStyleClass().add("view-row-active");
+        if (selectedButton != null) {
+            selectedButton.getStyleClass().add("view-row-active");
+        }
+    }
+
+    private void updateNavigationSelection(String commandText) {
+        switch (navigationSelectionFor(commandText)) {
+            case ALL -> selectNavigationButton(allStudentsButton);
+            case UPCOMING -> selectNavigationButton(upcomingLessonsButton);
+            case ARCHIVED -> selectNavigationButton(archivedStudentsButton);
+            case NONE -> selectNavigationButton(null);
+            case UNCHANGED -> { }
+            default -> throw new AssertionError("Unknown navigation selection");
+        }
+    }
+
+    static NavigationSelection navigationSelectionFor(String commandText) {
+        String normalizedCommand = commandText.strip().replaceAll("\\s+", " ");
+        if (normalizedCommand.equals("list")) {
+            return NavigationSelection.ALL;
+        }
+        if (normalizedCommand.equals("list archived")) {
+            return NavigationSelection.ARCHIVED;
+        }
+        if (normalizedCommand.equals("upcoming")) {
+            return NavigationSelection.UPCOMING;
+        }
+        if (hasCommandWord(normalizedCommand, "find") || hasCommandWord(normalizedCommand, "filter")) {
+            return NavigationSelection.NONE;
+        }
+        if (hasCommandWord(normalizedCommand, "edit")) {
+            return NavigationSelection.ALL;
+        }
+        return NavigationSelection.UNCHANGED;
+    }
+
+    private static boolean hasCommandWord(String commandText, String commandWord) {
+        return commandText.equals(commandWord) || commandText.startsWith(commandWord + " ");
     }
 
     /**
@@ -233,6 +273,7 @@ public class MainWindow extends UiPart<Stage> {
             CommandResult commandResult = logic.execute(commandText);
             logger.info("Result: " + commandResult.getFeedbackToUser());
             resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
+            updateNavigationSelection(commandText);
 
             if (commandResult.isShowHelp()) {
                 handleHelp();
