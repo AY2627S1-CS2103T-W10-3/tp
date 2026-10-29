@@ -409,7 +409,11 @@ when the data file cannot be read or written, and does not change that file.
 
 ### Editing the data file
 
-TutorContacts data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+TutorContacts data is saved automatically as a JSON file `[JAR file location]/data/tutorcontacts.json`. Advanced users are welcome to update data directly by editing that data file.
+
+For compatibility, TutorContacts continues using `data/addressbook.json` when that legacy file exists and
+`data/tutorcontacts.json` does not. If both files exist, TutorContacts uses `data/tutorcontacts.json` and leaves the
+legacy file unchanged.
 
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
 If your changes make the data file invalid, TutorContacts starts with an empty student list at the next run. The invalid file remains on disk when you use `help`; a data-changing command can replace it. We recommend backing up the file before editing it.<br>
@@ -421,7 +425,7 @@ Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a v
 ## FAQ
 
 **Q**: How do I transfer my data to another computer?<br>
-**A**: Install TutorContacts on the other computer, close it, and replace its `data/addressbook.json` file with the file from your previous TutorContacts home folder.
+**A**: Install TutorContacts on the other computer, close it, and replace its `data/tutorcontacts.json` file with the file from your previous TutorContacts home folder.
 
 --------------------------------------------------------------------------------------------------------------------
 
