@@ -1075,7 +1075,7 @@ testers are expected to do more *exploratory* testing.
 
 1. Dealing with a missing data file
 
-   1. Close TutorContacts and move `data/tutorcontacts.json` to a backup location. Relaunch TutorContacts.<br>
+   1. Close TutorContacts and ensure that both `data/tutorcontacts.json` and `data/addressbook.json` are absent (move them to a backup location if they exist). Relaunch TutorContacts.<br>
       Expected: TutorContacts starts with its sample student data. Executing a data-changing command creates a new data file.
 
 1. Dealing with a corrupted data file
