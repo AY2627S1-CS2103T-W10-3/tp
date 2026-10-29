@@ -1007,6 +1007,9 @@ testers are expected to do more *exploratory* testing.
    1. Test case: `schedule 1 at/2099-11-02 09:30`<br>
       Expected: The lesson is replaced. The result panel shows the new time and the previous time.
 
+   1. Test case: `schedule 1 at/2099-11-02 09:30` again<br>
+      Expected: The lesson is unchanged. The result panel says that the student already has a lesson at that time.
+
    1. Test case: `schedule 1 at/2020-01-01 10:00`<br>
       Expected: The lesson is unchanged. The result panel reports that the lesson must be in the future.
 

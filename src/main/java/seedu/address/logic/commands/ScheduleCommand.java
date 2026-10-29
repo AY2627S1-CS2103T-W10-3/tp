@@ -36,6 +36,7 @@ public class ScheduleCommand extends Command {
 
     public static final String MESSAGE_SCHEDULE_SUCCESS = "Scheduled lesson for %1$s: %2$s";
     public static final String MESSAGE_RESCHEDULE_SUCCESS = "Rescheduled lesson for %1$s: %2$s (previously %3$s)";
+    public static final String MESSAGE_SAME_LESSON = "%1$s already has a lesson at %2$s.";
     public static final String MESSAGE_LESSON_NOT_IN_FUTURE = "Lesson time must be in the future.";
 
     public static final String MESSAGE_REQUIRES_ACTIVE_VIEW =
@@ -84,12 +85,15 @@ public class ScheduleCommand extends Command {
         List<Person> shownBefore = List.copyOf(lastShownList);
         Person student = lastShownList.get(targetIndex.getZeroBased());
         Optional<Lesson> previousLesson = student.getLesson();
+        String studentName = student.getName().fullName;
+        if (previousLesson.equals(Optional.of(lesson))) {
+            return new CommandResult(String.format(MESSAGE_SAME_LESSON, studentName, lesson));
+        }
         Person scheduledStudent = student.withLesson(Optional.of(lesson));
         model.setPerson(student, scheduledStudent);
         assert scheduledStudent.getLesson().equals(Optional.of(lesson));
         logger.fine("Scheduled lesson " + lesson + " for " + student.getName());
 
-        String studentName = student.getName().fullName;
         String feedback = previousLesson.isPresent()
                 ? String.format(MESSAGE_RESCHEDULE_SUCCESS, studentName, lesson, previousLesson.get())
                 : String.format(MESSAGE_SCHEDULE_SUCCESS, studentName, lesson);
