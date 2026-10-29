@@ -240,13 +240,24 @@ public class PersonTest {
     }
 
     @Test
+    public void withRemark_preservesOtherFields() {
+        Optional<Remark> remark = Optional.of(new Remark("Prefers evening lessons."));
+        Person remarkedAlice = ALICE.withRemark(remark);
+
+        assertEquals(remark, remarkedAlice.getRemark());
+        assertEquals(remark, remarkedAlice.withArchived(true).getRemark());
+        assertEquals(ALICE, remarkedAlice.withRemark(Optional.empty()));
+        assertFalse(ALICE.equals(remarkedAlice));
+    }
+
+    @Test
     public void toStringMethod() {
         String expected = Person.class.getCanonicalName() + "{name=" + ALICE.getName() + ", phone=" + ALICE.getPhone()
                 + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", guardian="
                 + ALICE.getGuardian() + ", subject=" + ALICE.getSubject() + ", educationLevel="
                 + ALICE.getEducationLevel() + ", learningFocus=" + ALICE.getLearningFocus() + ", nextAction="
-                + ALICE.getNextAction() + ", lesson=" + ALICE.getLesson() + ", archived=" + ALICE.isArchived()
-                + ", tags=" + ALICE.getTags() + "}";
+                + ALICE.getNextAction() + ", lesson=" + ALICE.getLesson() + ", remark=" + ALICE.getRemark()
+                + ", archived=" + ALICE.isArchived() + ", tags=" + ALICE.getTags() + "}";
         assertEquals(expected, ALICE.toString());
     }
 }

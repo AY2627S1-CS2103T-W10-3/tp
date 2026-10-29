@@ -24,6 +24,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Remark;
 import seedu.address.model.person.Subject;
 import seedu.address.testutil.PersonBuilder;
 
@@ -154,6 +155,22 @@ public class JsonAdaptedPersonTest {
         assertEquals(expected, new JsonAdaptedPerson(expected).toModelType());
         assertEquals(expected, JsonUtil.fromJsonString(JsonUtil.toJsonString(new JsonAdaptedPerson(expected)),
                 JsonAdaptedPerson.class).toModelType());
+    }
+
+    @Test
+    public void toModelType_validRemark_returnsPersonWithRemark() throws Exception {
+        Person expected = new PersonBuilder(BENSON).withRemark("Prefers evening lessons.").build();
+
+        assertEquals(expected, JsonUtil.fromJsonString(JsonUtil.toJsonString(new JsonAdaptedPerson(expected)),
+                JsonAdaptedPerson.class).toModelType());
+    }
+
+    @Test
+    public void toModelType_invalidRemark_throwsIllegalValueException() throws Exception {
+        JsonAdaptedPerson person = JsonUtil.fromJsonString(
+                "{\"name\":\"Student\",\"remark\":\" \"}", JsonAdaptedPerson.class);
+
+        assertThrows(IllegalValueException.class, Remark.MESSAGE_CONSTRAINTS, person::toModelType);
     }
 
     @Test

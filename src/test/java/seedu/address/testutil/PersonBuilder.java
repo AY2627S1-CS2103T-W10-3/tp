@@ -14,6 +14,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.NextAction;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Remark;
 import seedu.address.model.person.Subject;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
@@ -40,6 +41,7 @@ public class PersonBuilder {
     private Optional<LearningFocus> learningFocus;
     private Optional<NextAction> nextAction;
     private Optional<Lesson> lesson;
+    private Optional<Remark> remark;
     private boolean archived;
     private Set<Tag> tags;
 
@@ -57,6 +59,7 @@ public class PersonBuilder {
         learningFocus = Optional.empty();
         nextAction = Optional.empty();
         lesson = Optional.empty();
+        remark = Optional.empty();
         archived = false;
         tags = new HashSet<>();
     }
@@ -75,6 +78,7 @@ public class PersonBuilder {
         learningFocus = personToCopy.getLearningFocus();
         nextAction = personToCopy.getNextAction();
         lesson = personToCopy.getLesson();
+        remark = personToCopy.getRemark();
         archived = personToCopy.isArchived();
         tags = new HashSet<>(personToCopy.getTags());
     }
@@ -216,6 +220,12 @@ public class PersonBuilder {
         return this;
     }
 
+    /** Sets the student's remark. */
+    public PersonBuilder withRemark(String remark) {
+        this.remark = Optional.of(new Remark(remark));
+        return this;
+    }
+
     /** Sets whether the student is archived. */
     public PersonBuilder withArchived(boolean archived) {
         this.archived = archived;
@@ -225,7 +235,7 @@ public class PersonBuilder {
     /** Builds a {@code Person} with the configured fields. */
     public Person build() {
         return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, lesson, archived, tags);
+                nextAction, lesson, remark, archived, tags);
     }
 
 }

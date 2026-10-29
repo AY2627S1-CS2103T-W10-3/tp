@@ -45,6 +45,8 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private Label lesson;
     @FXML
+    private Label remark;
+    @FXML
     private HBox tags;
 
     /**
@@ -63,6 +65,10 @@ public class PersonCard extends UiPart<Region> {
         if (person.getLesson().map(value -> value.isOverdue(now)).orElse(false)) {
             lesson.getStyleClass().add(OVERDUE_STYLE_CLASS);
         }
+        person.getRemark().ifPresentOrElse(value -> remark.setText(value.getValue()), () -> {
+            remark.setVisible(false);
+            remark.setManaged(false);
+        });
         person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));

@@ -32,6 +32,7 @@ public class Person {
 
     // Data fields
     private final Optional<Lesson> lesson;
+    private final Optional<Remark> remark;
     private final Optional<Address> address;
     private final Set<Tag> tags = new HashSet<>();
 
@@ -54,8 +55,21 @@ public class Person {
             Optional<Guardian> guardian, Optional<Subject> subject, Optional<EducationLevel> educationLevel,
             Optional<LearningFocus> learningFocus, Optional<NextAction> nextAction, Optional<Lesson> lesson,
             boolean archived, Set<Tag> tags) {
+        this(name, phone, email, address, guardian, subject, educationLevel, learningFocus, nextAction,
+                lesson, Optional.empty(), archived, tags);
+    }
+
+    /**
+     * Constructs a person with a required name, optional contact details, an optional scheduled lesson,
+     * and an optional remark.
+     * Optional wrappers and tags must not be null; use empty values for omitted details.
+     */
+    public Person(Name name, Optional<Phone> phone, Optional<Email> email, Optional<Address> address,
+            Optional<Guardian> guardian, Optional<Subject> subject, Optional<EducationLevel> educationLevel,
+            Optional<LearningFocus> learningFocus, Optional<NextAction> nextAction, Optional<Lesson> lesson,
+            Optional<Remark> remark, boolean archived, Set<Tag> tags) {
         requireAllNonNull(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, lesson, tags);
+                nextAction, lesson, remark, tags);
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -66,6 +80,7 @@ public class Person {
         this.learningFocus = learningFocus;
         this.nextAction = nextAction;
         this.lesson = lesson;
+        this.remark = remark;
         this.archived = archived;
         this.tags.addAll(tags);
     }
@@ -114,7 +129,18 @@ public class Person {
     public Person withLesson(Optional<Lesson> lesson) {
         requireNonNull(lesson);
         return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, lesson, archived, tags);
+                nextAction, lesson, remark, archived, tags);
+    }
+
+    public Optional<Remark> getRemark() {
+        return remark;
+    }
+
+    /** Returns a copy of this student with {@code remark} as the remark, replacing any existing one. */
+    public Person withRemark(Optional<Remark> remark) {
+        requireNonNull(remark);
+        return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
+                nextAction, lesson, remark, archived, tags);
     }
 
     /** Returns whether this student is archived. */
@@ -125,7 +151,7 @@ public class Person {
     /** Returns a copy of this student with the requested archive state. */
     public Person withArchived(boolean archived) {
         return new Person(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, lesson, archived, tags);
+                nextAction, lesson, remark, archived, tags);
     }
 
     /**
@@ -175,6 +201,7 @@ public class Person {
                 && learningFocus.equals(otherPerson.learningFocus)
                 && nextAction.equals(otherPerson.nextAction)
                 && lesson.equals(otherPerson.lesson)
+                && remark.equals(otherPerson.remark)
                 && archived == otherPerson.archived
                 && tags.equals(otherPerson.tags);
     }
@@ -183,7 +210,7 @@ public class Person {
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(name, phone, email, address, guardian, subject, educationLevel, learningFocus,
-                nextAction, lesson, archived, tags);
+                nextAction, lesson, remark, archived, tags);
     }
 
     @Override
@@ -199,6 +226,7 @@ public class Person {
                 .add("learningFocus", learningFocus)
                 .add("nextAction", nextAction)
                 .add("lesson", lesson)
+                .add("remark", remark)
                 .add("archived", archived)
                 .add("tags", tags)
                 .toString();

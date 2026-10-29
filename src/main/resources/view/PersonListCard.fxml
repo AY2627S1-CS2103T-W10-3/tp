@@ -35,4 +35,5 @@
       <Label fx:id="lesson" minWidth="0" maxWidth="Infinity" styleClass="summary-label" />
     </VBox>
   </GridPane>
+  <Label fx:id="remark" minWidth="0" maxWidth="Infinity" wrapText="true" styleClass="summary-label" />
 </VBox>

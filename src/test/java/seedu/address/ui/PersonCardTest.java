@@ -38,6 +38,14 @@ public class PersonCardTest {
     }
 
     @Test
+    public void personListCardFxml_containsRemarkLabel() throws IOException, URISyntaxException {
+        Path fxmlPath = Path.of(MainApp.class.getResource("/view/PersonListCard.fxml").toURI());
+        String fxml = Files.readString(fxmlPath);
+
+        assertEquals(1, countOccurrences(fxml, "fx:id=\"remark\""));
+    }
+
+    @Test
     public void personListCardFxml_containsCompactSummary()
             throws IOException, URISyntaxException {
         Path fxmlPath = Path.of(MainApp.class.getResource("/view/PersonListCard.fxml").toURI());
@@ -48,7 +56,7 @@ public class PersonCardTest {
         assertEquals(1, countOccurrences(fxml, "textOverrun=\"ELLIPSIS\""));
         assertEquals(1, countOccurrences(fxml, "styleClass=\"summary-grid\""));
         assertEquals(3, countOccurrences(fxml, "<ColumnConstraints"));
-        assertEquals(3, countOccurrences(fxml, "styleClass=\"summary-label\""));
+        assertEquals(4, countOccurrences(fxml, "styleClass=\"summary-label\""));
     }
 
     @Test
