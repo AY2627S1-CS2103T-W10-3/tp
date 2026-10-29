@@ -70,14 +70,14 @@ The window has five areas. You can do everything by typing commands; the mouse i
 | Result panel | Top of the centre column | Shows the outcome of the last command, or the reason it was rejected. |
 | Student list | Centre | Shows the current result view. Each card shows the displayed index, name, tags, subject, education level, and next lesson. Index-based commands use the index shown here. |
 | Details panel | Right | Shows every detail of the selected student: contact, learning, schedule, and guardian information. Click another card, or focus the list and use the arrow keys, to view another student. If the selected student leaves the current view, the first student is selected. |
-| Views sidebar | Left | The three view buttons run `list` (active students), `upcoming` (upcoming lessons), and `list archived` (archived students). The highlighted button shows the current view. |
+| Views sidebar | Left | **Active Students**, **Upcoming Lessons**, and **Archived Students** run `list`, `upcoming`, and `list archived` respectively. The highlighted button shows the current view; `find`, `filter`, and `edit` results keep **Active Students** highlighted because they show active students. |
 
 The status bar below the command box shows where your data is saved. The **Help** menu, and the `F1` key, open the
 same Help window as the `help` command.
 
 <div markdown="span" class="alert alert-info">:information_source: **Note:**
 Fields that were never recorded are shown as `Not provided`, and a student without a lesson is shown as
-`Not scheduled`. A lesson whose time has passed is marked `(overdue)` in red.
+`Not scheduled`. A lesson whose time has passed is marked `(overdue)` in bold red.
 </div>
 
 --------------------------------------------------------------------------------------------------------------------
