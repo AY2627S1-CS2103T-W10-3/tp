@@ -13,15 +13,24 @@ import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.DANIEL;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
+import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ResultViewScope;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.person.Person;
+import seedu.address.testutil.PersonBuilder;
 
 public class ArchiveCommandTest {
 
@@ -56,6 +65,41 @@ public class ArchiveCommandTest {
                 String.format(ArchiveCommand.MESSAGE_ARCHIVE_PERSON_SUCCESS, Messages.format(DANIEL)), expectedModel);
         assertFalse(findStoredPerson(ALICE).isArchived());
         assertTrue(findStoredPerson(DANIEL).isArchived());
+    }
+
+    @Test
+    public void execute_findView_archivesStudentAtDisplayedIndex() throws CommandException {
+        new FindCommand(new NameContainsKeywordsPredicate(List.of("Daniel"))).execute(model);
+        assertEquals(List.of(DANIEL), model.getFilteredPersonList());
+
+        CommandResult result = new ArchiveCommand(INDEX_FIRST_PERSON).execute(model);
+
+        assertEquals(String.format(ArchiveCommand.MESSAGE_ARCHIVE_PERSON_SUCCESS, Messages.format(DANIEL)),
+                result.getFeedbackToUser());
+        assertTrue(findStoredPerson(DANIEL).isArchived());
+        assertFalse(findStoredPerson(ALICE).isArchived());
+    }
+
+    @Test
+    public void execute_upcomingView_archivesStudentAtDisplayedIndex() throws CommandException {
+        Clock clock = Clock.fixed(LocalDateTime.of(2026, 10, 22, 16, 0)
+                .atZone(ZoneId.of("Asia/Singapore")).toInstant(), ZoneId.of("Asia/Singapore"));
+        Person later = new PersonBuilder().withName("Later Student").withLesson("2026-11-01 10:00").build();
+        Person soonest = new PersonBuilder().withName("Soonest Student").withLesson("2026-10-23 10:00").build();
+        AddressBook addressBook = new AddressBook();
+        List.of(later, soonest).forEach(addressBook::addPerson);
+        Model upcomingModel = new ModelManager(addressBook, new UserPrefs());
+        new UpcomingCommand(clock).execute(upcomingModel);
+        assertEquals(List.of(soonest, later), upcomingModel.getFilteredPersonList());
+
+        CommandResult result = new ArchiveCommand(INDEX_FIRST_PERSON).execute(upcomingModel);
+
+        assertEquals(String.format(ArchiveCommand.MESSAGE_ARCHIVE_PERSON_SUCCESS, Messages.format(soonest)),
+                result.getFeedbackToUser());
+        Person archived = upcomingModel.getAddressBook().getPersonList().stream()
+                .filter(person -> person.isSamePerson(soonest)).findFirst().orElseThrow();
+        assertTrue(archived.isArchived());
+        assertEquals(List.of(later), upcomingModel.getFilteredPersonList());
     }
 
     @Test
