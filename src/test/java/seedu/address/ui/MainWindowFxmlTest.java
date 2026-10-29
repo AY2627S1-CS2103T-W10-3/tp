@@ -21,10 +21,10 @@ public class MainWindowFxmlTest {
         assertTrue(fxml.contains("@TutorContactsTheme.css"));
         assertTrue(fxml.contains("text=\"TutorContacts\""));
         assertTrue(fxml.contains("styleClass=\"sidebar\""));
-        assertTrue(fxml.contains("text=\"All Students\""));
+        assertTrue(fxml.contains("text=\"Active Students\""));
         assertTrue(fxml.contains("text=\"Upcoming Lessons\""));
         assertTrue(fxml.contains("text=\"Archived Students\""));
-        assertTrue(fxml.contains("onAction=\"#handleAllStudents\""));
+        assertTrue(fxml.contains("onAction=\"#handleActiveStudents\""));
         assertTrue(fxml.contains("onAction=\"#handleUpcomingLessons\""));
         assertTrue(fxml.contains("onAction=\"#handleArchivedStudents\""));
         assertTrue(fxml.contains("fx:id=\"personDetailsPanelPlaceholder\""));

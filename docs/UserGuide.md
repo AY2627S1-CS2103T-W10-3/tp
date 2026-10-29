@@ -26,7 +26,7 @@ TutorContacts is an **offline desktop application for private tutors to manage s
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
 
-   * `list` : Lists all students.
+   * `list` : Lists all active students.
 
    * `filter s/Mathematics l/JC1` : Shows JC1 Mathematics students.
 
@@ -149,7 +149,7 @@ Examples:
 
 Rejected `add` commands leave the displayed records and saved data unchanged.
 
-### Listing all students: `list`
+### Listing active students: `list`
 
 Shows all active student records in their saved order. Archived students are excluded. If there are no records,
 TutorContacts shows guidance for adding one. If records exist only in the archive, it suggests `list archived` instead.
@@ -222,7 +222,7 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 
 * Matching is case-insensitive and partial; for example, `han` matches `Hans` and `Johanna`.
 * Keyword order does not matter; each supplied keyword is matched independently.
-* The search considers only names.
+* The search considers only the names of active students; archived students are not searched.
 * Students matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
 * Each matching student appears once in the same order as the complete active list, even if several or repeated
   keywords match that student.

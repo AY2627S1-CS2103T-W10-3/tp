@@ -29,7 +29,7 @@ public class MainWindow extends UiPart<Stage> {
     private static final String FXML = "MainWindow.fxml";
 
     enum NavigationSelection {
-        ALL, UPCOMING, ARCHIVED, NONE, UNCHANGED
+        ACTIVE, UPCOMING, ARCHIVED, UNCHANGED
     }
 
     private final Logger logger = LogsCenter.getLogger(getClass());
@@ -64,7 +64,7 @@ public class MainWindow extends UiPart<Stage> {
     private StackPane statusbarPlaceholder;
 
     @FXML
-    private Button allStudentsButton;
+    private Button activeStudentsButton;
 
     @FXML
     private Button upcomingLessonsButton;
@@ -153,7 +153,7 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     @FXML
-    private void handleAllStudents() {
+    private void handleActiveStudents() {
         executeNavigationCommand("list");
     }
 
@@ -178,21 +178,18 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     private void selectNavigationButton(Button selectedButton) {
-        Button[] buttons = {allStudentsButton, upcomingLessonsButton, archivedStudentsButton};
+        Button[] buttons = {activeStudentsButton, upcomingLessonsButton, archivedStudentsButton};
         for (Button button : buttons) {
             button.getStyleClass().remove("view-row-active");
         }
-        if (selectedButton != null) {
-            selectedButton.getStyleClass().add("view-row-active");
-        }
+        selectedButton.getStyleClass().add("view-row-active");
     }
 
     private void updateNavigationSelection(String commandText) {
         switch (navigationSelectionFor(commandText)) {
-            case ALL -> selectNavigationButton(allStudentsButton);
+            case ACTIVE -> selectNavigationButton(activeStudentsButton);
             case UPCOMING -> selectNavigationButton(upcomingLessonsButton);
             case ARCHIVED -> selectNavigationButton(archivedStudentsButton);
-            case NONE -> selectNavigationButton(null);
             case UNCHANGED -> { }
             default -> throw new AssertionError("Unknown navigation selection");
         }
@@ -201,7 +198,7 @@ public class MainWindow extends UiPart<Stage> {
     static NavigationSelection navigationSelectionFor(String commandText) {
         String normalizedCommand = commandText.strip().replaceAll("\\s+", " ");
         if (normalizedCommand.equals("list")) {
-            return NavigationSelection.ALL;
+            return NavigationSelection.ACTIVE;
         }
         if (normalizedCommand.equals("list archived")) {
             return NavigationSelection.ARCHIVED;
@@ -209,11 +206,10 @@ public class MainWindow extends UiPart<Stage> {
         if (normalizedCommand.equals("upcoming")) {
             return NavigationSelection.UPCOMING;
         }
-        if (hasCommandWord(normalizedCommand, "find") || hasCommandWord(normalizedCommand, "filter")) {
-            return NavigationSelection.NONE;
-        }
-        if (hasCommandWord(normalizedCommand, "edit")) {
-            return NavigationSelection.ALL;
+        // find, filter, and edit all show active students, so Active Students stays selected.
+        if (hasCommandWord(normalizedCommand, "find") || hasCommandWord(normalizedCommand, "filter")
+                || hasCommandWord(normalizedCommand, "edit")) {
+            return NavigationSelection.ACTIVE;
         }
         return NavigationSelection.UNCHANGED;
     }
