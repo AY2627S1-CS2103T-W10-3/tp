@@ -63,6 +63,7 @@ public class FilterCommandParserTest {
     @Test
     public void parse_invalidOrUnsupportedValue_failure() {
         assertParseFailure(parser, " s/", Subject.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, " s/Math\tPhysics", Subject.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, " l/University", EducationLevel.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, " s/Math x/value", "Unsupported prefix in filter command: x/");
         assertParseFailure(parser, "unexpected s/Math", String.format(

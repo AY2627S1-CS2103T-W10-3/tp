@@ -167,9 +167,12 @@ This section describes some noteworthy details on how certain features are imple
 after whitespace. It is shared by `add`, `edit`, and `filter`, rejects unsupported tokens, and stores the preamble and
 field values in an `ArgumentMultimap`. Text inside a pair of double quotes is treated as one field value, so a subject
 or address can contain text such as `l/` or `n/` without being split into another field. The enclosing quotes are not
-stored. Longer slash-terminated words such as `Level/` are ordinary text rather than CLI prefixes.
+stored. Longer slash-terminated words such as `Level/` are ordinary text rather than CLI prefixes. Inside an `n/` or `gn/`
+value, the whole-word relationship markers `s/o`, `d/o`, `a/l`, and `a/p` are also ordinary text, so names such as
+`Raj s/o Kumar` are not split at the `s/` subject prefix or rejected as an unsupported `d/` prefix. Outside a name, the
+same tokens are still read as prefixes.
 
-Validation follows a fixed order: token structure, required `n/`, repeated prefixes, guardian-name dependency, then individual field values. Duplicate-prefix errors list the repeated tokens in a stable order. Names, subjects, and addresses have surrounding whitespace removed and internal whitespace collapsed before validation. `Person#isSamePerson` compares names after the same whitespace normalization and case folding; phone, email, and guardian details do not determine whether two students are duplicates. An invalid command fails before `AddCommand` can update the model or save data.
+Validation follows a fixed order: token structure, required `n/`, repeated prefixes, guardian-name dependency, then individual field values. Duplicate-prefix errors list the repeated tokens in a stable order. Names and addresses have surrounding whitespace removed and internal whitespace collapsed before validation. Subjects have surrounding whitespace removed and repeated ordinary spaces collapsed, so a tab or other control character inside a subject still reaches `Subject` validation and is rejected. `Person#isSamePerson` compares names after the same whitespace normalization and case folding; phone, email, and guardian details do not determine whether two students are duplicates. An invalid command fails before `AddCommand` can update the model or save data.
 
 `HelpCommand` keeps the command formats in bundled text so help is available without a network connection. `LogicManager` returns the help result without saving the address book, which also allows help when the existing data file cannot be loaded. `HelpWindow` displays the same text directly in a scrollable JavaFX control.
 
@@ -896,7 +899,7 @@ testers are expected to do more *exploratory* testing.
 
    1. Download the JAR file and copy it into an empty folder.
 
-   1. Open a terminal in that folder and run `java -jar addressbook.jar`.<br>
+   1. Open a terminal in that folder and run `java -jar TutorContacts.jar`.<br>
       Expected: The GUI opens with a set of sample students. The window size may not be optimal.
 
 1. Saving window preferences

@@ -83,7 +83,7 @@ public class AddCommandParser implements Parser<AddCommand> {
         Optional<String> subjectValue = argMultimap.getValue(PREFIX_SUBJECT);
         Optional<String> educationLevelValue = argMultimap.getValue(PREFIX_EDUCATION_LEVEL);
         Optional<Subject> subject = subjectValue.isPresent()
-                ? Optional.of(ParserUtil.parseSubject(normalizeFreeText(subjectValue.get()))) : Optional.empty();
+                ? Optional.of(ParserUtil.parseSubject(subjectValue.get())) : Optional.empty();
         Optional<EducationLevel> educationLevel = educationLevelValue.isPresent()
                 ? Optional.of(ParserUtil.parseEducationLevel(educationLevelValue.get())) : Optional.empty();
         Optional<String> learningFocusValue = argMultimap.getValue(PREFIX_LEARNING_FOCUS);

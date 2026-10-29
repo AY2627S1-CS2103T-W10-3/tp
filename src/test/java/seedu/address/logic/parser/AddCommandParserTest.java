@@ -60,6 +60,8 @@ import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSucces
 import static seedu.address.testutil.TypicalPersons.AMY;
 import static seedu.address.testutil.TypicalPersons.BOB;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
@@ -143,6 +145,37 @@ public class AddCommandParserTest {
                 .withoutEducationLevel().withTags().build();
         assertParseSuccess(parser, " n/Alice s/English \"l/Literature\"",
                 new AddCommand(withLiteralQuotes));
+    }
+
+    @Test
+    public void parse_namesWithCommonNameCharacters_success() {
+        List<String> names = List.of("Jean-Luc Tan", "Liam O'Brien", "José Tan", "Raj s/o Kumar",
+                "Priya d/o Raju", "Ali a/l Ahmad", "Siti a/p Hassan");
+        for (String name : names) {
+            Person expectedPerson = new PersonBuilder().withName(name).withoutPhone().withoutEmail()
+                    .withoutAddress().withoutGuardian().withoutSubject().withoutEducationLevel().withTags().build();
+            assertParseSuccess(parser, " n/" + name, new AddCommand(expectedPerson));
+        }
+    }
+
+    @Test
+    public void parse_relationshipMarkerInName_notTreatedAsPrefix() {
+        Person expectedPerson = new PersonBuilder().withName("Raj s/o Kumar").withoutPhone().withoutEmail()
+                .withAddress("Blk 1").withGuardianName("Kumar a/l Muthu").withSubject("Mathematics")
+                .withoutEducationLevel().withTags().build();
+        assertParseSuccess(parser, " n/Raj s/o Kumar s/Mathematics gn/Kumar a/l Muthu a/Blk 1",
+                new AddCommand(expectedPerson));
+
+        // Outside a name, s/ is still the subject prefix
+        Person withSubjectO = new PersonBuilder().withName("Raj").withoutPhone().withoutEmail()
+                .withoutAddress().withoutGuardian().withSubject("o").withoutEducationLevel().withTags().build();
+        assertParseSuccess(parser, " s/o n/Raj", new AddCommand(withSubjectO));
+
+        // Only whole words are markers
+        Person withSubjectOceanography = new PersonBuilder().withName("Raj").withoutPhone().withoutEmail()
+                .withoutAddress().withoutGuardian().withSubject("oceanography").withoutEducationLevel().withTags()
+                .build();
+        assertParseSuccess(parser, " n/Raj s/oceanography", new AddCommand(withSubjectOceanography));
     }
 
     @Test
@@ -361,6 +394,7 @@ public class AddCommandParserTest {
                 Email.MESSAGE_CONSTRAINTS);
 
         assertParseFailure(parser, NAME_DESC_BOB + INVALID_SUBJECT_DESC, Subject.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, NAME_DESC_BOB + " s/Math\tPhysics", Subject.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, NAME_DESC_BOB + INVALID_EDUCATION_LEVEL_DESC,
                 EducationLevel.MESSAGE_CONSTRAINTS);
 
