@@ -393,7 +393,8 @@ Format: `clear`
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
 `clear` takes effect immediately without asking for confirmation, and it cannot be undone. Archived students are
 deleted as well. To keep a former student's record, use `archive INDEX` instead, and use `delete INDEX` to remove a
-single student. Back up `data/addressbook.json` first if you may need the records later.
+single student. Back up the data file described in [Editing the data file](#editing-the-data-file) first if you may
+need the records later.
 </div>
 
 `clear` takes no parameters. Extra text, such as `clear 3`, is rejected and no records are changed.
