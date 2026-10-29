@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.DESC_BOB;
@@ -16,12 +17,77 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_SUBJECT_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
+import seedu.address.model.tag.Tag;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
 
 public class EditPersonDescriptorTest {
+
+    @Test
+    public void isAnyFieldEdited() {
+        // no field edited -> returns false
+        assertFalse(new EditPersonDescriptor().isAnyFieldEdited());
+
+        // a field set -> returns true
+        assertTrue(new EditPersonDescriptorBuilder().withPhone(VALID_PHONE_BOB).build().isAnyFieldEdited());
+
+        // a field cleared -> returns true
+        assertTrue(new EditPersonDescriptorBuilder().withoutPhone().build().isAnyFieldEdited());
+    }
+
+    @Test
+    public void getPhone_unchanged_isNotEditedAndHasNoValue() {
+        EditPersonDescriptor descriptor = new EditPersonDescriptor();
+        assertFalse(descriptor.getPhone().isEdited());
+        assertTrue(descriptor.getPhone().value().isEmpty());
+    }
+
+    @Test
+    public void getPhone_set_isEditedWithValue() {
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withPhone(VALID_PHONE_BOB).build();
+        assertTrue(descriptor.getPhone().isEdited());
+        assertEquals(VALID_PHONE_BOB, descriptor.getPhone().value().orElseThrow().value);
+    }
+
+    @Test
+    public void getPhone_cleared_isEditedWithoutValue() {
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withoutPhone().build();
+        assertTrue(descriptor.getPhone().isEdited());
+        assertTrue(descriptor.getPhone().value().isEmpty());
+    }
+
+    @Test
+    public void setTags_modifyingSourceSet_doesNotAffectDescriptor() {
+        Set<Tag> tags = new HashSet<>();
+        tags.add(new Tag("friend"));
+        EditPersonDescriptor descriptor = new EditPersonDescriptor();
+        descriptor.setTags(tags);
+
+        tags.add(new Tag("colleague"));
+
+        assertEquals(Set.of(new Tag("friend")), descriptor.getTags().orElseThrow());
+    }
+
+    @Test
+    public void getTags_modifyingReturnedSet_throwsUnsupportedOperationException() {
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withTags("friend").build();
+        Set<Tag> tags = descriptor.getTags().orElseThrow();
+        assertThrows(UnsupportedOperationException.class, () -> tags.add(new Tag("colleague")));
+    }
+
+    @Test
+    public void copyConstructor_tagsAreDefensivelyCopied() {
+        EditPersonDescriptor original = new EditPersonDescriptorBuilder().withTags("friend").build();
+        EditPersonDescriptor copy = new EditPersonDescriptor(original);
+
+        original.setTags(Set.of(new Tag("friend"), new Tag("colleague")));
+
+        assertEquals(Set.of(new Tag("friend")), copy.getTags().orElseThrow());
+    }
 
     @Test
     public void equals() {
@@ -82,16 +148,16 @@ public class EditPersonDescriptorTest {
         EditPersonDescriptor editPersonDescriptor = new EditPersonDescriptor();
         String expected = EditPersonDescriptor.class.getCanonicalName() + "{name="
                 + editPersonDescriptor.getName().orElse(null) + ", phone="
-                + editPersonDescriptor.getPhone().orElse(null) + ", email="
-                + editPersonDescriptor.getEmail().orElse(null) + ", address="
-                + editPersonDescriptor.getAddress().orElse(null) + ", guardianName="
-                + editPersonDescriptor.getGuardianName().orElse(null) + ", guardianPhone="
-                + editPersonDescriptor.getGuardianPhone().orElse(null) + ", guardianEmail="
-                + editPersonDescriptor.getGuardianEmail().orElse(null) + ", subject="
-                + editPersonDescriptor.getSubject().orElse(null) + ", educationLevel="
-                + editPersonDescriptor.getEducationLevel().orElse(null) + ", learningFocus="
-                + editPersonDescriptor.getLearningFocus().orElse(null) + ", nextAction="
-                + editPersonDescriptor.getNextAction().orElse(null) + ", tags="
+                + editPersonDescriptor.getPhone().value().orElse(null) + ", email="
+                + editPersonDescriptor.getEmail().value().orElse(null) + ", address="
+                + editPersonDescriptor.getAddress().value().orElse(null) + ", guardianName="
+                + editPersonDescriptor.getGuardianName().value().orElse(null) + ", guardianPhone="
+                + editPersonDescriptor.getGuardianPhone().value().orElse(null) + ", guardianEmail="
+                + editPersonDescriptor.getGuardianEmail().value().orElse(null) + ", subject="
+                + editPersonDescriptor.getSubject().value().orElse(null) + ", educationLevel="
+                + editPersonDescriptor.getEducationLevel().value().orElse(null) + ", learningFocus="
+                + editPersonDescriptor.getLearningFocus().value().orElse(null) + ", nextAction="
+                + editPersonDescriptor.getNextAction().value().orElse(null) + ", tags="
                 + editPersonDescriptor.getTags().orElse(null) + "}";
         assertEquals(expected, editPersonDescriptor.toString());
     }
