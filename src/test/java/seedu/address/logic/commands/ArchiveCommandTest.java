@@ -62,7 +62,7 @@ public class ArchiveCommandTest {
         expectedModel.setPerson(DANIEL, DANIEL.withArchived(true));
 
         assertCommandSuccess(new ArchiveCommand(INDEX_FIRST_PERSON), model,
-                String.format(ArchiveCommand.MESSAGE_ARCHIVE_PERSON_SUCCESS, Messages.format(DANIEL)), expectedModel);
+                String.format(ArchiveCommand.MESSAGE_ARCHIVE_PERSON_SUCCESS, DANIEL.getName().fullName), expectedModel);
         assertFalse(findStoredPerson(ALICE).isArchived());
         assertTrue(findStoredPerson(DANIEL).isArchived());
     }
@@ -74,7 +74,7 @@ public class ArchiveCommandTest {
 
         CommandResult result = new ArchiveCommand(INDEX_FIRST_PERSON).execute(model);
 
-        assertEquals(String.format(ArchiveCommand.MESSAGE_ARCHIVE_PERSON_SUCCESS, Messages.format(DANIEL)),
+        assertEquals(String.format(ArchiveCommand.MESSAGE_ARCHIVE_PERSON_SUCCESS, DANIEL.getName().fullName),
                 result.getFeedbackToUser());
         assertTrue(findStoredPerson(DANIEL).isArchived());
         assertFalse(findStoredPerson(ALICE).isArchived());
@@ -94,7 +94,7 @@ public class ArchiveCommandTest {
 
         CommandResult result = new ArchiveCommand(INDEX_FIRST_PERSON).execute(upcomingModel);
 
-        assertEquals(String.format(ArchiveCommand.MESSAGE_ARCHIVE_PERSON_SUCCESS, Messages.format(soonest)),
+        assertEquals(String.format(ArchiveCommand.MESSAGE_ARCHIVE_PERSON_SUCCESS, soonest.getName().fullName),
                 result.getFeedbackToUser());
         Person archived = upcomingModel.getAddressBook().getPersonList().stream()
                 .filter(person -> person.isSamePerson(soonest)).findFirst().orElseThrow();
