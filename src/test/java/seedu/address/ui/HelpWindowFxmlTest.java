@@ -46,7 +46,8 @@ public class HelpWindowFxmlTest {
         assertFalse(fxml.contains("autocomplete"));
         assertFalse(fxml.contains("Statistics"));
         assertFalse(fxml.contains("OR semantics"));
-        assertFalse(fxml.contains("[t/TAG]..."));
+        assertTrue(fxml.contains("[t/TAG]..."));
+        assertTrue(fxml.contains("Repeat t/ to add more than one tag."));
     }
 
     private static String readResource(String resourcePath) throws IOException, URISyntaxException {

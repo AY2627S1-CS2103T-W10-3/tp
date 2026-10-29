@@ -56,10 +56,10 @@ TutorContacts is an **offline desktop application for private tutors to manage s
   For example, in `add n/NAME`, replace `NAME` with a value such as `John Doe`.
 
 * Items in square brackets are optional.<br>
-  For example, `n/NAME [t/TAG]` can be used as `n/John Doe t/friend` or as `n/John Doe`.
+  For example, `n/NAME [t/TAG]…​` can be used as `n/John Doe t/friend t/online` or as `n/John Doe`.
 
 * The prefixes in `add` can be in any order, with whitespace between fields.<br>
-  For example, `add p/81234567 n/Alex Tan` is accepted. Each `add` prefix can appear only once.
+  For example, `add p/81234567 n/Alex Tan` is accepted. Every `add` prefix except `t/` can appear only once.
 
 * Prefixes contain one or two lower-case characters followed by `/`. If a field value contains separate text that
   looks like a prefix, wrap the complete value in double quotes.<br>
@@ -87,10 +87,10 @@ Format: `help`
 
 Adds a student to TutorContacts. Only the student name is required; the remaining fields are optional.
 
-Format: `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]`
+Format: `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​`
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
-Only `n/` is required. Every other prefix is optional; each supported prefix can be supplied once, in any order.
+Only `n/` is required. Every other prefix is optional. Prefixes may appear in any order, and `t/` may repeat.
 </div>
 
 | Prefix | Meaning and validation |
@@ -106,7 +106,7 @@ Only `n/` is required. Every other prefix is optional; each supported prefix can
 | `ge/` | Guardian email. Optional; uses the student-email rules and requires `gn/`. |
 | `lf/` | Current learning focus. Optional; 1–200 characters without control characters. |
 | `na/` | Next action. Optional; 1–200 characters without control characters. |
-| `t/` | One optional tag; letters and digits only. |
+| `t/` | Optional tag; letters and digits only. Repeat `t/` to add more than one tag. |
 
 Subject and education level may be supplied independently. Education levels are case-insensitive when entered and are
 displayed in uppercase. If either field is omitted, the student card displays `Not provided` for that field.
@@ -137,7 +137,8 @@ Examples:
 * Learning context: `add n/Alex Tan lf/Quadratic graphs na/Complete worksheet 4`
 * Two students may share contacts: `add n/Ben Tan p/81234567 gn/Mary Tan gp/91234567` followed by `add n/Chloe Tan p/81234567 gn/Mary Tan gp/91234567`
 * Invalid, because `gn/` is missing: `add n/Sam Lee gp/81234567`
-* Invalid, because a prefix repeats: `add n/Sam Lee p/81234567 p/92345678`
+* Multiple tags: `add n/Sam Lee t/mathematics t/online`
+* Invalid, because a single-valued prefix repeats: `add n/Sam Lee p/81234567 p/92345678`
 * Invalid, because the education level is unsupported: `add n/Sam Lee l/University`
 * Invalid, because the subject is empty: `add n/Eva Lim s/ l/P6`
 * Invalid, because a learning focus supplied to `add` cannot be empty: `add n/Eva Lim lf/`
@@ -442,7 +443,7 @@ Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a v
 
 Action | Format, Examples
 --------|------------------
-**Add** | `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]` <br> e.g., `add n/James Ho lf/Fractions na/Complete worksheet 2`
+**Add** | `add n/NAME [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUCATION_LEVEL] [gn/GUARDIAN_NAME] [gp/GUARDIAN_PHONE] [ge/GUARDIAN_EMAIL] [lf/LEARNING_FOCUS] [na/NEXT_ACTION] [t/TAG]…​` <br> e.g., `add n/James Ho lf/Fractions na/Complete worksheet 2 t/mathematics t/online`
 **Archive** | `archive INDEX`<br> e.g., `archive 1`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`

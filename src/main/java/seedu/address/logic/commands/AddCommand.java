@@ -40,11 +40,11 @@ public class AddCommand extends Command {
             + "[" + PREFIX_GUARDIAN_NAME + "GUARDIAN_NAME] "
             + "[" + PREFIX_GUARDIAN_PHONE + "GUARDIAN_PHONE] "
             + "[" + PREFIX_GUARDIAN_EMAIL + "GUARDIAN_EMAIL] "
-            + "[" + PREFIX_TAG + "TAG]";
+            + "[" + PREFIX_TAG + "TAG]...";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a student to TutorContacts. "
             + "Parameters: " + FORMAT + "\n"
-            + "Prefixes may appear in any order, but each can appear only once. "
+            + "Prefixes may appear in any order. Every prefix except t/ may appear at most once. "
             + "Guardian phone or email requires gn/.\n"
             + "Example: " + COMMAND_WORD + " "
             + PREFIX_NAME + "John Doe "
@@ -57,7 +57,8 @@ public class AddCommand extends Command {
             + PREFIX_GUARDIAN_NAME + "Jane Doe "
             + PREFIX_GUARDIAN_PHONE + "91234567 "
             + PREFIX_ADDRESS + "311, Clementi Ave 2, #02-25 "
-            + PREFIX_TAG + "online";
+            + PREFIX_TAG + "online "
+            + PREFIX_TAG + "exam";
 
     public static final String MESSAGE_SUCCESS = "New student added: %1$s";
     public static final String MESSAGE_DUPLICATE_PERSON = "This student already exists in TutorContacts.";
