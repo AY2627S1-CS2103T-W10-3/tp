@@ -326,11 +326,11 @@ Format: `schedule INDEX at/YYYY-MM-DD HH:mm`
 * If the student already has a lesson, the new lesson replaces it. The result panel shows the previous lesson time.
 * Dates that do not exist, such as `2099-02-30`, and times outside `00:00`–`23:59` are rejected.
 * Extra spaces around the value and between the date and time are ignored.
-* The student card shows the lesson as `Lesson: 2099-10-30 16:00`, or `Lesson: Not scheduled` when the student has no
-  lesson.
-* Once the lesson time is reached, the card marks the lesson in red as `Lesson: 2099-10-30 16:00 (overdue)`. The
-  lesson is kept, so you can reschedule it with `schedule` or clear it with `unschedule`. The marker is updated each
-  time you enter a command.
+* The student card and the details panel show the lesson under **Next lesson**, for example `2099-10-30 16:00`, or
+  `Not scheduled` when the student has no lesson.
+* Once the lesson time is reached, the lesson is shown in bold red as `2099-10-30 16:00 (overdue)`. The lesson is
+  kept, so you can reschedule it with `schedule` or clear it with `unschedule`. The marker is updated each time you
+  enter a command.
 * Archiving a student keeps their lesson. The lesson is shown again when the student is restored with `unarchive`.
 
 Examples:
@@ -378,13 +378,17 @@ Format: `upcoming`
   index in the upcoming list.
 * `upcoming` takes no parameters. Extra text, such as `upcoming 3`, is rejected.
 * The list shows the lessons that were upcoming when you ran `upcoming`. If a lesson's time passes while the list is
-  showing, that student stays in the list and is marked overdue. Run `upcoming` again to update the list.
+  showing, that student stays in the list and is marked overdue. Run `upcoming` again, or click **Upcoming Lessons**
+  in the sidebar, to update the list.
+* The list does update after your own commands. Rescheduling a student moves them to their new place in the order,
+  and `unschedule` removes them from the list. When this moves other students or removes one, the result panel says
+  that the displayed list has been updated, so check the indices before your next command.
 * If no lessons are upcoming, the result panel suggests `schedule` instead.
 
 Examples:
 * With the sample data, `schedule 1 at/2099-11-02 09:30`, then `schedule 2 at/2099-10-30 16:00`, then `upcoming`
   lists `Bernice Yu` first and `Alex Yeoh` second, because Bernice's lesson is sooner.
-* `upcoming` followed by `unschedule 1` clears the soonest upcoming lesson.
+* `upcoming` followed by `unschedule 1` clears the soonest upcoming lesson and removes that student from the list.
 * Invalid, because `upcoming` takes no parameters: `upcoming 3`
 
 ### Clearing all entries: `clear`

@@ -354,19 +354,27 @@ The sequence diagram below shows how `upcoming` is executed.
 Index-based commands such as `schedule`, `unschedule`, `archive`, and `delete` read `Model#getFilteredPersonList`, which
 returns the sorted list, so an index always refers to the student shown at that position.
 
+`schedule` and `unschedule` replace the student through `Model#setPerson`. The `FilteredList` tests the new student
+against the predicate that `upcoming` created, which keeps the time at which `upcoming` ran, and the `SortedList`
+re-sorts. In the upcoming list, a reschedule can therefore move other students to different indices, and `unschedule`
+removes the student. `Command#withListUpdateNotice` compares the displayed list before and after the change. If it
+differs by more than the replaced student, the command adds `Messages.MESSAGE_DISPLAYED_LIST_UPDATED` to its result,
+so the user knows to check the indices before the next command.
+
 `Lesson#isOverdue(now)` is the opposite of `Lesson#isAfter(now)`, so every lesson is either upcoming or overdue. A
-lesson becomes overdue as soon as it starts. `PersonCard` adds ` (overdue)` and the `lesson-overdue` style class to the
-lesson label of an overdue lesson. Because the card is drawn from the current time, `MainWindow#executeCommand` calls
+lesson becomes overdue as soon as it starts. `PersonCard` and `PersonDetailsPanel` add ` (overdue)` and an overdue style
+class to the lesson label of an overdue lesson. Because the card is drawn from the current time, `MainWindow#executeCommand` calls
 `PersonListPanel#refreshCards` after every command, including rejected ones, so overdue markers stay current.
 `PersonListPanel` also refreshes its cards when the displayed list is reordered, because `ListView` does not redraw
 cells after a permutation.
 
 Design considerations:
 
-* **Alternative 1 (current choice):** Compute the upcoming list when `upcoming` runs, and update it only when the user
-  enters another query.
-  * Pros: The list changes only in response to the user, so an index the user reads is still valid when they type the
-    next command.
+* **Alternative 1 (current choice):** Compute the upcoming list when `upcoming` runs, and update it only in response to
+  the user's commands: another query, or a command that changes a displayed student, such as `schedule` or
+  `unschedule`. The result panel says when such a change moves other students.
+  * Pros: The list never changes on its own, so an index the user reads is still valid when they type the next
+    command, unless their own command reported that the list was updated.
   * Cons: A lesson whose time passes while the list is showing stays in the list, marked overdue, until `upcoming`
     is run again.
 * **Alternative 2:** Re-filter the upcoming list after every command.
@@ -378,6 +386,11 @@ Design considerations:
   * Pros: Lessons leave the list as soon as they start.
   * Cons: The indices can change while the user is typing, so a command such as `delete 2` could act on a different
     student from the one the user saw.
+* **Alternative 4:** Keep the order and membership of the upcoming list fixed until the next query, even after
+  `schedule` or `unschedule`.
+  * Pros: No index changes until the user runs another query.
+  * Cons: A rescheduled student is shown out of time order, and an unscheduled student stays in a list of upcoming
+    lessons. It also differs from every other view, where `delete` and `archive` update the list immediately.
 
 ## **Documentation, logging, testing, dev-ops**
 
@@ -850,6 +863,8 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
   a displayed index.
 
   * 2b1. TutorContacts acts on the student shown at that index in the upcoming list (UC03, UC05, UC08, UC09).
+  * 2b2. If the change moves other students or removes the student from the list, TutorContacts updates the list and
+    tells the user to check the indices.
 
   Use case ends.
 
@@ -986,7 +1001,8 @@ testers are expected to do more *exploratory* testing.
    1. Prerequisites: List all students using the `list` command. The first student has no lesson.
 
    1. Test case: `schedule 1 at/2099-10-30 16:00`<br>
-      Expected: The first card shows `Lesson: 2099-10-30 16:00`. The result panel reports the scheduled lesson.
+      Expected: The first card shows `2099-10-30 16:00` under Next lesson. The result panel reports the scheduled
+      lesson.
 
    1. Test case: `schedule 1 at/2099-11-02 09:30`<br>
       Expected: The lesson is replaced. The result panel shows the new time and the previous time.
@@ -1004,7 +1020,7 @@ testers are expected to do more *exploratory* testing.
    1. Prerequisites: The first student has a scheduled lesson.
 
    1. Test case: `unschedule 1`<br>
-      Expected: The first card shows `Lesson: Not scheduled`. The result panel shows the cleared lesson time.
+      Expected: The first card shows `Not scheduled` under Next lesson. The result panel shows the cleared lesson time.
 
    1. Test case: `unschedule 1` again<br>
       Expected: The result panel reports that the student has no scheduled lesson.
@@ -1034,11 +1050,16 @@ testers are expected to do more *exploratory* testing.
    1. Test case: `upcoming`<br>
       Expected: Only Bernice Yu and Alex Yeoh are listed, in that order. The result panel reports 2 students.
 
-   1. Test case: `unschedule 1` while the upcoming list is showing<br>
-      Expected: Bernice Yu's lesson is cleared, because she is shown first.
+   1. Test case: `schedule 1 at/2099-12-01 10:00` while the upcoming list is showing<br>
+      Expected: Bernice Yu's lesson is rescheduled, because she is shown first. She moves below Alex Yeoh, and the
+      result panel says that the displayed list has been updated.
+
+   1. Test case: `upcoming`, then `unschedule 1`<br>
+      Expected: Alex Yeoh's lesson is cleared, because he is now shown first. He leaves the list, and the result panel
+      says that the displayed list has been updated.
 
    1. Test case: `archive 1` while the upcoming list is showing, then `upcoming`<br>
-      Expected: Alex Yeoh is archived and is no longer listed. The result panel reports that there are no upcoming
+      Expected: Bernice Yu is archived and is no longer listed. The result panel reports that there are no upcoming
       lessons.
 
    1. Test case: `upcoming 3`<br>
@@ -1048,8 +1069,8 @@ testers are expected to do more *exploratory* testing.
 
    1. Close TutorContacts. In `data/tutorcontacts.json`, change one student's `"lesson" : null` to
       `"lesson" : "2020-01-01 09:00"`, then launch TutorContacts.<br>
-      Expected: The student's card shows `Lesson: 2020-01-01 09:00 (overdue)` in red, and `upcoming` does not list
-      the student.
+      Expected: The student's card shows `2020-01-01 09:00 (overdue)` in bold red under Next lesson, and `upcoming`
+      does not list the student.
 
    1. Run `list`, then `schedule INDEX at/2099-10-30 16:00`, where `INDEX` is that student's index.<br>
       Expected: The card shows the new lesson without the overdue marker.
