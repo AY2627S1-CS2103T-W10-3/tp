@@ -1,9 +1,13 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.logic.parser.CliSyntax.PREFIX_GUARDIAN_NAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +18,9 @@ import seedu.address.logic.parser.exceptions.ParseException;
 /** Tokenizes command fields while preserving prefix-like text inside quoted values. */
 final class CommandArgumentTokenizer {
     private static final Pattern PREFIX_TOKEN = Pattern.compile("[a-z][a-z0-9]?/");
+    private static final Set<String> NAME_FIELDS = Set.of(PREFIX_NAME.toString(), PREFIX_GUARDIAN_NAME.toString());
+    // s/o (son of), d/o (daughter of), a/l (anak lelaki), and a/p (anak perempuan) as whole words in names
+    private static final Pattern NAME_RELATIONSHIP_MARKER = Pattern.compile("(?:[sd]/o|a/[lp])(?=\\s|$)");
 
     private CommandArgumentTokenizer() {
     }
@@ -21,7 +28,8 @@ final class CommandArgumentTokenizer {
     /**
      * Returns the preamble and values for the supplied prefixes. Prefix tokens inside a quoted
      * value are treated as text. Prefix-like words longer than two characters are also treated
-     * as text because TutorContacts prefixes contain one or two lower-case characters.
+     * as text because TutorContacts prefixes contain one or two lower-case characters. In a name
+     * or guardian name, the relationship markers s/o, d/o, a/l, and a/p are also treated as text.
      */
     static ArgumentMultimap tokenize(String args, String commandWord, Prefix... prefixes) throws ParseException {
         Map<String, Prefix> supported = Arrays.stream(prefixes)
@@ -55,6 +63,12 @@ final class CommandArgumentTokenizer {
             if (isInsideQuotes || i > 0 && !Character.isWhitespace(args.charAt(i - 1))) {
                 continue;
             }
+            Matcher marker = NAME_RELATIONSHIP_MARKER.matcher(args);
+            marker.region(i, args.length());
+            if (isInNameField(fields) && marker.lookingAt()) {
+                i = marker.end() - 1;
+                continue;
+            }
             Matcher matcher = PREFIX_TOKEN.matcher(args);
             matcher.region(i, args.length());
             if (matcher.lookingAt()) {
@@ -66,6 +80,10 @@ final class CommandArgumentTokenizer {
             throw new ParseException("Unclosed quoted value in " + commandWord + " command.");
         }
         return fields;
+    }
+
+    private static boolean isInNameField(List<FieldPosition> fields) {
+        return !fields.isEmpty() && NAME_FIELDS.contains(fields.getLast().token());
     }
 
     private static String parseValue(String rawValue) {

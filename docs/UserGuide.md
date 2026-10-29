@@ -95,7 +95,7 @@ Only `n/` is required. Every other prefix is optional. Prefixes may appear in an
 
 | Prefix | Meaning and validation |
 |--------|------------------------|
-| `n/` | Student name. Required; letters, digits, and spaces; cannot be blank. |
+| `n/` | Student name. Required; starts with a letter or digit; may contain letters (including accented letters), digits, spaces, hyphens (`-`), apostrophes (`'`), full stops (`.`), and slashes (`/`). `s/o`, `d/o`, `a/l`, and `a/p` in a name stay part of the name, for example `n/Raj s/o Kumar`. |
 | `p/` | Student phone. Optional; digits only, at least 3 digits. |
 | `e/` | Student email. Optional; a valid email address. |
 | `a/` | Address. Optional; nonblank text. |
@@ -133,6 +133,7 @@ A guardian name may be supplied without guardian contact information.
 Examples:
 * Name only: `add n/Alex Tan`
 * Prefix-like text in values: `add n/Alice s/A Level/Mathematics a/"Block n/7"`
+* Names with hyphens, apostrophes, accents, or `s/o`: `add n/Jean-Luc O'Brien`, `add n/José Tan`, `add n/Raj s/o Kumar s/Mathematics`
 * All tutoring and guardian details, in a different prefix order: `add l/jc1 gn/Mary Tan s/H2 Mathematics p/98765432 ge/mary@example.com gp/81234567 e/alex@example.com n/Alex Tan`
 * Learning context: `add n/Alex Tan lf/Quadratic graphs na/Complete worksheet 4`
 * Two students may share contacts: `add n/Ben Tan p/81234567 gn/Mary Tan gp/91234567` followed by `add n/Chloe Tan p/81234567 gn/Mary Tan gp/91234567`
