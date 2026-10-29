@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import java.util.regex.Pattern;
 
 /**
  * Represents the date and time of a student's next lesson, in the computer's local time.
@@ -18,6 +19,8 @@ public final class Lesson {
     public static final String MESSAGE_CONSTRAINTS = "Lesson time should be a valid date and 24-hour time in the "
             + "format " + FORMAT + ", e.g. 2099-10-30 16:00";
 
+    // The formatter alone also accepts signed years of any length, such as +12345, so check the shape first.
+    private static final Pattern LESSON_SHAPE = Pattern.compile("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}");
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm")
             .withResolverStyle(ResolverStyle.STRICT);
 
@@ -38,6 +41,9 @@ public final class Lesson {
     /** Returns true if the given string is a valid lesson date and time. */
     public static boolean isValidLesson(String test) {
         requireNonNull(test);
+        if (!LESSON_SHAPE.matcher(test).matches()) {
+            return false;
+        }
         try {
             LocalDateTime.parse(test, FORMATTER);
             return true;
