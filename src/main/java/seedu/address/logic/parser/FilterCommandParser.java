@@ -26,8 +26,7 @@ public class FilterCommandParser implements Parser<FilterCommand> {
         arguments.verifyNoDuplicatePrefixesFor(PREFIX_SUBJECT, PREFIX_EDUCATION_LEVEL);
 
         Optional<Subject> subject = arguments.getValue(PREFIX_SUBJECT).isPresent()
-                ? Optional.of(ParserUtil.parseSubject(normalizeFreeText(
-                        arguments.getValue(PREFIX_SUBJECT).get())))
+                ? Optional.of(ParserUtil.parseSubject(arguments.getValue(PREFIX_SUBJECT).get()))
                 : Optional.empty();
         Optional<EducationLevel> educationLevel = arguments.getValue(PREFIX_EDUCATION_LEVEL).isPresent()
                 ? Optional.of(ParserUtil.parseEducationLevel(arguments.getValue(PREFIX_EDUCATION_LEVEL).get()))
@@ -36,9 +35,5 @@ public class FilterCommandParser implements Parser<FilterCommand> {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, FilterCommand.MESSAGE_USAGE));
         }
         return new FilterCommand(new PersonMatchesFiltersPredicate(subject, educationLevel));
-    }
-
-    private static String normalizeFreeText(String value) {
-        return value.strip().replaceAll("\\s+", " ");
     }
 }

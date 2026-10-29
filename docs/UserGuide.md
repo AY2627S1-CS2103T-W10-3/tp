@@ -117,7 +117,8 @@ other control characters, blank values, and values longer than 200 characters ar
 is displayed as `Not provided`.
 
 Leading and trailing whitespace around field values is ignored. Repeated whitespace inside names, guardian names,
-subjects, and addresses is stored as one space. Whitespace within phone numbers, email addresses, education levels, and
+and addresses is stored as one space. Repeated spaces inside subjects are stored as one space, but a tab, line break,
+or other control character inside a subject is rejected. Whitespace within phone numbers, email addresses, education levels, and
 tags is not accepted. Text before the first prefix and unknown prefix-like tokens such as `x/value` are rejected.
 If a subject or address contains a separate one- or two-character token followed by `/`, enclose the complete value in
 double quotes. For example, `add n/Alex s/"A l/Mathematics" a/"Block n/7"` stores the values without the quotes.

@@ -120,14 +120,18 @@ public class ParserUtil {
 
     /**
      * Parses a {@code String subject} into a {@code Subject}.
+     * Leading and trailing whitespace is trimmed, and repeated ordinary spaces are collapsed. Tabs and other control
+     * characters inside the value are kept, so they are rejected instead of being silently converted to spaces.
+     *
+     * @throws ParseException if the given {@code subject} is invalid.
      */
     public static Subject parseSubject(String subject) throws ParseException {
         requireNonNull(subject);
-        String trimmedSubject = subject.trim();
-        if (!Subject.isValidSubject(trimmedSubject)) {
+        String normalizedSubject = normalizeOrdinarySpaces(subject);
+        if (!Subject.isValidSubject(normalizedSubject)) {
             throw new ParseException(Subject.MESSAGE_CONSTRAINTS);
         }
-        return new Subject(trimmedSubject);
+        return new Subject(normalizedSubject);
     }
 
     /**

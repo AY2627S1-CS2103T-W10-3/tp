@@ -361,6 +361,7 @@ public class AddCommandParserTest {
                 Email.MESSAGE_CONSTRAINTS);
 
         assertParseFailure(parser, NAME_DESC_BOB + INVALID_SUBJECT_DESC, Subject.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, NAME_DESC_BOB + " s/Math\tPhysics", Subject.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, NAME_DESC_BOB + INVALID_EDUCATION_LEVEL_DESC,
                 EducationLevel.MESSAGE_CONSTRAINTS);
 
