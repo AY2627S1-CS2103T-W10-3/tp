@@ -1,5 +1,8 @@
 package seedu.address.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
@@ -29,11 +32,17 @@ public class PersonListPanel extends UiPart<Region> {
     @FXML
     private ListView<Person> personListView;
 
+    private Person pendingSelection;
+    private boolean hasPendingSelection;
+
     /**
      * Creates a {@code PersonListPanel} with the displayed and complete student lists.
      */
     public PersonListPanel(ObservableList<Person> personList, ObservableList<Person> allPersons) {
         super(FXML);
+        // Registered before the list is given to the ListView, so that it sees the selection before the
+        // ListView's selection model adjusts it for the change.
+        personList.addListener(this::rememberSelection);
         personListView.setItems(personList);
         Label emptyListPlaceholder = new Label();
         emptyListPlaceholder.textProperty().bind(Bindings.createStringBinding(() ->
@@ -41,7 +50,6 @@ public class PersonListPanel extends UiPart<Region> {
         personListView.setPlaceholder(emptyListPlaceholder);
         personListView.setCellFactory(listView -> new PersonListViewCell());
         personList.addListener(this::refreshIfReordered);
-        personList.addListener((ListChangeListener<Person>) change -> keepSelectionValid());
         selectFirstStudent();
     }
 
@@ -59,13 +67,62 @@ public class PersonListPanel extends UiPart<Region> {
         }
     }
 
-    private void keepSelectionValid() {
-        Person selectedPerson = personListView.getSelectionModel().getSelectedItem();
-        Platform.runLater(() -> {
-            if (selectedPerson == null || !personListView.getItems().contains(selectedPerson)) {
-                selectFirstStudent();
+    /**
+     * Remembers which student should stay selected after {@code change}, and reselects that student once the
+     * change has been processed. When a student moves, {@code ListView} can highlight one row while reporting
+     * another student as selected, so the student is always selected again by position.
+     */
+    private void rememberSelection(ListChangeListener.Change<? extends Person> change) {
+        Person selectedPerson = hasPendingSelection
+                ? pendingSelection
+                : personListView.getSelectionModel().getSelectedItem();
+        pendingSelection = findPersonToSelect(selectedPerson, change, Person::isSamePerson);
+        if (!hasPendingSelection) {
+            hasPendingSelection = true;
+            Platform.runLater(this::applyPendingSelection);
+        }
+    }
+
+    private void applyPendingSelection() {
+        hasPendingSelection = false;
+        int index = pendingSelection == null ? -1 : personListView.getItems().indexOf(pendingSelection);
+        pendingSelection = null;
+        if (index == -1) {
+            selectFirstStudent();
+        } else {
+            personListView.getSelectionModel().clearAndSelect(index);
+        }
+    }
+
+    /**
+     * Returns the item in the changed list that represents {@code selected}, or null if there is none.
+     * An edited student is a new object, so it is matched with {@code isSame}. A student whose identity changed
+     * is matched when the change only replaces that one student.
+     */
+    static <T> T findPersonToSelect(T selected, ListChangeListener.Change<? extends T> change,
+                                    BiPredicate<T, T> isSame) {
+        if (selected == null) {
+            return null;
+        }
+        List<T> added = new ArrayList<>();
+        List<T> removed = new ArrayList<>();
+        while (change.next()) {
+            added.addAll(change.getAddedSubList());
+            removed.addAll(change.getRemoved());
+        }
+        change.reset();
+
+        List<? extends T> items = change.getList();
+        if (items.contains(selected)) {
+            return selected;
+        }
+        for (T item : items) {
+            if (isSame.test(item, selected)) {
+                return item;
             }
-        });
+        }
+        boolean isOnlyReplacement = removed.equals(List.of(selected)) && added.size() == 1;
+        return isOnlyReplacement ? added.get(0) : null;
     }
 
     /**
