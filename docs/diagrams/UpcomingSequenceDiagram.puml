@@ -73,7 +73,11 @@ deactivate Model
 UpcomingCommand --> LogicManager : CommandResult
 deactivate UpcomingCommand
 
-LogicManager -> LogicManager : save address book
+LogicManager -> LogicManager : compare with snapshot
+note right of LogicManager
+No student changed,
+so nothing is saved
+end note
 
 [<--LogicManager
 deactivate LogicManager
