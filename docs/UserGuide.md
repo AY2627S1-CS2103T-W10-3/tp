@@ -198,6 +198,8 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/SUBJECT] [l/EDUC
   `a/"Block n/7"` or `s/"English l/Literature"`.
 * After a successful edit the full student list is shown again, so a `find` or `filter` view is cleared. For example,
   `find Bernice` followed by `edit 1 p/91234567` ends with every student displayed rather than only the search results.
+* If every supplied value already matches the student's current details, TutorContacts reports that no changes were
+  made.
 * `edit` works only on the active student list. If `list archived` is showing, run `list` first to return to an active
   view.
 
