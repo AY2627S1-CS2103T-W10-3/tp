@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -27,6 +28,8 @@ public class PersonListPanel extends UiPart<Region> {
             "No students recorded. Use add to create your first student.";
     private static final String EMPTY_VIEW_MESSAGE =
             "No students in this view. Use list or list archived.";
+    private static final String EMPTY_UPCOMING_VIEW_MESSAGE =
+            "No upcoming lessons. Use schedule INDEX at/DATE_TIME to schedule one.";
     private final Logger logger = LogsCenter.getLogger(PersonListPanel.class);
 
     @FXML
@@ -34,6 +37,7 @@ public class PersonListPanel extends UiPart<Region> {
 
     private Person pendingSelection;
     private boolean hasPendingSelection;
+    private final SimpleBooleanProperty isUpcomingView = new SimpleBooleanProperty(false);
 
     /**
      * Creates a {@code PersonListPanel} with the displayed and complete student lists.
@@ -46,7 +50,7 @@ public class PersonListPanel extends UiPart<Region> {
         personListView.setItems(personList);
         Label emptyListPlaceholder = new Label();
         emptyListPlaceholder.textProperty().bind(Bindings.createStringBinding(() ->
-                getEmptyListMessage(allPersons.size()), allPersons));
+                getEmptyListMessage(allPersons.size(), isUpcomingView.get()), allPersons, isUpcomingView));
         personListView.setPlaceholder(emptyListPlaceholder);
         personListView.setCellFactory(listView -> new PersonListViewCell());
         personList.addListener(this::refreshIfReordered);
@@ -56,6 +60,11 @@ public class PersonListPanel extends UiPart<Region> {
     /** Returns the student currently selected in the displayed list. */
     public ReadOnlyObjectProperty<Person> selectedPersonProperty() {
         return personListView.getSelectionModel().selectedItemProperty();
+    }
+
+    /** Sets whether the displayed list represents the Upcoming Lessons view. */
+    public void setUpcomingView(boolean isUpcomingView) {
+        this.isUpcomingView.set(isUpcomingView);
     }
 
     /** Selects the first displayed student, or clears selection when the list is empty. */
@@ -167,8 +176,11 @@ public class PersonListPanel extends UiPart<Region> {
         return replacedRanges > 1 || hasAddition && hasRemoval;
     }
 
-    private static String getEmptyListMessage(int totalStudentCount) {
-        return totalStudentCount == 0 ? NO_STUDENTS_MESSAGE : EMPTY_VIEW_MESSAGE;
+    static String getEmptyListMessage(int totalStudentCount, boolean isUpcomingView) {
+        if (totalStudentCount == 0) {
+            return NO_STUDENTS_MESSAGE;
+        }
+        return isUpcomingView ? EMPTY_UPCOMING_VIEW_MESSAGE : EMPTY_VIEW_MESSAGE;
     }
 
     /**

@@ -187,9 +187,18 @@ public class MainWindow extends UiPart<Stage> {
 
     private void updateNavigationSelection(String commandText) {
         switch (navigationSelectionFor(commandText)) {
-            case ACTIVE -> selectNavigationButton(activeStudentsButton);
-            case UPCOMING -> selectNavigationButton(upcomingLessonsButton);
-            case ARCHIVED -> selectNavigationButton(archivedStudentsButton);
+            case ACTIVE -> {
+                selectNavigationButton(activeStudentsButton);
+                personListPanel.setUpcomingView(false);
+            }
+            case UPCOMING -> {
+                selectNavigationButton(upcomingLessonsButton);
+                personListPanel.setUpcomingView(true);
+            }
+            case ARCHIVED -> {
+                selectNavigationButton(archivedStudentsButton);
+                personListPanel.setUpcomingView(false);
+            }
             case UNCHANGED -> { }
             default -> throw new AssertionError("Unknown navigation selection");
         }

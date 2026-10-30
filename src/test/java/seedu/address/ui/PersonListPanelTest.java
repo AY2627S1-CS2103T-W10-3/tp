@@ -4,12 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,16 +42,23 @@ public class PersonListPanelTest {
     }
 
     @Test
-    public void getEmptyListMessage_usesRecordedStudentCount() throws Exception {
-        Optional<Method> messageMethod = Arrays.stream(PersonListPanel.class.getDeclaredMethods())
-                .filter(method -> method.getName().equals("getEmptyListMessage"))
-                .findFirst();
-        assertTrue(messageMethod.isPresent(), "PersonListPanel should select its message from the total record count");
+    public void getEmptyListMessage_emptyDatabase_usesFirstUseMessageForEveryView() {
+        assertEquals("No students recorded. Use add to create your first student.",
+                PersonListPanel.getEmptyListMessage(0, false));
+        assertEquals("No students recorded. Use add to create your first student.",
+                PersonListPanel.getEmptyListMessage(0, true));
+    }
 
-        Method method = messageMethod.get();
-        method.setAccessible(true);
-        assertEquals("No students recorded. Use add to create your first student.", method.invoke(null, 0));
-        assertEquals("No students in this view. Use list or list archived.", method.invoke(null, 1));
+    @Test
+    public void getEmptyListMessage_emptyUpcomingView_usesSchedulingGuidance() {
+        assertEquals("No upcoming lessons. Use schedule INDEX at/DATE_TIME to schedule one.",
+                PersonListPanel.getEmptyListMessage(1, true));
+    }
+
+    @Test
+    public void getEmptyListMessage_otherEmptyViews_usesGenericGuidance() {
+        assertEquals("No students in this view. Use list or list archived.",
+                PersonListPanel.getEmptyListMessage(1, false));
     }
 
     @Test
