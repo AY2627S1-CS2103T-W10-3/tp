@@ -11,7 +11,7 @@ title: Developer Guide
 
 * TutorContacts is based on the [AddressBook-Level3](https://github.com/se-edu/addressbook-level3) project created by the [SE-EDU initiative](https://se-education.org/).
 * TutorContacts uses [JavaFX](https://openjfx.io/), [Jackson](https://github.com/FasterXML/jackson), and [JUnit 5](https://junit.org/junit5/).
-* The sidebar icons are reused from [Material Design Icons](https://github.com/google/material-design-icons) by Google, under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+* The sidebar icons and some details-panel icons are reused or adapted from [Material Design Icons](https://github.com/google/material-design-icons) by Google, under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 * The TutorContacts application icon was generated using AI.
 * TutorContacts diagrams are authored in [PlantUML](https://plantuml.com/). Product screenshots and team profile
   images are supplied by the project team.
