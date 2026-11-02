@@ -168,7 +168,7 @@ This section describes some noteworthy details on how certain features are imple
 ### Add command validation and offline help
 
 `CommandArgumentTokenizer` scans for one- or two-character lower-case prefix tokens at the start of an argument or
-after whitespace. It is shared by `add`, `edit`, and `filter`, rejects unsupported tokens, and stores the preamble and
+after whitespace. It is shared by `add`, `edit`, `filter`, and `schedule`, rejects unsupported tokens, and stores the preamble and
 field values in an `ArgumentMultimap`. Text inside a pair of double quotes is treated as one field value, so a subject
 or address can contain text such as `l/` or `n/` without being split into another field. The enclosing quotes are not
 stored. Longer slash-terminated words such as `Level/` are ordinary text rather than CLI prefixes. Inside an `n/` or `gn/`
@@ -186,9 +186,9 @@ Validation follows a fixed order: token structure, required `n/`, repeated prefi
 changed using `edit`. Lesson times are deliberately excluded, as they are managed through `schedule` and `unschedule`
 instead. It builds an
 `EditPersonDescriptor` that distinguishes three states for each optional field: the prefix was omitted, the prefix
-contained a replacement value, or the prefix was explicitly supplied without a value to clear the field. The
-descriptor stores an edited flag separately from each nullable value so an omitted field and a clear request do not
-become indistinguishable.
+contained a replacement value, or the prefix was explicitly supplied without a value to clear the field. Each optional
+field is a `FieldUpdate` that is unchanged, set to a value, or cleared, so an omitted field and a clear request cannot
+be confused.
 
 The diagram below shows the main success path for `edit 1 p/91234567 e/`, which replaces the phone number and clears
 the email while preserving all omitted fields.
@@ -229,7 +229,7 @@ The `add` command accepts the feature-specific prefixes `gn/`, `gp/`, and `ge/`.
 
 `JsonAdaptedPerson` stores guardian name, phone, and email as separate nullable JSON properties. All three properties may be absent when loading older files. If a saved file contains a guardian phone or email without a guardian name, loading fails rather than creating an invalid domain object.
 
-`PersonCard` displays all three guardian fields. Missing guardian values are shown as `Not provided` only in the UI; that display text is never written to the data file. Existing commands that replace a `Person`, such as `edit`, must carry the unchanged guardian value forward.
+`PersonDetailsPanel` displays all three guardian fields. Missing guardian values are shown as `Not provided` only in the UI; that display text is never written to the data file. Existing commands that replace a `Person`, such as `edit`, must carry the unchanged guardian value forward.
 
 ### Subject and education level
 
@@ -237,7 +237,7 @@ TutorContacts represents tutoring context using immutable `Subject` and `Educati
 
 The `add` command accepts `s/` for a subject and `l/` for an education level. `ParserUtil` trims both values before validation. Subjects must be non-blank, contain no control characters, and contain at most 100 characters. Education levels accept `P1`–`P6`, `S1`–`S5`, or `JC1`–`JC2` case-insensitively and are normalized to uppercase.
 
-`JsonAdaptedPerson` stores the two values as separate nullable JSON properties, so valid data files created before these fields were introduced remain loadable. `PersonCard` displays `Not provided` for an absent value without writing that placeholder to storage. Commands that replace a `Person`, such as `edit`, preserve both values unchanged.
+`JsonAdaptedPerson` stores the two values as separate nullable JSON properties, so valid data files created before these fields were introduced remain loadable. `PersonCard` and `PersonDetailsPanel` display `Not provided` for an absent value without writing that placeholder to storage. Commands that replace a `Person`, such as `edit`, preserve both values unchanged.
 
 ### Learning focus and next action
 
@@ -248,11 +248,11 @@ punctuation.
 
 `add` and `edit` accept `lf/` and `na/`. `ParserUtil` removes surrounding whitespace and collapses repeated ordinary
 spaces before constructing the value object. An omitted edit prefix preserves the existing value, while an explicitly
-empty prefix records a clear request. `EditPersonDescriptor` keeps a separate edited-state flag for each optional
-field so `EditCommand` can distinguish those two cases.
+empty prefix records a clear request. `EditPersonDescriptor` keeps a `FieldUpdate` for each optional field so
+`EditCommand` can distinguish those two cases.
 
 `JsonAdaptedPerson` stores both values as nullable JSON properties. Missing properties load as empty optionals, which
-keeps valid older data files compatible. `PersonCard` displays `Not provided` for absent values.
+keeps valid older data files compatible. `PersonDetailsPanel` displays `Not provided` for absent values.
 
 ### Archive lifecycle
 
@@ -532,7 +532,8 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
 1. User requests to list students.
 2. TutorContacts retrieves the student records.
-3. TutorContacts displays all students and their recorded contact, guardian, subject, and education-level details.
+3. TutorContacts displays all active students, with a summary of each student and every recorded detail of the selected
+   student.
 
     Use case ends.
 
@@ -958,7 +959,7 @@ testers are expected to do more *exploratory* testing.
 1. Adding a student with every MVP field
 
    1. Test case: `add n/Alex Tan p/81234567 e/alex@example.com a/21 Dover Road s/H2 Mathematics l/jc1 gn/Mary Tan gp/91234567 ge/mary@example.com t/active`<br>
-      Expected: The student is added. The card shows all supplied details, the result panel names the added student, and the education level is displayed as `JC1`.
+      Expected: The student is added and the result panel names the student. The details panel shows every supplied detail after you select the student's card, and the education level is displayed as `JC1`.
 
    1. Test case: `add n/Ben Lee`<br>
       Expected: The student is added. Optional fields are displayed as `Not provided`.
@@ -1151,8 +1152,9 @@ testers are expected to do more *exploratory* testing.
 
 1. Recording and updating learning context
 
-   1. Test case: `add n/Alex Tan lf/Linear equations na/Complete worksheet 4`<br>
-      Expected: Alex is added and both values appear in the student card and result panel.
+   1. Test case: `add n/Dana Tan lf/Linear equations na/Complete worksheet 4`<br>
+      Expected: Dana is added and the result panel names her. Both values appear in the details panel after you select
+      her card.
 
    1. Test case: `edit 1 lf/Quadratic graphs na/Review exercise 2`<br>
       Expected: Both values are replaced; all omitted fields remain unchanged.
