@@ -78,6 +78,7 @@
 .view-icon { -fx-fill: #9a94a6; }
 
 .view-row-active {
+.view-row:hover { -fx-background-color: #f1f4fb; }
     -fx-background-color: #edf2ff;
     -fx-text-fill: #36578f;
     -fx-font-weight: bold;
@@ -87,6 +88,7 @@
 .view-row-active .view-icon { -fx-fill: #7894d5; }
 
 .details-panel-container {
+.view-row-active:hover { -fx-background-color: #e3eafa; }
     -fx-background-color: #fffdfb;
     -fx-background-radius: 12;
     -fx-border-color: #e9e1dc;
@@ -339,10 +341,12 @@
     -fx-prompt-text-fill: #928c99;
 }
 
-#commandTextField:focused { -fx-border-color: #829bd6; }
+#commandTextField:focused { -fx-border-color: #b7c6e6; }
 
 #commandTextField.error {
     -fx-border-color: #c85b5b;
+    -fx-highlight-fill: #dbe5fb;
+    -fx-highlight-text-fill: #282632;
     -fx-background-color: #fff7f7;
 }
 

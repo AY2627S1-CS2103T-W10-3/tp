@@ -59,6 +59,15 @@ public class MainWindowFxmlTest {
     }
 
     @Test
+    public void tutorContactsTheme_keepsHoverAndSelectionLight() throws IOException, URISyntaxException {
+        String stylesheet = readResource("/view/TutorContactsTheme.css");
+
+        assertTrue(stylesheet.contains(".view-row:hover { -fx-background-color: #f1f4fb; }"));
+        assertTrue(stylesheet.contains(".view-row-active:hover { -fx-background-color: #e3eafa; }"));
+        assertTrue(stylesheet.contains("-fx-highlight-fill: #dbe5fb;"));
+    }
+
+    @Test
     public void tutorContactsTheme_usesReadableArialFont() throws IOException, URISyntaxException {
         String stylesheet = readResource("/view/TutorContactsTheme.css");
 
