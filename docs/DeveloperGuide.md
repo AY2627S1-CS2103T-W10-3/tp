@@ -416,6 +416,8 @@ Design considerations:
   * Cons: A rescheduled student is shown out of time order, and an unscheduled student stays in a list of upcoming
     lessons. It also differs from every other view, where `delete` and `archive` update the list immediately.
 
+--------------------------------------------------------------------------------------------------------------------
+
 ## **Documentation, logging, testing, dev-ops**
 
 * [Documentation guide](Documentation.md)
@@ -1007,7 +1009,7 @@ testers are expected to do more *exploratory* testing.
 
    1. Download the JAR file and copy it into an empty folder.
 
-   1. Open a terminal in that folder and run `java -jar TutorContacts.jar`.<br>
+   1. Open a terminal in that folder and run `java -jar` followed by the JAR file name, e.g. `java -jar TutorContacts.jar`.<br>
       Expected: The GUI opens with a set of sample students. The window size may not be optimal.
 
 1. Saving window preferences
