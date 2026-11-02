@@ -73,7 +73,7 @@
 
           <VBox styleClass="content-panel" HBox.hgrow="ALWAYS">
             <StackPane fx:id="resultDisplayPlaceholder" styleClass="result-panel"
-                       minHeight="44" prefHeight="44" maxHeight="44" />
+                       minHeight="68" prefHeight="68" maxHeight="68" />
             <VBox fx:id="personList" VBox.vgrow="ALWAYS">
               <StackPane fx:id="personListPanelPlaceholder" VBox.vgrow="ALWAYS" />
             </VBox>
