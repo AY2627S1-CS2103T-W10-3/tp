@@ -27,6 +27,13 @@ public class MainWindowTest {
     }
 
     @Test
+    public void navigationSelectionFor_addCommand_selectsActiveStudents() {
+        assertEquals(ACTIVE, MainWindow.navigationSelectionFor("add n/Sam Lee"));
+        assertEquals(ACTIVE, MainWindow.navigationSelectionFor("  add   n/Sam Lee "));
+        assertEquals(UNCHANGED, MainWindow.navigationSelectionFor("additional n/Sam Lee"));
+    }
+
+    @Test
     public void navigationSelectionFor_editAndOtherCommands_returnsExpectedSelection() {
         // edit keeps the current result view, including the upcoming view
         assertEquals(UNCHANGED, MainWindow.navigationSelectionFor("edit 1 p/91234567"));
