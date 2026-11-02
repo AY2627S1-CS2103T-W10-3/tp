@@ -51,6 +51,7 @@ public class PersonListPanel extends UiPart<Region> {
         Label emptyListPlaceholder = new Label();
         emptyListPlaceholder.textProperty().bind(Bindings.createStringBinding(() ->
                 getEmptyListMessage(allPersons.size(), isUpcomingView.get()), allPersons, isUpcomingView));
+        emptyListPlaceholder.setWrapText(true);
         personListView.setPlaceholder(emptyListPlaceholder);
         personListView.setCellFactory(listView -> new PersonListViewCell());
         personList.addListener(this::refreshIfReordered);

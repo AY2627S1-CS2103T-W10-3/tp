@@ -18,7 +18,7 @@
     <VBox spacing="12" styleClass="details-content">
       <VBox spacing="5">
         <Label fx:id="name" wrapText="true" styleClass="details-name" />
-        <FlowPane fx:id="tags" hgap="6" vgap="5" styleClass="details-tags" />
+        <FlowPane fx:id="tags" minWidth="0" hgap="6" vgap="5" styleClass="details-tags" />
       </VBox>
 
       <VBox styleClass="details-section, contact-section">

@@ -54,8 +54,8 @@
     -fx-background-radius: 12;
     -fx-border-color: #eadfd8;
     -fx-border-radius: 12;
-    -fx-padding: 20 12;
-    -fx-spacing: 16;
+    -fx-padding: 14 8;
+    -fx-spacing: 10;
 }
 
 .brand-title {
@@ -64,31 +64,35 @@
     -fx-text-fill: #252330;
 }
 
-.brand-subtitle, .sidebar-hint { -fx-text-fill: #817d8b; }
+.brand-subtitle, .sidebar-hint {
+    -fx-font-size: 12px;
+    -fx-text-fill: #817d8b;
+}
 
 .view-row {
     -fx-background-color: transparent;
     -fx-background-radius: 8;
     -fx-border-color: transparent;
-    -fx-padding: 10 8;
+    -fx-graphic-text-gap: 6;
+    -fx-padding: 10 4;
     -fx-text-fill: #4a4755;
 }
 
+.view-row:hover { -fx-background-color: #f1f4fb; }
 .view-row .label { -fx-text-fill: #4a4755; }
 .view-icon { -fx-fill: #9a94a6; }
 
 .view-row-active {
-.view-row:hover { -fx-background-color: #f1f4fb; }
     -fx-background-color: #edf2ff;
     -fx-text-fill: #36578f;
     -fx-font-weight: bold;
 }
 
+.view-row-active:hover { -fx-background-color: #e3eafa; }
 .view-row-active .label { -fx-text-fill: #36578f; }
 .view-row-active .view-icon { -fx-fill: #7894d5; }
 
 .details-panel-container {
-.view-row-active:hover { -fx-background-color: #e3eafa; }
     -fx-background-color: #fffdfb;
     -fx-background-radius: 12;
     -fx-border-color: #e9e1dc;
@@ -117,6 +121,7 @@
 }
 
 .details-tags .label {
+    -fx-max-width: 200;
     -fx-background-color: #eee8fb;
     -fx-background-radius: 9;
     -fx-padding: 4 8;
@@ -188,9 +193,9 @@
 
 .details-key {
     -fx-font-size: 11px;
-    -fx-min-width: 104;
-    -fx-pref-width: 104;
-    -fx-max-width: 104;
+    -fx-min-width: 82;
+    -fx-pref-width: 82;
+    -fx-max-width: 82;
     -fx-text-fill: #3f3d48;
 }
 
@@ -316,6 +321,7 @@
 }
 
 #tags .label {
+    -fx-max-width: 220;
     -fx-background-color: #eee8fb;
     -fx-background-radius: 10;
     -fx-padding: 3 8 4 8;
@@ -339,14 +345,14 @@
     -fx-font-size: 14px;
     -fx-text-fill: #282632;
     -fx-prompt-text-fill: #928c99;
+    -fx-highlight-fill: #dbe5fb;
+    -fx-highlight-text-fill: #282632;
 }
 
 #commandTextField:focused { -fx-border-color: #b7c6e6; }
 
 #commandTextField.error {
     -fx-border-color: #c85b5b;
-    -fx-highlight-fill: #dbe5fb;
-    -fx-highlight-text-fill: #282632;
     -fx-background-color: #fff7f7;
 }
 
