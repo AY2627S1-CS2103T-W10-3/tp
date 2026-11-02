@@ -67,7 +67,7 @@
                 </VBox>
                 <VBox spacing="8" styleClass="help-card">
                   <Label text="Important behaviour" styleClass="section-title" />
-                  <Label text="• Use the number shown beside a student when a command asks for an INDEX.&#10;• Commands act on the student list currently shown on screen.&#10;• list returns to the complete list of current students.&#10;• Archived students stay saved but are hidden from the main list.&#10;• clear permanently deletes every student record, including archived students."
+                  <Label text="• Use the number shown beside a student when a command asks for an INDEX.&#10;• Commands that use an INDEX act on the student list currently shown on screen.&#10;• list returns to the complete list of current students.&#10;• Archived students stay saved but are hidden from the main list.&#10;• clear permanently deletes every student record, including archived students."
                          wrapText="true" styleClass="body-text" />
                 </VBox>
                 <VBox spacing="8" styleClass="help-card, warm-card">
@@ -88,7 +88,7 @@
                        wrapText="true" styleClass="page-intro" />
                 <VBox spacing="7" styleClass="help-card, blue-card">
                   <Label text="Add a student" styleClass="section-title" />
-                  <Label text="add n/NAME [optional fields] [t/TAG]..." styleClass="command-format" />
+                  <Label text="add n/NAME [PREFIX/VALUE]..." styleClass="command-format" />
                   <Label text="Example: add n/Alex Tan s/H2 Mathematics l/JC1 lf/Quadratic graphs"
                          wrapText="true" styleClass="example-text" />
                   <Label text="Only the name is required. Repeat t/ to add more than one tag. Guardian phone or email requires a guardian name. Supported education levels are P1–P6, S1–S5, and JC1–JC2."
@@ -214,7 +214,7 @@
                 <VBox spacing="7" styleClass="help-card, purple-card">
                   <Label text="View archived students" styleClass="section-title" />
                   <Label text="list archived" styleClass="command-format" />
-                  <Label text="Shows archived students and gives them numbers for archive-related commands." wrapText="true" styleClass="body-text" />
+                  <Label text="Shows archived students and gives them numbers for unarchive and delete." wrapText="true" styleClass="body-text" />
                 </VBox>
                 <VBox spacing="7" styleClass="help-card, purple-card">
                   <Label text="Restore an archived student" styleClass="section-title" />
