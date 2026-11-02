@@ -47,11 +47,11 @@ public class MainWindowFxmlTest {
     }
 
     @Test
-    public void mainWindowFxml_resultPanelFitsThreeLines() throws IOException, URISyntaxException {
+    public void mainWindowFxml_resultPanelFitsTwoLines() throws IOException, URISyntaxException {
         String fxml = readResource("/view/MainWindow.fxml");
         String stylesheet = readResource("/view/TutorContactsTheme.css");
 
-        assertTrue(fxml.contains("minHeight=\"68\" prefHeight=\"68\" maxHeight=\"68\""));
+        assertTrue(fxml.contains("minHeight=\"52\" prefHeight=\"52\" maxHeight=\"52\""));
         assertTrue(stylesheet.contains(".result-display .content {\n"
                 + "    -fx-background-color: transparent;\n"
                 + "    -fx-background-insets: 0;\n"
