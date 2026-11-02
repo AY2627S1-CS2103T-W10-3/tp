@@ -1022,6 +1022,17 @@ testers are expected to do more *exploratory* testing.
    1. Enter `exit`.<br>
       Expected: TutorContacts closes normally.
 
+1. Viewing help
+
+   1. Test case: `help`<br>
+      Expected: The Help window opens and the result panel confirms that it opened.
+
+   1. Test case: Press `F1`, then use **Help** > **Help** in the menu bar.<br>
+      Expected: The same Help window is opened or focused.
+
+   1. Test case: `help extra`<br>
+      Expected: The result panel shows the `help` format. No window opens.
+
 ### Adding a student
 
 1. Adding a student with every MVP field
@@ -1031,6 +1042,14 @@ testers are expected to do more *exploratory* testing.
 
    1. Test case: `add n/Ben Lee`<br>
       Expected: The student is added. Optional fields are displayed as `Not provided`.
+
+1. Adding values that resemble prefixes
+
+   1. Test case: `add n/Raj s/o Kumar`<br>
+      Expected: A student named `Raj s/o Kumar` is added, and no subject is recorded.
+
+   1. Test case: `add n/Mia Lim s/"Physics l/Chemistry"`<br>
+      Expected: The subject is `Physics l/Chemistry`, without the quotes, and no education level is recorded.
 
 1. Rejecting invalid student details
 
@@ -1077,6 +1096,60 @@ testers are expected to do more *exploratory* testing.
    1. Test case: Change a student's name to the name of another existing student.<br>
       Expected: The duplicate edit is rejected and both student records remain unchanged.
 
+### Finding and filtering students
+
+1. Finding students by name
+
+   1. Prerequisites: Start from the sample data.
+
+   1. Test case: `find al`<br>
+      Expected: Alex Yeoh and Roy Balakrishnan are listed, because partial names match.
+
+   1. Test case: `find ALEX bernice`<br>
+      Expected: Alex Yeoh and Bernice Yu are listed, because case is ignored and either keyword can match.
+
+   1. Test case: `find alex alex`<br>
+      Expected: Alex Yeoh is listed once.
+
+   1. Test case: `find zzz`<br>
+      Expected: The list is empty and the result panel reports that no students were found.
+
+   1. Test case: `find n/alex`<br>
+      Expected: The list is empty. The result panel suggests plain keywords and `filter`.
+
+   1. Test case: `find`<br>
+      Expected: The result panel shows the `find` format.
+
+1. Filtering students by subject and education level
+
+   1. Prerequisites: Start from the sample data.
+
+   1. Test case: `filter s/mathematics`<br>
+      Expected: Alex Yeoh is listed, because case is ignored.
+
+   1. Test case: `filter s/Math`<br>
+      Expected: The list is empty, because a subject must match in full.
+
+   1. Test case: `filter l/s3`<br>
+      Expected: Alex Yeoh is listed.
+
+   1. Test case: `filter s/Mathematics l/S3`, then `filter s/Mathematics l/P6`<br>
+      Expected: The first command lists Alex Yeoh. The second lists no one, because both criteria must match.
+
+   1. Other incorrect filter commands to try: `filter`, `filter x/abc`, `filter l/University`<br>
+      Expected: The result panel shows error details and the list does not change.
+
+1. Using a displayed index after a query
+
+   1. Test case: `find bernice`, then `edit 1 na/Call parent`<br>
+      Expected: Bernice Yu is updated, and the search results remain displayed.
+
+   1. Test case: `list`<br>
+      Expected: All active students are listed in saved order.
+
+   1. Test case: `list extra`<br>
+      Expected: The result panel shows the `list` format.
+
 ### Student-list UI, keyboard, and deletion feedback
 
 1. List refresh and keyboard operation
@@ -1091,6 +1164,21 @@ testers are expected to do more *exploratory* testing.
 
    1. Test case: Focus the student list using the mouse or Tab, then use arrow keys and Page Up/Page Down.<br>
       Expected: Normal list selection and scrolling work; command entry remains available after returning focus to the command box.
+
+1. Sidebar and details panel
+
+   1. Test case: Click **Upcoming Lessons**, **Archived Students**, and **Active Students** in turn.<br>
+      Expected: Each button shows the same list and result-panel message as `upcoming`, `list archived`, and `list`, and
+      it becomes highlighted.
+
+   1. Test case: Run `upcoming`, then `add n/Sam Lee`.<br>
+      Expected: All active students are listed and **Active Students** is highlighted.
+
+   1. Test case: Click a student card.<br>
+      Expected: The details panel shows every recorded detail of that student.
+
+   1. Test case: Run a query that matches no one.<br>
+      Expected: The details panel shows `No student selected`.
 
 ### Scheduling and clearing lessons
 
@@ -1191,6 +1279,16 @@ testers are expected to do more *exploratory* testing.
    1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
       Expected: Similar to previous.
 
+1. Deleting all students
+
+   1. Test case: `clear extra`<br>
+      Expected: No student is deleted. The result panel shows the `clear` format.
+
+   1. Prerequisites: At least one student is archived.
+
+   1. Test case: `clear`, then `list archived`, then `list`<br>
+      Expected: All active and archived students are deleted, and both lists are empty.
+
 ### Saving data
 
 1. Saving and loading student records
@@ -1202,6 +1300,11 @@ testers are expected to do more *exploratory* testing.
 
    1. Close TutorContacts and ensure that both `data/tutorcontacts.json` and `data/addressbook.json` are absent (move them to a backup location if they exist). Relaunch TutorContacts.<br>
       Expected: TutorContacts starts with its sample student data. Executing a data-changing command creates a new data file.
+
+1. Using a legacy data file
+
+   1. Close TutorContacts. Rename `data/tutorcontacts.json` to `data/addressbook.json`, then relaunch TutorContacts.<br>
+      Expected: The same students are listed, and the status bar shows `./data/addressbook.json`.
 
 1. Dealing with a corrupted data file
 
