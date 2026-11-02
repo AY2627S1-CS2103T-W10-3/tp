@@ -11,6 +11,24 @@ import org.junit.jupiter.api.Test;
 public class MainWindowTest {
 
     @Test
+    public void fitWithin_positionInsideBounds_keepsPosition() {
+        assertEquals(100, MainWindow.fitWithin(100, 800, 0, 1920));
+        assertEquals(1120, MainWindow.fitWithin(1120, 800, 0, 1920));
+    }
+
+    @Test
+    public void fitWithin_positionOutsideBounds_movesInsideBounds() {
+        assertEquals(1120, MainWindow.fitWithin(3000, 800, 0, 1920));
+        assertEquals(0, MainWindow.fitWithin(-500, 800, 0, 1920));
+        assertEquals(3040, MainWindow.fitWithin(5000, 800, 1920, 3840));
+    }
+
+    @Test
+    public void fitWithin_sizeLargerThanBounds_startsAtBoundsStart() {
+        assertEquals(0, MainWindow.fitWithin(50, 2000, 0, 1920));
+    }
+
+    @Test
     public void navigationSelectionFor_navigationCommands_returnsMatchingSelection() {
         assertEquals(ACTIVE, MainWindow.navigationSelectionFor("list"));
         assertEquals(UPCOMING, MainWindow.navigationSelectionFor("upcoming"));
