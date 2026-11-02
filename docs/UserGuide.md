@@ -42,11 +42,11 @@ table below to jump to the task you need.
 
    * `list` : Lists all active students.
 
-   * `filter s/Mathematics l/JC1` : Shows JC1 Mathematics students.
+   * `filter s/Mathematics l/S3` : Shows S3 Mathematics students.
 
    * `add n/John Doe p/98765432 gn/Jane Doe gp/91234567` : Adds a student named `John Doe` with optional student and guardian contact details.
 
-   * `add n/John Doe lf/Fractions na/Complete worksheet 2` : Adds a student with optional learning context.
+   * `add n/Jane Tan lf/Fractions na/Complete worksheet 2` : Adds a student with optional learning context.
 
    * `archive 1` : Moves the 1st student shown out of active workflows without deleting the record.
 
@@ -70,7 +70,7 @@ The window has five areas. You can do everything by typing commands; the mouse i
 | Result panel | Top of the centre column | Shows the outcome of the last command, or the reason it was rejected. Two lines are visible at once; scroll the panel to read longer messages. |
 | Student list | Centre | Shows the current result view. Each card shows the displayed index, name, tags, subject, education level, and next lesson. Tags wrap onto extra rows. In a narrow window, or for very long values, a card shortens the text with `...`; the details panel shows it in full, except that very long tags stay shortened there too. Index-based commands use the index shown here. |
 | Details panel | Right | Shows every detail of the selected student: contact, learning, schedule, and guardian information. Click another card, or focus the list and use the arrow keys, to view another student. If the selected student leaves the current view, the first student is selected. |
-| Views sidebar | Left | **Active Students**, **Upcoming Lessons**, and **Archived Students** run `list`, `upcoming`, and `list archived` respectively. The highlighted button shows the current view; `find` and `filter` results keep **Active Students** highlighted because they show active students, and `edit` keeps the current view highlighted. |
+| Views sidebar | Left | **Active Students**, **Upcoming Lessons**, and **Archived Students** run `list`, `upcoming`, and `list archived` respectively. The highlighted button shows the current view; `find`, `filter`, and `add` highlight **Active Students** because they show active students, and `edit` keeps the current view highlighted. |
 
 The status bar below the command box shows where your data is saved. The **Help** menu, and the `F1` key, open the
 same Help window as the `help` command.
@@ -87,6 +87,9 @@ Fields that were never recorded are shown as `Not provided`, and a student witho
 <div markdown="block" class="alert alert-info">
 
 **:information_source: Notes about the command format:**<br>
+
+* Command words are case-sensitive and must be in lower case.<br>
+  For example, `list` is accepted but `LIST` is rejected as an unknown command.
 
 * Words in `UPPER_CASE` are the parameters to be supplied by the user.<br>
   For example, in `add n/NAME`, replace `NAME` with a value such as `John Doe`.
@@ -169,8 +172,8 @@ When an input breaks several rules, TutorContacts reports one error predictably:
 prefix, missing `n/`, repeated prefix, missing guardian name, then invalid field value. Repeated prefixes are listed in
 alphabetical order in the error.
 
-Student names are unique regardless of letter case and repeated spaces. For example, after adding `Alex Tan`,
-`add n/ alex   tan` is rejected as a duplicate. Different students may share phone, email, and guardian details.
+Student names are unique regardless of letter case and repeated spaces, and archived students count too. For example,
+after adding `Alex Tan`, `add n/ alex   tan` is rejected as a duplicate. Different students may share phone, email, and guardian details.
 A guardian name may be supplied without guardian contact information.
 
 Examples:
@@ -189,7 +192,8 @@ Examples:
 * Invalid guardian email: `add n/Sam Lee gn/Pat Lee ge/pat.example.com`
 * Invalid, because of unexpected text: `add surprise n/Sam Lee` or `add n/Sam Lee x/value`
 
-Rejected `add` commands leave the displayed records and saved data unchanged.
+Rejected `add` commands leave the displayed records and saved data unchanged. A successful `add` shows the complete
+active-student list, so you can see the new student.
 
 ### Listing active students: `list`
 
@@ -217,7 +221,7 @@ complete saved data. `upcoming` orders its results by lesson time; the other vie
 
 `edit`, `archive`, `schedule`, and `unschedule` are active-only commands. If the archived view is showing, run `list`
 before using one of them. `unarchive` works only in the archived view. `delete` works in either view and permanently
-removes the displayed record. A new `list`, `find`, `filter`, or `upcoming` command replaces the previous result view;
+removes the displayed record. A new `list`, `find`, `filter`, `upcoming`, or `add` command replaces the previous result view;
 `edit` keeps it.
 Run `list` whenever you want to restore the complete active-student view in saved order.
 
@@ -509,9 +513,8 @@ Furthermore, certain edits can cause TutorContacts to behave unexpectedly if a v
 
 ## Known issues
 
-1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
-2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
-3. **Exceptionally long student details may be truncated in the student list.** This display limitation does not affect
+1. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
+2. **Exceptionally long student details may be truncated in the student list.** This display limitation does not affect
    the stored value.
 
 --------------------------------------------------------------------------------------------------------------------

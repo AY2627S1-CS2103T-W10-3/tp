@@ -104,7 +104,7 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 ![Interactions Inside the Logic Component for the `delete 1` Command](images/DeleteSequenceDiagram.png)
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `DeleteCommandParser` should end at the destroy marker (X), but due to a limitation of PlantUML, it continues to the end of the diagram.
+<div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `DeleteCommandParser` should end at the destroy marker (X), but due to a limitation of PlantUML, it continues to the end of the diagram. The same applies to the parser lifelines in the other sequence diagrams in this guide.
 </div>
 
 How the `Logic` component works:
@@ -137,7 +137,7 @@ The `Model` component,
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `AddressBook`, and each `Person` references tags from that list. This lets `AddressBook` maintain one `Tag` object per unique tag instead of each `Person` holding its own `Tag` objects.<br>
+<div markdown="span" class="alert alert-info">:information_source: **Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `AddressBook`, and each `Person` references tags from that list. This lets `AddressBook` maintain one `Tag` object per unique tag instead of each `Person` holding its own `Tag` objects. The partial diagram omits the other student fields.<br>
 
 <img src="images/BetterModelClassDiagram.png" width="450" />
 
@@ -266,6 +266,7 @@ state, so contact, guardian, tutoring, learning-context, lesson, and tag data re
 
 `ModelManager` stores a `ResultViewScope` independently from its `FilteredList<Person>`. `list`, `find`, `filter`, and
 `upcoming` establish an `ACTIVE` scope and automatically combine their query predicate with `!Person#isArchived`.
+`add` also returns to the complete active view, so the new student is visible.
 `list archived` establishes an `ARCHIVED` scope and uses `Person#isArchived`. The explicit scope is required because
 an empty result list cannot indicate whether the user selected an active or archived view.
 
@@ -335,7 +336,7 @@ Design considerations:
 
 `ModelManager` maintains a `FilteredList<Person>` wrapped by a `SortedList<Person>` and exposes the sorted list as the
 current result view. It records whether the view's `ResultViewScope` is `ACTIVE` or `ARCHIVED`. `list`, `find`, `filter`,
-and `upcoming` use the active scope; `list archived` uses the archived scope. The scope predicate is combined with the
+`upcoming`, and `add` use the active scope; `list archived` uses the archived scope. The scope predicate is combined with the
 command's query predicate, so archived students cannot appear in active queries. Updating a filter first clears any
 existing comparator, which returns `list`, `find`, `filter`, and `list archived` to saved order. `upcoming` then applies
 its lesson-time comparator. `PersonListPanel` derives each visible one-based index from the displayed list position.
