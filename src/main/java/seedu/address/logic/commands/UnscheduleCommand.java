@@ -27,8 +27,8 @@ public class UnscheduleCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Clears the scheduled lesson of the student identified by the index number used in the displayed "
-            + "student list.\n"
-            + "Parameters: INDEX (must be a positive integer)\n"
+            + "student list.\n\n"
+            + "Parameters: INDEX (must be a positive integer)\n\n"
             + "Example: " + COMMAND_WORD + " 1";
 
     public static final String MESSAGE_UNSCHEDULE_SUCCESS = "Cleared lesson for %1$s (was %2$s)";

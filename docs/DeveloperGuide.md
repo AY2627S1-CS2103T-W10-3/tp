@@ -81,6 +81,8 @@ The UI consists of a `MainWindow` and its parts: `CommandBox`, `ResultDisplay`, 
 
 `MainWindow` also holds the sidebar with the Active Students, Upcoming Lessons, and Archived Students buttons. Each button runs `list`, `upcoming`, or `list archived` through the same method as a typed command, so the feedback and displayed indices are the same, and the highlighted button follows the view shown by the last command. `PersonDetailsPanel` shows the read-only details of the student selected in `PersonListPanel`, which keeps that student selected when the displayed list changes. `PersonCard` and `PersonDetailsPanel` format a student through the shared `StudentDisplayFormatter`, so missing values and overdue lessons look the same in both.
 
+The window can shrink to `820 × 450` so that it fits a `1280 × 720` screen at 150% scaling, and `MainWindow` limits the saved or default window size to the primary screen when it opens. To stay readable at that size, `ResultDisplay` shows two lines before it scrolls, `PersonCard` wraps tags in a row below the name so that tags cannot hide the name, and very long tags are shortened with `...` in both the card and `PersonDetailsPanel`. Font sizes stay fixed, so a card shortens long text with `...` when it runs out of width.
+
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103T-W10-3/tp/tree/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103T-W10-3/tp/tree/master/src/main/java/seedu/address/ui/MainWindow.java).
 
 The `UI` component,
@@ -1020,6 +1022,14 @@ testers are expected to do more *exploratory* testing.
 
    1. Relaunch the app by double-clicking the JAR file.<br>
        Expected: The most recent window size and location are retained.
+
+1. Checking the layout at the minimum window size
+
+   1. Prerequisites: Run `edit 1 t/examPrep t/group t/olympiad t/online t/scholarship t/weekend`, then resize the window to its smallest size.<br>
+      Expected: The first card shows its name, and its tags wrap below the name. Sidebar labels and phone numbers are not cut off.
+
+   1. Test case: `schedule 1 at/2099-10-30 16:00`<br>
+      Expected: The whole message is visible in the result panel without scrolling.
 
 1. Exiting from the command box
 

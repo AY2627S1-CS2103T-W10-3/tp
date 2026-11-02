@@ -42,10 +42,10 @@ public class AddCommand extends Command {
             + "[" + PREFIX_GUARDIAN_EMAIL + "GUARDIAN_EMAIL] "
             + "[" + PREFIX_TAG + "TAG]...";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a student to TutorContacts. "
-            + "Parameters: " + FORMAT + "\n"
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a student to TutorContacts.\n\n"
+            + "Parameters: " + FORMAT + "\n\n"
             + "Prefixes may appear in any order. Every prefix except t/ may appear at most once. "
-            + "Guardian phone or email requires gn/.\n"
+            + "Guardian phone or email requires gn/.\n\n"
             + "Example: " + COMMAND_WORD + " "
             + PREFIX_NAME + "John Doe "
             + PREFIX_PHONE + "98765432 "

@@ -22,7 +22,7 @@ public class UpcomingCommand extends Command {
     public static final String COMMAND_WORD = "upcoming";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Lists active students with future lessons, soonest first. Takes no parameters.\n"
+            + ": Lists active students with future lessons, soonest first. Takes no parameters.\n\n"
             + "Example: " + COMMAND_WORD;
 
     public static final String MESSAGE_SUCCESS = "Listed %1$d student(s) with upcoming lessons.";

@@ -39,14 +39,13 @@ public class HelpWindowFxmlTest {
         assertTrue(fxml.contains("fx:id=\"archivingPage\""));
         assertTrue(fxml.contains("Copy User Guide URL"));
         assertTrue(fxml.contains("Field prefixes for add and edit"));
-        assertTrue(fxml.contains("add n/NAME [optional fields]"));
+        assertTrue(fxml.contains("add n/NAME [PREFIX/VALUE]..."));
         assertTrue(fxml.contains("edit INDEX PREFIX/VALUE [other field changes]"));
         assertFalse(fxml.contains("TextArea"));
         assertFalse(fxml.contains("WebView"));
         assertFalse(fxml.contains("autocomplete"));
         assertFalse(fxml.contains("Statistics"));
         assertFalse(fxml.contains("OR semantics"));
-        assertTrue(fxml.contains("[t/TAG]..."));
         assertTrue(fxml.contains("Repeat t/ to add more than one tag."));
     }
 

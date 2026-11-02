@@ -67,10 +67,10 @@ The window has five areas. You can do everything by typing commands; the mouse i
 | Area | Where | What it does |
 |------|-------|--------------|
 | Command box | Bottom | Type a command and press Enter. The box keeps keyboard focus after each command, so you can type the next one immediately. |
-| Result panel | Top of the centre column | Shows the outcome of the last command, or the reason it was rejected. |
-| Student list | Centre | Shows the current result view. Each card shows the displayed index, name, tags, subject, education level, and next lesson. Index-based commands use the index shown here. |
+| Result panel | Top of the centre column | Shows the outcome of the last command, or the reason it was rejected. Two lines are visible at once; scroll the panel to read longer messages. |
+| Student list | Centre | Shows the current result view. Each card shows the displayed index, name, tags, subject, education level, and next lesson. Tags wrap onto extra rows. In a narrow window, or for very long values, a card shortens the text with `...`; the details panel shows it in full, except that very long tags stay shortened there too. Index-based commands use the index shown here. |
 | Details panel | Right | Shows every detail of the selected student: contact, learning, schedule, and guardian information. Click another card, or focus the list and use the arrow keys, to view another student. If the selected student leaves the current view, the first student is selected. |
-| Views sidebar | Left | **Active Students**, **Upcoming Lessons**, and **Archived Students** run `list`, `upcoming`, and `list archived` respectively. The highlighted button shows the current view; `find`, `filter`, and `edit` results keep **Active Students** highlighted because they show active students. |
+| Views sidebar | Left | **Active Students**, **Upcoming Lessons**, and **Archived Students** run `list`, `upcoming`, and `list archived` respectively. The highlighted button shows the current view; `find` and `filter` results keep **Active Students** highlighted because they show active students, and `edit` keeps the current view highlighted. |
 
 The status bar below the command box shows where your data is saved. The **Help** menu, and the `F1` key, open the
 same Help window as the `help` command.

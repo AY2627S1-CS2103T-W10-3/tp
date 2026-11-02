@@ -22,8 +22,8 @@ public class FindCommand extends Command {
             + "Use `filter` for subjects and education levels, e.g. `filter s/Mathematics`.";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all students whose names partially match any "
-            + "specified keyword (case-insensitive) and displays them as a list with index numbers.\n"
-            + "Parameters: KEYWORD [MORE_KEYWORDS]...\n"
+            + "specified keyword (case-insensitive) and displays them as a list with index numbers.\n\n"
+            + "Parameters: KEYWORD [MORE_KEYWORDS]...\n\n"
             + "Example: " + COMMAND_WORD + " alice bob charlie";
 
     private final NameContainsKeywordsPredicate predicate;
