@@ -85,7 +85,7 @@ public class MainWindowFxmlTest {
 
     private static String readResource(String resourcePath) throws IOException, URISyntaxException {
         Path path = Path.of(MainApp.class.getResource(resourcePath).toURI());
-        return Files.readString(path);
+        return Files.readString(path).replace("\r\n", "\n");
     }
 
     private static int countOccurrences(String text, String value) {
