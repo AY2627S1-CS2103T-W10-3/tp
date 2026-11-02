@@ -14,7 +14,7 @@ Class XYZCommandParser
 Class CliSyntax
 Class ParserUtil
 Class ArgumentMultimap
-Class ArgumentTokenizer
+Class CommandArgumentTokenizer
 Class Prefix
 }
 
@@ -27,12 +27,12 @@ XYZCommandParser ..> XYZCommand : <<create>>
 AddressBookParser ..> Command : <<use>>
 XYZCommandParser .up.|> Parser
 XYZCommandParser ..> ArgumentMultimap
-XYZCommandParser ..> ArgumentTokenizer
-ArgumentTokenizer .left.> ArgumentMultimap
+XYZCommandParser ..> CommandArgumentTokenizer
+CommandArgumentTokenizer .left.> ArgumentMultimap
 XYZCommandParser ..> CliSyntax
 CliSyntax ..> Prefix
 XYZCommandParser ..> ParserUtil
 ParserUtil .down.> Prefix
-ArgumentTokenizer .down.> Prefix
+CommandArgumentTokenizer .down.> Prefix
 XYZCommand -up-|> Command
 @enduml
