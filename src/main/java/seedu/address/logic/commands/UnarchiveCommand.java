@@ -17,8 +17,8 @@ public class UnarchiveCommand extends Command {
 
     public static final String COMMAND_WORD = "unarchive";
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Restores the student identified by the index in the archived student list.\n"
-            + "Parameters: INDEX (must be a positive integer)\n"
+            + ": Restores the student identified by the index in the archived student list.\n\n"
+            + "Parameters: INDEX (must be a positive integer)\n\n"
             + "Example: list archived\n" + COMMAND_WORD + " 1";
     public static final String MESSAGE_UNARCHIVE_PERSON_SUCCESS = "Restored student: %1$s";
     public static final String MESSAGE_REQUIRES_ARCHIVED_VIEW =

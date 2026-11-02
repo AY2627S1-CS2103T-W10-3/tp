@@ -12,7 +12,7 @@ public class ClearCommand extends Command {
 
     public static final String COMMAND_WORD = "clear";
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Permanently deletes all active and archived students. Takes no parameters.\n"
+            + ": Permanently deletes all active and archived students. Takes no parameters.\n\n"
             + "Example: " + COMMAND_WORD;
     public static final String MESSAGE_SUCCESS = "Deleted all active and archived students.";
 

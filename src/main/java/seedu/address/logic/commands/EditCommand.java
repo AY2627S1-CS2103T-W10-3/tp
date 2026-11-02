@@ -45,9 +45,9 @@ public class EditCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Edits the details of the student identified "
             + "by the index number used in the displayed student list. "
-            + "Existing values will be overwritten by the input values.\n"
+            + "Existing values will be overwritten by the input values.\n\n"
             + "Leave an optional field empty to clear it. Clearing the guardian name also clears "
-            + "the guardian phone and email.\n"
+            + "the guardian phone and email.\n\n"
             + "Parameters: INDEX (must be a positive integer) "
             + "[" + PREFIX_NAME + "NAME] "
             + "[" + PREFIX_PHONE + "PHONE] "
@@ -60,7 +60,7 @@ public class EditCommand extends Command {
             + "[" + PREFIX_EDUCATION_LEVEL + "EDUCATION_LEVEL] "
             + "[" + PREFIX_LEARNING_FOCUS + "LEARNING_FOCUS] "
             + "[" + PREFIX_NEXT_ACTION + "NEXT_ACTION] "
-            + "[" + PREFIX_TAG + "TAG]...\n"
+            + "[" + PREFIX_TAG + "TAG]...\n\n"
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_PHONE + "91234567 "
             + PREFIX_EMAIL + "johndoe@example.com";

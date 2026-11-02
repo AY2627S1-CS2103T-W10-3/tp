@@ -14,9 +14,9 @@ public class FilterCommand extends Command {
     public static final String COMMAND_WORD = "filter";
     public static final String MESSAGE_NO_MATCHES = "No students match the filters.";
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Filters students by subject, education level, or both.\n"
+            + ": Filters students by subject, education level, or both.\n\n"
             + "Parameters: [" + PREFIX_SUBJECT + "SUBJECT] ["
-            + PREFIX_EDUCATION_LEVEL + "EDUCATION_LEVEL]\n"
+            + PREFIX_EDUCATION_LEVEL + "EDUCATION_LEVEL]\n\n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_SUBJECT + "H2 Mathematics "
             + PREFIX_EDUCATION_LEVEL + "JC1";
 
