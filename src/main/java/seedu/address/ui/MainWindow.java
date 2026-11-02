@@ -1,17 +1,21 @@
 package seedu.address.ui;
 
+import java.awt.Point;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
@@ -228,15 +232,38 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
-     * Sets the default size based on {@code guiSettings}.
+     * Sets the default size and position based on {@code guiSettings}, keeping the window within the visible
+     * bounds of the screen that holds the saved position, or of the primary screen if no screen does.
      */
     private void setWindowDefaultSize(GuiSettings guiSettings) {
-        primaryStage.setHeight(guiSettings.getWindowHeight());
-        primaryStage.setWidth(guiSettings.getWindowWidth());
-        if (guiSettings.getWindowCoordinates() != null) {
-            primaryStage.setX(guiSettings.getWindowCoordinates().getX());
-            primaryStage.setY(guiSettings.getWindowCoordinates().getY());
+        Point coordinates = guiSettings.getWindowCoordinates();
+        Rectangle2D screenBounds = findScreenBounds(coordinates);
+        double width = Math.min(guiSettings.getWindowWidth(), screenBounds.getWidth());
+        double height = Math.min(guiSettings.getWindowHeight(), screenBounds.getHeight());
+        primaryStage.setHeight(height);
+        primaryStage.setWidth(width);
+        if (coordinates != null) {
+            primaryStage.setX(fitWithin(coordinates.getX(), width, screenBounds.getMinX(), screenBounds.getMaxX()));
+            primaryStage.setY(fitWithin(coordinates.getY(), height, screenBounds.getMinY(), screenBounds.getMaxY()));
         }
+    }
+
+    private static Rectangle2D findScreenBounds(Point coordinates) {
+        if (coordinates != null) {
+            List<Screen> screens = Screen.getScreensForRectangle(coordinates.getX(), coordinates.getY(), 1, 1);
+            if (!screens.isEmpty()) {
+                return screens.get(0).getVisualBounds();
+            }
+        }
+        return Screen.getPrimary().getVisualBounds();
+    }
+
+    /**
+     * Returns the position closest to {@code position} at which something of the given {@code size} fits between
+     * {@code boundsStart} and {@code boundsEnd}. If it cannot fit, it starts at {@code boundsStart}.
+     */
+    static double fitWithin(double position, double size, double boundsStart, double boundsEnd) {
+        return Math.max(boundsStart, Math.min(position, boundsEnd - size));
     }
 
     /**

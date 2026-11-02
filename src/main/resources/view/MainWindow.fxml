@@ -39,8 +39,8 @@
 
         <HBox styleClass="workspace" VBox.vgrow="ALWAYS">
           <VBox styleClass="sidebar" minWidth="190" prefWidth="230" maxWidth="230">
-            <HBox alignment="CENTER_LEFT" spacing="10">
-              <ImageView fitHeight="36" fitWidth="36" preserveRatio="true">
+            <HBox alignment="CENTER_LEFT" spacing="6">
+              <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
                 <image><Image url="@/images/tutor_contacts.png" /></image>
               </ImageView>
               <VBox spacing="2" HBox.hgrow="ALWAYS">
@@ -73,7 +73,7 @@
 
           <VBox styleClass="content-panel" HBox.hgrow="ALWAYS">
             <StackPane fx:id="resultDisplayPlaceholder" styleClass="result-panel"
-                       minHeight="44" prefHeight="44" maxHeight="44" />
+                       minHeight="52" prefHeight="52" maxHeight="52" />
             <VBox fx:id="personList" VBox.vgrow="ALWAYS">
               <StackPane fx:id="personListPanelPlaceholder" VBox.vgrow="ALWAYS" />
             </VBox>

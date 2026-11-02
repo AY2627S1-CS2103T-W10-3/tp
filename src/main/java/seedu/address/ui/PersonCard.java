@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import seedu.address.model.person.Person;
@@ -41,7 +41,7 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private Label lesson;
     @FXML
-    private HBox tags;
+    private FlowPane tags;
 
     /**
      * Creates a {@code PersonCard} with the given {@code Person} and index to display.
@@ -59,5 +59,6 @@ public class PersonCard extends UiPart<Region> {
             lesson.getStyleClass().add(OVERDUE_STYLE_CLASS);
         }
         details.tags().forEach(tag -> tags.getChildren().add(new Label(tag)));
+        tags.setManaged(!details.tags().isEmpty());
     }
 }

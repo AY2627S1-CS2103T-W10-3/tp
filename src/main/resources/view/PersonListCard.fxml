@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -10,13 +11,13 @@
 <VBox id="cardPane" fx:id="cardPane" spacing="9" xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1">
   <padding><Insets top="12" right="14" bottom="12" left="14" /></padding>
-  <HBox alignment="BASELINE_LEFT" spacing="8">
-    <Label fx:id="id" minWidth="38" prefWidth="38" maxWidth="38" styleClass="card-index" />
+  <HBox alignment="BASELINE_LEFT" spacing="4">
+    <Label fx:id="id" minWidth="26" styleClass="card-index" />
     <Label fx:id="name" minWidth="0" maxWidth="Infinity" textOverrun="ELLIPSIS"
            styleClass="card-name" HBox.hgrow="ALWAYS" />
-    <HBox fx:id="tags" alignment="BASELINE_LEFT" spacing="6" />
   </HBox>
-  <GridPane hgap="18" styleClass="summary-grid">
+  <FlowPane fx:id="tags" minWidth="0" hgap="6" vgap="4" />
+  <GridPane hgap="10" styleClass="summary-grid">
     <columnConstraints>
       <ColumnConstraints percentWidth="35" />
       <ColumnConstraints percentWidth="32" />

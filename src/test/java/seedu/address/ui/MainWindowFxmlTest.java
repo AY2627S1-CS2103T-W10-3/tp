@@ -47,6 +47,35 @@ public class MainWindowFxmlTest {
     }
 
     @Test
+    public void mainWindowFxml_resultPanelFitsTwoLines() throws IOException, URISyntaxException {
+        String fxml = readResource("/view/MainWindow.fxml");
+        String stylesheet = readResource("/view/TutorContactsTheme.css");
+
+        assertTrue(fxml.contains("minHeight=\"52\" prefHeight=\"52\" maxHeight=\"52\""));
+        assertTrue(stylesheet.contains(".result-display .content {\n"
+                + "    -fx-background-color: transparent;\n"
+                + "    -fx-background-insets: 0;\n"
+                + "    -fx-padding: 4;\n"));
+    }
+
+    @Test
+    public void tutorContactsTheme_keepsHoverAndSelectionLight() throws IOException, URISyntaxException {
+        String stylesheet = readResource("/view/TutorContactsTheme.css");
+
+        assertTrue(stylesheet.contains(".view-row:hover { -fx-background-color: #f1f4fb; }"));
+        assertTrue(stylesheet.contains(".view-row-active:hover { -fx-background-color: #e3eafa; }"));
+        assertTrue(stylesheet.contains("-fx-highlight-fill: #dbe5fb;"));
+    }
+
+    @Test
+    public void tutorContactsTheme_limitsLongTagWidth() throws IOException, URISyntaxException {
+        String stylesheet = readResource("/view/TutorContactsTheme.css");
+
+        assertTrue(stylesheet.contains("#tags .label {\n    -fx-max-width: 220;"));
+        assertTrue(stylesheet.contains(".details-tags .label {\n    -fx-max-width: 200;"));
+    }
+
+    @Test
     public void tutorContactsTheme_usesReadableArialFont() throws IOException, URISyntaxException {
         String stylesheet = readResource("/view/TutorContactsTheme.css");
 
@@ -56,7 +85,7 @@ public class MainWindowFxmlTest {
 
     private static String readResource(String resourcePath) throws IOException, URISyntaxException {
         Path path = Path.of(MainApp.class.getResource(resourcePath).toURI());
-        return Files.readString(path);
+        return Files.readString(path).replace("\r\n", "\n");
     }
 
     private static int countOccurrences(String text, String value) {
