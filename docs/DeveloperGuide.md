@@ -972,7 +972,7 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 8. A user with above-average typing speed should be able to perform common contact-management tasks faster using commands than by relying primarily on mouse interactions.
 9. TutorContacts should work well at screen resolutions of `1920 × 1080` or higher with display scaling of 100% or 125%.
 10. TutorContacts should remain functionally usable at screen resolutions of `1280 × 720` or higher with display scaling of 150%.
-11. At the default window size, a student card should show a name of up to 40 characters and six tags of up to 12 characters each without shortening them.
+11. At the default window size, a student card should show the name `Maximilian Alexander Tan Wei Ming` and six 12-character tags such as `scholarship1` without shortening them.
 12. TutorContacts should preserve data integrity when handling invalid commands or data by displaying a clear error message and leaving existing student records unchanged.
 13. A failure to load or save data should not cause existing valid data to be silently overwritten.
 
