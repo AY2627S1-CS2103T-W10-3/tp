@@ -465,7 +465,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* *` | private tutor | see my upcoming lessons in time order | prepare for my next lessons |
 | `* *` | private tutor | see which lessons have already passed | reschedule or clear them |
 | `* *` | private tutor | record learning focuses and follow-up actions | remember what should be covered in future lessons |
-| `*` | private tutor | archive former students | retain old records without showing them in my active list |
+| `* *` | private tutor | archive former students | retain old records without showing them in my active list |
+| `* *` | private tutor | delete all student records at once | remove the sample data and start with my own students |
 | `*` | private tutor | record group tuition arrangements | manage students who attend lessons together |
 | `*` | private tutor | associate multiple guardians with a student | retain additional family contact details |
 
@@ -717,6 +718,12 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
+* 4d. The supplied values are the same as the student's current details.
+
+  * 4d1. TutorContacts reports that no changes were made.
+
+  Use case ends.
+
 * 5a. The resulting name duplicates another student's normalized name.
 
   * 5a1. TutorContacts reports the duplicate student.
@@ -811,6 +818,12 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case resumes at step 6.
 
+* 5b. The student already has a lesson at the supplied date and time.
+
+  * 5b1. TutorContacts reports that the student already has that lesson and leaves the record unchanged.
+
+  Use case ends.
+
 * 6a. TutorContacts cannot save the updated data.
 
   * 6a1. TutorContacts reports the save failure.
@@ -893,6 +906,56 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
+**Use case: UC11 — Delete all students**
+
+**MSS**
+
+1. User requests to delete all students.
+2. TutorContacts permanently deletes all active and archived students.
+3. TutorContacts saves the updated student data.
+4. TutorContacts displays an empty student list and reports that the operation was successful.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. User supplies extra parameters.
+
+  * 1a1. TutorContacts reports the required format and leaves the records unchanged.
+
+  Use case ends.
+
+* 3a. TutorContacts cannot save the updated data.
+
+  * 3a1. TutorContacts reports the save failure.
+  * 3a2. TutorContacts restores the previous in-memory records. The data file may remain partially written, so the
+    previously saved data is not guaranteed to be preserved.
+
+  Use case ends.
+
+**Use case: UC12 — View help**
+
+**MSS**
+
+1. User requests help.
+2. TutorContacts opens the offline Help window and confirms that it opened.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. User supplies extra parameters.
+
+  * 1a1. TutorContacts reports the required format.
+
+  Use case ends.
+
+* 2a. The Help window is already open.
+
+  * 2a1. TutorContacts focuses the Help window.
+
+  Use case ends.
+
 ### Non-Functional Requirements
 
 1. TutorContacts should work on Windows, Linux, and macOS systems that have Java `25` installed.
@@ -905,19 +968,24 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 8. A user with above-average typing speed should be able to perform common contact-management tasks faster using commands than by relying primarily on mouse interactions.
 9. TutorContacts should work well at screen resolutions of `1920 × 1080` or higher with display scaling of 100% or 125%.
 10. TutorContacts should remain functionally usable at screen resolutions of `1280 × 720` or higher with display scaling of 150%.
-11. Student information should remain readable under typical field lengths at supported window sizes.
+11. At the default window size, a student card should show a name of up to 40 characters and six tags of up to 12 characters each without shortening them.
 12. TutorContacts should preserve data integrity when handling invalid commands or data by displaying a clear error message and leaving existing student records unchanged.
 13. A failure to load or save data should not cause existing valid data to be silently overwritten.
 
 ### Glossary
 
+* **Active student**: A student who is not archived. Active students appear in `list`, `find`, `filter`, and `upcoming`.
+* **Archived student**: A former student whose complete record is kept but who appears only in `list archived`.
 * **CLI**: Command-line interface, an interface in which users perform actions by typing commands.
+* **Displayed index**: The number shown on a student card, which identifies that student in the current result view.
 * **Education level**: The student's current school level, such as `P6`, `S3`, or `JC1`.
 * **Guardian**: A parent or other responsible adult whose contact details are associated with a student.
 * **Independent private tutor**: A tutor who manages their own students and tutoring arrangements rather than relying on an organization to manage them.
 * **Lesson**: The single tutoring session recorded for a student, as a local date and time with minute precision. It is
   upcoming until its time is reached, and overdue afterwards.
 * **Overdue lesson**: A lesson whose time has been reached. It stays recorded until it is rescheduled or cleared.
+* **Result view**: The students currently shown in the student list, as set by the last `list`, `find`, `filter`,
+  `upcoming`, `list archived`, or `add` command.
 * **Student record**: The information stored for one student, including contact, guardian, tutoring, learning-context,
   lesson, and archive-state details.
 * **Subject**: The academic subject for which the student is receiving tuition.
