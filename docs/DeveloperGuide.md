@@ -11,6 +11,8 @@ title: Developer Guide
 
 * TutorContacts is based on the [AddressBook-Level3](https://github.com/se-edu/addressbook-level3) project created by the [SE-EDU initiative](https://se-education.org/).
 * TutorContacts uses [JavaFX](https://openjfx.io/), [Jackson](https://github.com/FasterXML/jackson), and [JUnit 5](https://junit.org/junit5/).
+* The sidebar icons and some details-panel icons are reused or adapted from [Material Design Icons](https://github.com/google/material-design-icons) by Google, under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+* The TutorContacts application icon was generated using AI.
 * TutorContacts diagrams are authored in [PlantUML](https://plantuml.com/). Product screenshots and team profile
   images are supplied by the project team.
 
@@ -102,7 +104,7 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 ![Interactions Inside the Logic Component for the `delete 1` Command](images/DeleteSequenceDiagram.png)
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `DeleteCommandParser` should end at the destroy marker (X), but due to a limitation of PlantUML, it continues to the end of the diagram.
+<div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `DeleteCommandParser` should end at the destroy marker (X), but due to a limitation of PlantUML, it continues to the end of the diagram. The same applies to the parser lifelines in the other sequence diagrams in this guide.
 </div>
 
 How the `Logic` component works:
@@ -125,7 +127,7 @@ How the parsing works:
 ### Model component
 **API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-W10-3/tp/tree/master/src/main/java/seedu/address/model/Model.java)
 
-<img src="images/ModelClassDiagram.png" width="450" />
+<img src="images/ModelClassDiagram.png" width="700" />
 
 
 The `Model` component,
@@ -135,7 +137,7 @@ The `Model` component,
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `AddressBook`, and each `Person` references tags from that list. This lets `AddressBook` maintain one `Tag` object per unique tag instead of each `Person` holding its own `Tag` objects.<br>
+<div markdown="span" class="alert alert-info">:information_source: **Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `AddressBook`, and each `Person` references tags from that list. This lets `AddressBook` maintain one `Tag` object per unique tag instead of each `Person` holding its own `Tag` objects. The partial diagram omits the other student fields.<br>
 
 <img src="images/BetterModelClassDiagram.png" width="450" />
 
@@ -170,7 +172,7 @@ This section describes some noteworthy details on how certain features are imple
 ### Add command validation and offline help
 
 `CommandArgumentTokenizer` scans for one- or two-character lower-case prefix tokens at the start of an argument or
-after whitespace. It is shared by `add`, `edit`, and `filter`, rejects unsupported tokens, and stores the preamble and
+after whitespace. It is shared by `add`, `edit`, `filter`, and `schedule`, rejects unsupported tokens, and stores the preamble and
 field values in an `ArgumentMultimap`. Text inside a pair of double quotes is treated as one field value, so a subject
 or address can contain text such as `l/` or `n/` without being split into another field. The enclosing quotes are not
 stored. Longer slash-terminated words such as `Level/` are ordinary text rather than CLI prefixes. Inside an `n/` or `gn/`
@@ -188,9 +190,9 @@ Validation follows a fixed order: token structure, required `n/`, repeated prefi
 changed using `edit`. Lesson times are deliberately excluded, as they are managed through `schedule` and `unschedule`
 instead. It builds an
 `EditPersonDescriptor` that distinguishes three states for each optional field: the prefix was omitted, the prefix
-contained a replacement value, or the prefix was explicitly supplied without a value to clear the field. The
-descriptor stores an edited flag separately from each nullable value so an omitted field and a clear request do not
-become indistinguishable.
+contained a replacement value, or the prefix was explicitly supplied without a value to clear the field. Each optional
+field is a `FieldUpdate` that is unchanged, set to a value, or cleared, so an omitted field and a clear request cannot
+be confused.
 
 The diagram below shows the main success path for `edit 1 p/91234567 e/`, which replaces the phone number and clears
 the email while preserving all omitted fields.
@@ -231,7 +233,7 @@ The `add` command accepts the feature-specific prefixes `gn/`, `gp/`, and `ge/`.
 
 `JsonAdaptedPerson` stores guardian name, phone, and email as separate nullable JSON properties. All three properties may be absent when loading older files. If a saved file contains a guardian phone or email without a guardian name, loading fails rather than creating an invalid domain object.
 
-`PersonCard` displays all three guardian fields. Missing guardian values are shown as `Not provided` only in the UI; that display text is never written to the data file. Existing commands that replace a `Person`, such as `edit`, must carry the unchanged guardian value forward.
+`PersonDetailsPanel` displays all three guardian fields. Missing guardian values are shown as `Not provided` only in the UI; that display text is never written to the data file. Existing commands that replace a `Person`, such as `edit`, must carry the unchanged guardian value forward.
 
 ### Subject and education level
 
@@ -239,7 +241,7 @@ TutorContacts represents tutoring context using immutable `Subject` and `Educati
 
 The `add` command accepts `s/` for a subject and `l/` for an education level. `ParserUtil` trims both values before validation. Subjects must be non-blank, contain no control characters, and contain at most 100 characters. Education levels accept `P1`–`P6`, `S1`–`S5`, or `JC1`–`JC2` case-insensitively and are normalized to uppercase.
 
-`JsonAdaptedPerson` stores the two values as separate nullable JSON properties, so valid data files created before these fields were introduced remain loadable. `PersonCard` displays `Not provided` for an absent value without writing that placeholder to storage. Commands that replace a `Person`, such as `edit`, preserve both values unchanged.
+`JsonAdaptedPerson` stores the two values as separate nullable JSON properties, so valid data files created before these fields were introduced remain loadable. `PersonCard` and `PersonDetailsPanel` display `Not provided` for an absent value without writing that placeholder to storage. Commands that replace a `Person`, such as `edit`, preserve both values unchanged.
 
 ### Learning focus and next action
 
@@ -250,11 +252,11 @@ punctuation.
 
 `add` and `edit` accept `lf/` and `na/`. `ParserUtil` removes surrounding whitespace and collapses repeated ordinary
 spaces before constructing the value object. An omitted edit prefix preserves the existing value, while an explicitly
-empty prefix records a clear request. `EditPersonDescriptor` keeps a separate edited-state flag for each optional
-field so `EditCommand` can distinguish those two cases.
+empty prefix records a clear request. `EditPersonDescriptor` keeps a `FieldUpdate` for each optional field so
+`EditCommand` can distinguish those two cases.
 
 `JsonAdaptedPerson` stores both values as nullable JSON properties. Missing properties load as empty optionals, which
-keeps valid older data files compatible. `PersonCard` displays `Not provided` for absent values.
+keeps valid older data files compatible. `PersonDetailsPanel` displays `Not provided` for absent values.
 
 ### Archive lifecycle
 
@@ -264,6 +266,7 @@ state, so contact, guardian, tutoring, learning-context, lesson, and tag data re
 
 `ModelManager` stores a `ResultViewScope` independently from its `FilteredList<Person>`. `list`, `find`, `filter`, and
 `upcoming` establish an `ACTIVE` scope and automatically combine their query predicate with `!Person#isArchived`.
+`add` also returns to the complete active view, so the new student is visible.
 `list archived` establishes an `ARCHIVED` scope and uses `Person#isArchived`. The explicit scope is required because
 an empty result list cannot indicate whether the user selected an active or archived view.
 
@@ -333,7 +336,7 @@ Design considerations:
 
 `ModelManager` maintains a `FilteredList<Person>` wrapped by a `SortedList<Person>` and exposes the sorted list as the
 current result view. It records whether the view's `ResultViewScope` is `ACTIVE` or `ARCHIVED`. `list`, `find`, `filter`,
-and `upcoming` use the active scope; `list archived` uses the archived scope. The scope predicate is combined with the
+`upcoming`, and `add` use the active scope; `list archived` uses the archived scope. The scope predicate is combined with the
 command's query predicate, so archived students cannot appear in active queries. Updating a filter first clears any
 existing comparator, which returns `list`, `find`, `filter`, and `list archived` to saved order. `upcoming` then applies
 its lesson-time comparator. `PersonListPanel` derives each visible one-based index from the displayed list position.
@@ -418,6 +421,8 @@ Design considerations:
   * Cons: A rescheduled student is shown out of time order, and an unscheduled student stays in a list of upcoming
     lessons. It also differs from every other view, where `delete` and `archive` update the list immediately.
 
+--------------------------------------------------------------------------------------------------------------------
+
 ## **Documentation, logging, testing, dev-ops**
 
 * [Documentation guide](Documentation.md)
@@ -467,7 +472,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* *` | private tutor | see my upcoming lessons in time order | prepare for my next lessons |
 | `* *` | private tutor | see which lessons have already passed | reschedule or clear them |
 | `* *` | private tutor | record learning focuses and follow-up actions | remember what should be covered in future lessons |
-| `*` | private tutor | archive former students | retain old records without showing them in my active list |
+| `* *` | private tutor | archive former students | retain old records without showing them in my active list |
+| `* *` | private tutor | delete all student records at once | remove the sample data and start with my own students |
 | `*` | private tutor | record group tuition arrangements | manage students who attend lessons together |
 | `*` | private tutor | associate multiple guardians with a student | retain additional family contact details |
 
@@ -534,7 +540,8 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
 1. User requests to list students.
 2. TutorContacts retrieves the student records.
-3. TutorContacts displays all students and their recorded contact, guardian, subject, and education-level details.
+3. TutorContacts displays all active students, with a summary of each student and every recorded detail of the selected
+   student.
 
     Use case ends.
 
@@ -718,6 +725,12 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
+* 4d. The supplied values are the same as the student's current details.
+
+  * 4d1. TutorContacts reports that no changes were made.
+
+  Use case ends.
+
 * 5a. The resulting name duplicates another student's normalized name.
 
   * 5a1. TutorContacts reports the duplicate student.
@@ -812,6 +825,12 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case resumes at step 6.
 
+* 5b. The student already has a lesson at the supplied date and time.
+
+  * 5b1. TutorContacts reports that the student already has that lesson and leaves the record unchanged.
+
+  Use case ends.
+
 * 6a. TutorContacts cannot save the updated data.
 
   * 6a1. TutorContacts reports the save failure.
@@ -894,6 +913,56 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 
   Use case ends.
 
+**Use case: UC11 — Delete all students**
+
+**MSS**
+
+1. User requests to delete all students.
+2. TutorContacts permanently deletes all active and archived students.
+3. TutorContacts saves the updated student data.
+4. TutorContacts displays an empty student list and reports that the operation was successful.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. User supplies extra parameters.
+
+  * 1a1. TutorContacts reports the required format and leaves the records unchanged.
+
+  Use case ends.
+
+* 3a. TutorContacts cannot save the updated data.
+
+  * 3a1. TutorContacts reports the save failure.
+  * 3a2. TutorContacts restores the previous in-memory records. The data file may remain partially written, so the
+    previously saved data is not guaranteed to be preserved.
+
+  Use case ends.
+
+**Use case: UC12 — View help**
+
+**MSS**
+
+1. User requests help.
+2. TutorContacts opens the offline Help window and confirms that it opened.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. User supplies extra parameters.
+
+  * 1a1. TutorContacts reports the required format.
+
+  Use case ends.
+
+* 2a. The Help window is already open.
+
+  * 2a1. TutorContacts focuses the Help window.
+
+  Use case ends.
+
 ### Non-Functional Requirements
 
 1. TutorContacts should work on Windows, Linux, and macOS systems that have Java `25` installed.
@@ -906,19 +975,24 @@ For all use cases below, the **System** is `TutorContacts` and the **Actor** is 
 8. A user with above-average typing speed should be able to perform common contact-management tasks faster using commands than by relying primarily on mouse interactions.
 9. TutorContacts should work well at screen resolutions of `1920 × 1080` or higher with display scaling of 100% or 125%.
 10. TutorContacts should remain functionally usable at screen resolutions of `1280 × 720` or higher with display scaling of 150%.
-11. Student information should remain readable under typical field lengths at supported window sizes.
+11. At the default window size, a student card should show the name `Maximilian Alexander Tan Wei Ming` and six 12-character tags such as `scholarship1` without shortening them.
 12. TutorContacts should preserve data integrity when handling invalid commands or data by displaying a clear error message and leaving existing student records unchanged.
 13. A failure to load or save data should not cause existing valid data to be silently overwritten.
 
 ### Glossary
 
+* **Active student**: A student who is not archived. Active students appear in `list`, `find`, `filter`, and `upcoming`.
+* **Archived student**: A former student whose complete record is kept but who appears only in `list archived`.
 * **CLI**: Command-line interface, an interface in which users perform actions by typing commands.
+* **Displayed index**: The number shown on a student card, which identifies that student in the current result view.
 * **Education level**: The student's current school level, such as `P6`, `S3`, or `JC1`.
 * **Guardian**: A parent or other responsible adult whose contact details are associated with a student.
 * **Independent private tutor**: A tutor who manages their own students and tutoring arrangements rather than relying on an organization to manage them.
 * **Lesson**: The single tutoring session recorded for a student, as a local date and time with minute precision. It is
   upcoming until its time is reached, and overdue afterwards.
 * **Overdue lesson**: A lesson whose time has been reached. It stays recorded until it is rescheduled or cleared.
+* **Result view**: The students currently shown in the student list, as set by the last `list`, `find`, `filter`,
+  `upcoming`, `list archived`, or `add` command.
 * **Student record**: The information stored for one student, including contact, guardian, tutoring, learning-context,
   lesson, and archive-state details.
 * **Subject**: The academic subject for which the student is receiving tuition.
@@ -940,7 +1014,7 @@ testers are expected to do more *exploratory* testing.
 
    1. Download the JAR file and copy it into an empty folder.
 
-   1. Open a terminal in that folder and run `java -jar TutorContacts.jar`.<br>
+   1. Open a terminal in that folder and run `java -jar` followed by the JAR file name, e.g. `java -jar TutorContacts.jar`.<br>
       Expected: The GUI opens with a set of sample students. The window size may not be optimal.
 
 1. Saving window preferences
@@ -963,15 +1037,34 @@ testers are expected to do more *exploratory* testing.
    1. Enter `exit`.<br>
       Expected: TutorContacts closes normally.
 
+1. Viewing help
+
+   1. Test case: `help`<br>
+      Expected: The Help window opens and the result panel confirms that it opened.
+
+   1. Test case: Press `F1`, then use **Help** > **Help** in the menu bar.<br>
+      Expected: The same Help window is opened or focused.
+
+   1. Test case: `help extra`<br>
+      Expected: The result panel shows the `help` format. No window opens.
+
 ### Adding a student
 
 1. Adding a student with every MVP field
 
    1. Test case: `add n/Alex Tan p/81234567 e/alex@example.com a/21 Dover Road s/H2 Mathematics l/jc1 gn/Mary Tan gp/91234567 ge/mary@example.com t/active`<br>
-      Expected: The student is added. The card shows all supplied details, the result panel names the added student, and the education level is displayed as `JC1`.
+      Expected: The student is added and the result panel names the student. The details panel shows every supplied detail after you select the student's card, and the education level is displayed as `JC1`.
 
    1. Test case: `add n/Ben Lee`<br>
       Expected: The student is added. Optional fields are displayed as `Not provided`.
+
+1. Adding values that resemble prefixes
+
+   1. Test case: `add n/Raj s/o Kumar`<br>
+      Expected: A student named `Raj s/o Kumar` is added, and no subject is recorded.
+
+   1. Test case: `add n/Mia Lim s/"Physics l/Chemistry"`<br>
+      Expected: The subject is `Physics l/Chemistry`, without the quotes, and no education level is recorded.
 
 1. Rejecting invalid student details
 
@@ -1018,6 +1111,60 @@ testers are expected to do more *exploratory* testing.
    1. Test case: Change a student's name to the name of another existing student.<br>
       Expected: The duplicate edit is rejected and both student records remain unchanged.
 
+### Finding and filtering students
+
+1. Finding students by name
+
+   1. Prerequisites: Start from the sample data.
+
+   1. Test case: `find al`<br>
+      Expected: Alex Yeoh and Roy Balakrishnan are listed, because partial names match.
+
+   1. Test case: `find ALEX bernice`<br>
+      Expected: Alex Yeoh and Bernice Yu are listed, because case is ignored and either keyword can match.
+
+   1. Test case: `find alex alex`<br>
+      Expected: Alex Yeoh is listed once.
+
+   1. Test case: `find zzz`<br>
+      Expected: The list is empty and the result panel reports that no students were found.
+
+   1. Test case: `find n/alex`<br>
+      Expected: The list is empty. The result panel suggests plain keywords and `filter`.
+
+   1. Test case: `find`<br>
+      Expected: The result panel shows the `find` format.
+
+1. Filtering students by subject and education level
+
+   1. Prerequisites: Start from the sample data.
+
+   1. Test case: `filter s/mathematics`<br>
+      Expected: Alex Yeoh is listed, because case is ignored.
+
+   1. Test case: `filter s/Math`<br>
+      Expected: The list is empty, because a subject must match in full.
+
+   1. Test case: `filter l/s3`<br>
+      Expected: Alex Yeoh is listed.
+
+   1. Test case: `filter s/Mathematics l/S3`, then `filter s/Mathematics l/P6`<br>
+      Expected: The first command lists Alex Yeoh. The second lists no one, because both criteria must match.
+
+   1. Other incorrect filter commands to try: `filter`, `filter x/abc`, `filter l/University`<br>
+      Expected: The result panel shows error details and the list does not change.
+
+1. Using a displayed index after a query
+
+   1. Test case: `find bernice`, then `edit 1 na/Call parent`<br>
+      Expected: Bernice Yu is updated, and the search results remain displayed.
+
+   1. Test case: `list`<br>
+      Expected: All active students are listed in saved order.
+
+   1. Test case: `list extra`<br>
+      Expected: The result panel shows the `list` format.
+
 ### Student-list UI, keyboard, and deletion feedback
 
 1. List refresh and keyboard operation
@@ -1032,6 +1179,21 @@ testers are expected to do more *exploratory* testing.
 
    1. Test case: Focus the student list using the mouse or Tab, then use arrow keys and Page Up/Page Down.<br>
       Expected: Normal list selection and scrolling work; command entry remains available after returning focus to the command box.
+
+1. Sidebar and details panel
+
+   1. Test case: Click **Upcoming Lessons**, **Archived Students**, and **Active Students** in turn.<br>
+      Expected: Each button shows the same list and result-panel message as `upcoming`, `list archived`, and `list`, and
+      it becomes highlighted.
+
+   1. Test case: Run `upcoming`, then `add n/Sam Lee`.<br>
+      Expected: All active students are listed and **Active Students** is highlighted.
+
+   1. Test case: Click a student card.<br>
+      Expected: The details panel shows every recorded detail of that student.
+
+   1. Test case: Run a query that matches no one.<br>
+      Expected: The details panel shows `No student selected`.
 
 ### Scheduling and clearing lessons
 
@@ -1132,6 +1294,16 @@ testers are expected to do more *exploratory* testing.
    1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
       Expected: Similar to previous.
 
+1. Deleting all students
+
+   1. Test case: `clear extra`<br>
+      Expected: No student is deleted. The result panel shows the `clear` format.
+
+   1. Prerequisites: At least one student is archived.
+
+   1. Test case: `clear`, then `list archived`, then `list`<br>
+      Expected: All active and archived students are deleted, and both lists are empty.
+
 ### Saving data
 
 1. Saving and loading student records
@@ -1143,6 +1315,11 @@ testers are expected to do more *exploratory* testing.
 
    1. Close TutorContacts and ensure that both `data/tutorcontacts.json` and `data/addressbook.json` are absent (move them to a backup location if they exist). Relaunch TutorContacts.<br>
       Expected: TutorContacts starts with its sample student data. Executing a data-changing command creates a new data file.
+
+1. Using a legacy data file
+
+   1. Close TutorContacts. Rename `data/tutorcontacts.json` to `data/addressbook.json`, then relaunch TutorContacts.<br>
+      Expected: The same students are listed, and the status bar shows `./data/addressbook.json`.
 
 1. Dealing with a corrupted data file
 
@@ -1161,10 +1338,11 @@ testers are expected to do more *exploratory* testing.
 
 1. Recording and updating learning context
 
-   1. Test case: `add n/Alex Tan lf/Linear equations na/Complete worksheet 4`<br>
-      Expected: Alex is added and both values appear in the student card and result panel.
+   1. Test case: `add n/Dana Tan lf/Linear equations na/Complete worksheet 4`<br>
+      Expected: Dana is added and the result panel names her. Both values appear in the details panel after you select
+      her card.
 
-   1. Test case: `edit 1 lf/Quadratic graphs na/Review exercise 2`<br>
+   1. Test case: Run `find Dana`, then `edit 1 lf/Quadratic graphs na/Review exercise 2`.<br>
       Expected: Both values are replaced; all omitted fields remain unchanged.
 
    1. Test case: `edit 1 lf/`<br>

@@ -59,19 +59,10 @@ deactivate DisplayedView
 
 EditCommand -> ModelManager : setPerson(displayed student 1, edited)
 activate ModelManager
-ModelManager --> EditCommand
-deactivate ModelManager
-
-EditCommand -> ModelManager : updateFilteredPersonList(show all)
-activate ModelManager
-ModelManager -> DisplayedView : setComparator(null)
-activate DisplayedView
-DisplayedView --> ModelManager
-deactivate DisplayedView
-ModelManager -> FilteredView : setPredicate(active and show all)
-activate FilteredView
-FilteredView --> ModelManager
-deactivate FilteredView
+note right of ModelManager
+The current result view is kept. An edited
+student who no longer matches leaves it.
+end note
 ModelManager --> EditCommand
 deactivate ModelManager
 

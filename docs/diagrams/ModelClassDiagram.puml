@@ -19,6 +19,13 @@ Class Email
 Class Name
 Class Phone
 Class Tag
+Class Subject
+Class EducationLevel
+Class LearningFocus
+Class NextAction
+Class Lesson
+Class Guardian
+Class "<<enumeration>>\nResultViewScope" as ResultViewScope
 
 Class I #FFFFFF
 }
@@ -36,12 +43,22 @@ ModelManager -right-> "1" UserPrefs
 UserPrefs .up.|> ReadOnlyUserPrefs
 
 AddressBook *--> "1" UniquePersonList
-UniquePersonList --> "~* all" Person
-Person *--> Name
-Person *--> Phone
-Person *--> Email
-Person *--> Address
+UniquePersonList --> "~*" Person : all
+Person *--> "1" Name
+Person *--> "0..1" Phone
+Person *--> "0..1" Email
+Person *--> "0..1" Address
 Person *--> "*" Tag
+Person *--> "0..1" Subject
+Person *--> "0..1" EducationLevel
+Person *--> "0..1" LearningFocus
+Person *--> "0..1" NextAction
+Person *--> "0..1" Lesson
+Person *--> "0..1" Guardian
+Guardian *--> "1" Name
+Guardian *--> "0..1" Phone
+Guardian *--> "0..1" Email
+ModelManager --> "1" ResultViewScope
 
 Person -[hidden]up--> I
 UniquePersonList -[hidden]right-> I
@@ -50,5 +67,5 @@ Name -[hidden]right-> Phone
 Phone -[hidden]right-> Address
 Address -[hidden]right-> Email
 
-ModelManager --> "~* filtered" Person
+ModelManager --> "~*" Person : filtered
 @enduml

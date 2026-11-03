@@ -49,7 +49,9 @@ deactivate AddressBookParser
 LogicManager -> UpcomingCommand : execute(m)
 activate UpcomingCommand
 
-UpcomingCommand -> UpcomingCommand : now = LocalDateTime.now(clock)
+note right of UpcomingCommand
+now = LocalDateTime.now(clock)
+end note
 
 UpcomingCommand -> Model : updateFilteredPersonList(lesson after now, ACTIVE)
 activate Model

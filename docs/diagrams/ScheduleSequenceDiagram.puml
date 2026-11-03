@@ -51,33 +51,39 @@ deactivate AddressBookParser
 LogicManager -> ScheduleCommand : execute(m)
 activate ScheduleCommand
 
+ScheduleCommand -> Model : getResultViewScope()
+activate Model
+Model --> ScheduleCommand : ACTIVE
+deactivate Model
+
 ScheduleCommand -> Model : getFilteredPersonList()
 activate Model
 Model --> ScheduleCommand : displayed students
 deactivate Model
 
-alt lesson is not after LocalDateTime.now(clock)
-    ScheduleCommand -->> LogicManager : CommandException
-else lesson is in the future
-    ScheduleCommand -> Student : withLesson(Optional.of(lesson))
-    activate Student
-    Student --> ScheduleCommand : scheduled
-    deactivate Student
+note right of ScheduleCommand
+Throws a CommandException if the
+lesson is not after LocalDateTime.now(clock)
+end note
 
-    ScheduleCommand -> Model : setPerson(student, scheduled)
-    activate Model
-    Model --> ScheduleCommand
-    deactivate Model
+ScheduleCommand -> Student : withLesson(Optional.of(lesson))
+activate Student
+Student --> ScheduleCommand : scheduled
+deactivate Student
 
-    ScheduleCommand --> LogicManager : CommandResult
+ScheduleCommand -> Model : setPerson(student, scheduled)
+activate Model
+Model --> ScheduleCommand
+deactivate Model
 
-    LogicManager -> LogicManager : save address book
-    note right of LogicManager
-    Restores the previous address book
-    if saving fails
-    end note
-end
+ScheduleCommand --> LogicManager : CommandResult
 deactivate ScheduleCommand
+
+LogicManager -> LogicManager : save address book
+note right of LogicManager
+Restores the previous address book
+if saving fails
+end note
 
 [<--LogicManager
 deactivate LogicManager
