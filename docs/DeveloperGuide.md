@@ -16,6 +16,13 @@ title: Developer Guide
 * TutorContacts diagrams are authored in [PlantUML](https://plantuml.com/). Product screenshots and team profile
   images are supplied by the project team.
 
+**Notable uses of AI:**
+
+* Codex and Claude Code were used to help implement features and fix bugs.
+* Codex and Claude Code were used to help write automated tests and investigate defects.
+* Codex and Claude Code were used to help draft and check the User Guide, the Developer Guide, and UML diagrams.
+* The team reviewed and tested AI-assisted work before including it in the product.
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Setting up, getting started**
