@@ -1342,7 +1342,7 @@ testers are expected to do more *exploratory* testing.
       Expected: Dana is added and the result panel names her. Both values appear in the details panel after you select
       her card.
 
-   1. Test case: `edit 1 lf/Quadratic graphs na/Review exercise 2`<br>
+   1. Test case: Run `find Dana`, then `edit 1 lf/Quadratic graphs na/Review exercise 2`.<br>
       Expected: Both values are replaced; all omitted fields remain unchanged.
 
    1. Test case: `edit 1 lf/`<br>
